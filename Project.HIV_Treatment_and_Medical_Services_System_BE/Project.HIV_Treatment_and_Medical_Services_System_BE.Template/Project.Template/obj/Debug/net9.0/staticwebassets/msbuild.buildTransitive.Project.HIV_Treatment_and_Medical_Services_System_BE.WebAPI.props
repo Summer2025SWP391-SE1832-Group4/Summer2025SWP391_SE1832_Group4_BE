@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="../buildMultiTargeting/Project.HIV_Treatment_and_Medical_Services_System_BE.WebAPI.props" />
+</Project>

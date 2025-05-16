@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.HIV_Treatment_and_Medical_Services_System_BE.WebAPI", "Project.Template\Project.HIV_Treatment_and_Medical_Services_System_BE.WebAPI.csproj", "{9965AEF0-EA10-4501-B90B-245655DC4C5C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.HIV_Treatment_and_Medical_Services_System_BE.Application", "Project.HIV_Treatment_and_Medical_Services_System_BE.Application\Project.HIV_Treatment_and_Medical_Services_System_BE.Application.csproj", "{DCA11AFA-601A-4993-884C-AFD63AF9507C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Project.HIV_Treatment_and_Medical_Services_System_BE.Domain", "Project.HIV_Treatment_and_Medical_Services_System_BE.Domain\Project.HIV_Treatment_and_Medical_Services_System_BE.Domain.csproj", "{72282E98-AAC4-48A2-8708-08E7ECC69052}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence", "HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence\HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence.csproj", "{942D1FFB-477F-4DEC-9CB8-78611702FAD2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{9965AEF0-EA10-4501-B90B-245655DC4C5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9965AEF0-EA10-4501-B90B-245655DC4C5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9965AEF0-EA10-4501-B90B-245655DC4C5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9965AEF0-EA10-4501-B90B-245655DC4C5C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DCA11AFA-601A-4993-884C-AFD63AF9507C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DCA11AFA-601A-4993-884C-AFD63AF9507C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DCA11AFA-601A-4993-884C-AFD63AF9507C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DCA11AFA-601A-4993-884C-AFD63AF9507C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72282E98-AAC4-48A2-8708-08E7ECC69052}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72282E98-AAC4-48A2-8708-08E7ECC69052}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72282E98-AAC4-48A2-8708-08E7ECC69052}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72282E98-AAC4-48A2-8708-08E7ECC69052}.Release|Any CPU.Build.0 = Release|Any CPU
+		{942D1FFB-477F-4DEC-9CB8-78611702FAD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{942D1FFB-477F-4DEC-9CB8-78611702FAD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{942D1FFB-477F-4DEC-9CB8-78611702FAD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{942D1FFB-477F-4DEC-9CB8-78611702FAD2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1AD06EF8-AB43-44B4-B96A-420D14299E66}
+	EndGlobalSection
+EndGlobal
