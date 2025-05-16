@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "dgSpecHash": "noV52InluP4=",
-  "success": true,
+  "dgSpecHash": "2gKElratPOQ=",
+  "success": false,
   "projectFilePath": "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/Project.Template/Project.HIV_Treatment_and_Medical_Services_System_BE.WebAPI.csproj",
   "expectedPackageFiles": [
     "/Users/penpen1112003/.nuget/packages/automapper/14.0.0/automapper.14.0.0.nupkg.sha512",
@@ -53,11 +53,26 @@
     "/Users/penpen1112003/.nuget/packages/system.composition.hosting/7.0.0/system.composition.hosting.7.0.0.nupkg.sha512",
     "/Users/penpen1112003/.nuget/packages/system.composition.runtime/7.0.0/system.composition.runtime.7.0.0.nupkg.sha512",
     "/Users/penpen1112003/.nuget/packages/system.composition.typedparts/7.0.0/system.composition.typedparts.7.0.0.nupkg.sha512",
-    "/Users/penpen1112003/.nuget/packages/system.io.pipelines/7.0.0/system.io.pipelines.7.0.0.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/system.diagnostics.diagnosticsource/9.0.3/system.diagnostics.diagnosticsource.9.0.3.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/system.io.pipelines/9.0.3/system.io.pipelines.9.0.3.nupkg.sha512",
     "/Users/penpen1112003/.nuget/packages/system.reflection.metadata/7.0.0/system.reflection.metadata.7.0.0.nupkg.sha512",
     "/Users/penpen1112003/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/system.text.encodings.web/9.0.3/system.text.encodings.web.9.0.3.nupkg.sha512",
     "/Users/penpen1112003/.nuget/packages/system.text.json/9.0.3/system.text.json.9.0.3.nupkg.sha512",
-    "/Users/penpen1112003/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512"
+    "/Users/penpen1112003/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/microsoft.netcore.app.ref/8.0.11/microsoft.netcore.app.ref.8.0.11.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/microsoft.aspnetcore.app.ref/8.0.11/microsoft.aspnetcore.app.ref.8.0.11.nupkg.sha512",
+    "/Users/penpen1112003/.nuget/packages/microsoft.netcore.app.host.osx-arm64/8.0.11/microsoft.netcore.app.host.osx-arm64.8.0.11.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "NU1202",
+      "level": "Error",
+      "message": "Package Microsoft.AspNetCore.OpenApi 9.0.3 is not compatible with net8.0 (.NETCoreApp,Version=v8.0). Package Microsoft.AspNetCore.OpenApi 9.0.3 supports: net9.0 (.NETCoreApp,Version=v9.0)",
+      "libraryId": "Microsoft.AspNetCore.OpenApi",
+      "targetGraphs": [
+        "net8.0"
+      ]
+    }
+  ]
 }

@@ -18,14 +18,14 @@
           "/Users/penpen1112003/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
               "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/Project.HIV_Treatment_and_Medical_Services_System_BE.Domain/Project.HIV_Treatment_and_Medical_Services_System_BE.Domain.csproj": {
                 "projectPath": "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/Project.HIV_Treatment_and_Medical_Services_System_BE.Domain/Project.HIV_Treatment_and_Medical_Services_System_BE.Domain.csproj"
@@ -46,8 +46,8 @@
         "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.CodeAnalysis.Analyzers": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -122,6 +122,16 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -145,14 +155,14 @@
           "/Users/penpen1112003/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
               "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence.csproj": {
                 "projectPath": "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence.csproj"
@@ -176,8 +186,8 @@
         "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "AutoMapper": {
               "target": "Package",
@@ -248,6 +258,16 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -271,14 +291,14 @@
           "/Users/penpen1112003/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {}
           }
         },
@@ -295,8 +315,8 @@
         "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "Microsoft.CodeAnalysis.Analyzers": {
               "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
@@ -366,6 +386,16 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.NETCore.App": {
               "privateAssets": "all"
@@ -389,14 +419,14 @@
           "/Users/penpen1112003/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "net9.0"
+          "net8.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "net9.0": {
-            "targetAlias": "net9.0",
+          "net8.0": {
+            "targetAlias": "net8.0",
             "projectReferences": {
               "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence.csproj": {
                 "projectPath": "/Users/penpen1112003/IntelliJ/Rider/Summer2025SWP391_SE1832_Group4/Project.HIV_Treatment_and_Medical_Services_System_BE/Project.HIV_Treatment_and_Medical_Services_System_BE.Template/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence/HIV_Treatment_and_Medical_Services_System_BE.Project.Persistence.csproj"
@@ -420,8 +450,8 @@
         "SdkAnalysisLevel": "9.0.100"
       },
       "frameworks": {
-        "net9.0": {
-          "targetAlias": "net9.0",
+        "net8.0": {
+          "targetAlias": "net8.0",
           "dependencies": {
             "AutoMapper": {
               "target": "Package",
@@ -519,6 +549,20 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
           "frameworkReferences": {
             "Microsoft.AspNetCore.App": {
               "privateAssets": "none"
