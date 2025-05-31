@@ -1,21 +1,25 @@
 using System;
+using HIVTreatmentSystem.Domain.Entities.Base;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
-    public class Appointment
+    public class Appointment : BaseEntity<int>
     {
-        public Guid Id { get; set; }
-        public Guid PatientId { get; set; }
-        public Guid DoctorId { get; set; }
-        public DateTime AppointmentDate { get; set; }
-        public required string AppointmentType { get; set; }
-        public required string Status { get; set; }
-        public required string Notes { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-
+        public int PatientId { get; set; }
+        public int? DoctorId { get; set; }
+        public DateTime AppointmentTime { get; set; }  // ThoiGianHen
+        public string AppointmentType { get; set; }  // LoaiLichHen
+        public string Status { get; set; }  // TrangThaiLichHen: DaLenLich, DaHoanThanh, DaHuyBenhNhan, DaHuyBacSi, VangMat, ChoXacNhan, DangDienRa
+        public string Reason { get; set; }  // LyDoKham
+        public string Notes { get; set; }  // GhiChuHen
+        public bool IsAnonymousConsultation { get; set; } = false;  // LaTuVanAnDanh
+        public int? CreatedByAccountId { get; set; }  // NguoiTaoLichHenID
+        
         // Navigation properties
-        public virtual required Patient Patient { get; set; }
-        public virtual required Doctor Doctor { get; set; }
+        public virtual Patient Patient { get; set; }
+        public virtual Doctor Doctor { get; set; }
+        public virtual Account CreatedByAccount { get; set; }
+        public virtual MedicalConsultation MedicalConsultation { get; set; }
+        public virtual Reminder Reminder { get; set; }
     }
-} 
+}

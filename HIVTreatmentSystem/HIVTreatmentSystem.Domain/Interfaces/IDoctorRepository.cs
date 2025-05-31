@@ -7,9 +7,10 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 {
     public interface IDoctorRepository : IGenericRepository<Doctor>
     {
-        Task<Doctor> GetDoctorWithDetailsAsync(Guid id);
+        Task<Doctor> GetDoctorWithDetailsAsync(int id);
         Task<IEnumerable<Doctor>> GetDoctorsBySpecializationAsync(string specialization);
         Task<IEnumerable<Doctor>> GetDoctorsByDepartmentAsync(string department);
         Task<IEnumerable<Doctor>> GetDoctorsWithActivePatientsAsync();
     }
-} 
+}
+
