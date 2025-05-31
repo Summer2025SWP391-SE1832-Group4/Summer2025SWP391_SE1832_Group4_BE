@@ -4,13 +4,28 @@ using HIVTreatmentSystem.Domain.Entities.Base;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
+    /// <summary>
+    /// Thực thể bệnh nhân.
+    /// </summary>
     public class Patient : BaseEntity<int>
     {
+        /// <summary>
+        /// Mã bệnh nhân.
+        /// </summary>
         public string PatientCode { get; set; }  // MaBenhNhanTaiCoSo
         public DateTime? DateOfBirth { get; set; }
+        /// <summary>
+        /// Giới tính.
+        /// </summary>
         public string Gender { get; set; }  // Nam, Nữ, Khác
+        /// <summary>
+        /// Địa chỉ.
+        /// </summary>
         public string Address { get; set; }
         public DateTime? DiagnosisDate { get; set; }
+        /// <summary>
+        /// Thông tin đồng ý điều trị.
+        /// </summary>
         public string ConsentInformation { get; set; }  // ThongTinDongThuan
         public string AnonymousIdentifier { get; set; }  // MaSoDinhDanhAnDanh
         public string AdditionalNotes { get; set; }  // GhiChuThem

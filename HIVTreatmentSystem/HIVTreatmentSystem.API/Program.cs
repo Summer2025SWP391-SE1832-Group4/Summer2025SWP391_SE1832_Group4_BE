@@ -12,11 +12,15 @@ using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Services;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiResponseWrapperAttribute>();
+});
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure JWT Authentication
@@ -162,6 +166,9 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty; // Set Swagger UI at the app's root
         c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
         c.EnableFilter();
+        c.EnableDeepLinking();
+        c.DisplayOperationId(); // Display operation IDs in Swagger UI
+        c.DisplayRequestDuration(); // Show request duration in Swagger UI
         c.DefaultModelsExpandDepth(-1); // Hide the models by default
     });
     // Use the development CORS policy in development environment
