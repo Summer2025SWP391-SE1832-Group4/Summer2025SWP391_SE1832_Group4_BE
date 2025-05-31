@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HIVTreatmentSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 
 namespace HIVTreatmentSystem.Infrastructure.Data
 {
@@ -28,6 +31,12 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<EducationalMaterial> EducationalMaterials { get; set; }
         public DbSet<DoctorSchedule> DoctorSchedules { get; set; }
         public DbSet<SystemAuditLog> SystemAuditLogs { get; set; }
+        public DbSet<ExperienceWorking> ExperienceWorkings { get; set; }
+        public DbSet<Certificate> Certificates { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Blog> Blogs { get; set; }
+        public DbSet<BlogTag> BlogTags { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -43,6 +52,17 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             modelBuilder.Entity<PatientTreatment>().Property(e => e.Status).HasConversion<string>();
 
             modelBuilder.Entity<Reminder>().Property(e => e.ReminderType).HasConversion<string>();
+
+            modelBuilder.Entity<ExperienceWorking>()
+                .HasOne(e => e.Doctor)
+                .WithMany(d => d.ExperienceWorkings)
+                .HasForeignKey(e => e.DoctorId);
+
+            modelBuilder.Entity<Blog>()
+                .HasOne(b => b.BlogTag)
+                .WithMany(t => t.Blogs)
+                .HasForeignKey(b => b.BlogTagId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder
                 .Entity<Reminder>()
@@ -467,5 +487,9 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     }
                 );
         }
+
+        
+
+        
     }
 }
