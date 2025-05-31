@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum PatientStatus
+    public enum Gender
     {
-        Active = 0,
-        Inactive = 1,
-        Died = 2,
-        GivenUp = 3,
+        Male,
+        Female,
+        Other,
     }
 }

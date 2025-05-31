@@ -7,12 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connectionString = builder.Configuration.GetConnectionString("ARVManagementDbContext");
+var connectionString = builder.Configuration.GetConnectionString("HIVDbContext");
 
 // Register DbContext BEFORE builder.Build()
-builder.Services.AddDbContext<ARVManagementDbContext>(options =>
-    options.UseSqlServer(connectionString)
-);
+builder.Services.AddDbContext<HIVDbContext>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 

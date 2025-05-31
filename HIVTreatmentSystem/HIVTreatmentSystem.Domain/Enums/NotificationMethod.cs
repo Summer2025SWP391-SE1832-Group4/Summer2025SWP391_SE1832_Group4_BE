@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum BlogStatus
+    public enum NotificationMethod
     {
-        Draft = 0,
-        Published = 1,
-        Archived = 2,
+        SMS,
+        Email,
+        InApp,
     }
 }

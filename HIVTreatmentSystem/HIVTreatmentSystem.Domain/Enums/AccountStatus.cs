@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum CertificateType
+    public enum AccountStatus
     {
-        Treatment = 0,
-        TestResult = 1,
-        Vaccination = 2,
-        Medical = 3,
+        Active,
+        Inactive,
+        PendingVerification,
+        Deleted,
     }
 }

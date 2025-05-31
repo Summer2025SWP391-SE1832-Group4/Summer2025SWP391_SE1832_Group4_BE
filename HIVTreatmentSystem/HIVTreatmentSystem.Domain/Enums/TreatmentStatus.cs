@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum TestResult
+    public enum TreatmentStatus
     {
-        Negative = 0,
-        Positive = 1,
-        Pending = 2,
+        InTreatment,
+        Completed,
+        Discontinued,
+        SwitchedRegimen,
     }
 }

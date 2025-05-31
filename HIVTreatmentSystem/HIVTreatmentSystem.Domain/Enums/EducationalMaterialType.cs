@@ -6,11 +6,12 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum BookingStatus
+    public enum EducationalMaterialType
     {
-        Pending = 0,
-        Confirmed = 1,
-        Completed = 2,
-        Cancelled = 3,
+        Article,
+        Video,
+        BlogPost,
+        StigmaReductionMaterial,
+        FAQ,
     }
 }
