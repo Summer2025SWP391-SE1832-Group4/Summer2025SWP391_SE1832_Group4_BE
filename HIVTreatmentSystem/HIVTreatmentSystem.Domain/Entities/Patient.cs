@@ -1,28 +1,30 @@
 using System;
+using System.Collections.Generic;
+using HIVTreatmentSystem.Domain.Entities.Base;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
-    public class Patient
+    public class Patient : BaseEntity<int>
     {
-        public Guid Id { get; set; }
-        public required string FirstName { get; set; }
-        public required string LastName { get; set; }
-        public DateTime DateOfBirth { get; set; }
-        public required string Gender { get; set; }
-        public required string ContactNumber { get; set; }
-        public required string Email { get; set; }
-        public required string Address { get; set; }
-        public required string MedicalRecordNumber { get; set; }
-        public DateTime DiagnosisDate { get; set; }
-        public required string HIVStatus { get; set; }
-        public required string CurrentStage { get; set; }
-        public DateTime CreatedAt { get; set; }
-        public DateTime? UpdatedAt { get; set; }
-        public bool IsActive { get; set; }
+        public string PatientCode { get; set; }  // MaBenhNhanTaiCoSo
+        public DateTime? DateOfBirth { get; set; }
+        public string Gender { get; set; }  // Nam, Nữ, Khác
+        public string Address { get; set; }
+        public DateTime? DiagnosisDate { get; set; }
+        public string ConsentInformation { get; set; }  // ThongTinDongThuan
+        public string AnonymousIdentifier { get; set; }  // MaSoDinhDanhAnDanh
+        public string AdditionalNotes { get; set; }  // GhiChuThem
+        public bool IsActive { get; set; } = true;
+
+        // Foreign key
+        public int AccountId { get; set; }  // Same as PatientId
 
         // Navigation properties
+        public virtual Account Account { get; set; }
         public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public virtual ICollection<Treatment> Treatments { get; set; } = new List<Treatment>();
-        public virtual ICollection<Prescription> Prescriptions { get; set; } = new List<Prescription>();
+        public virtual ICollection<MedicalConsultation> MedicalConsultations { get; set; } = new List<MedicalConsultation>();
+        public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
+        public virtual ICollection<PatientTreatment> Treatments { get; set; } = new List<PatientTreatment>();
+        public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
     }
-} 
+}

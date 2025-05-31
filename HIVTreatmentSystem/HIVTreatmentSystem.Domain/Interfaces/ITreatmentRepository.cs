@@ -5,7 +5,7 @@ using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
-    public interface ITreatmentRepository : IGenericRepository<Treatment>
+    public interface ITreatmentRepository : IGenericRepository<Treatment, Guid>
     {
         Task<Treatment> GetTreatmentWithDetailsAsync(Guid id);
         Task<IEnumerable<Treatment>> GetTreatmentsByPatientAsync(Guid patientId);
@@ -13,4 +13,5 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<IEnumerable<Treatment>> GetActiveTreatmentsAsync();
         Task<IEnumerable<Treatment>> GetTreatmentsByTypeAsync(string treatmentType);
     }
-} 
+}
+
