@@ -44,6 +44,9 @@ namespace HIVTreatmentSystem.Domain.Entities
         [MaxLength(255)]
         public string? ProfileImageUrl { get; set; }
 
+        public string? PasswordResetToken { get; set; }
+        public DateTime? PasswordResetTokenExpiry { get; set; }
+
         // Navigation properties
         public virtual Role Role { get; set; } = null!;
         public virtual Patient? Patient { get; set; }
