@@ -12,6 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using BCrypt.Net;
+using HIVTreatmentSystem.Application.Interfaces;
+using HIVTreatmentSystem.Application.Services;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -24,11 +27,12 @@ namespace HIVTreatmentSystem.API.Controllers
     {
         private readonly HIVDbContext _context;
         private readonly JwtSettings _jwtSettings;
-
-        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings)
+        private readonly IEmailService _emailService;
+        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings, IEmailService emailService)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _emailService = emailService;
         }
 
         /// <summary>
@@ -37,37 +41,35 @@ namespace HIVTreatmentSystem.API.Controllers
         /// <param name="request">Thông tin đăng nhập.</param>
         /// <returns>Thông tin đăng nhập thành công hoặc lỗi.</returns>
         [HttpPost("login")]
-        public async Task<ActionResult<LoginResponse>> Login(LoginRequest request)
+        public async Task<ActionResult<ApiResponse>> Login(LoginRequest request)
         {
             // Validate request
-            if (string.IsNullOrEmpty(request.Username) || string.IsNullOrEmpty(request.Password))
+            if (string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                return BadRequest("Username and password are required");
+                return BadRequest(new ApiResponse("Email and password are required"));
             }
 
-            // Find user by username
+            // Find user by email only
             var account = await _context.Accounts
                 .Include(a => a.Role)
-                .FirstOrDefaultAsync(u => u.Username == request.Username);
+                .FirstOrDefaultAsync(u => u.Email == request.Email);
 
             // Check if user exists
             if (account == null)
             {
-                return Unauthorized("Invalid username or password");
+                return Unauthorized(new ApiResponse("Invalid email or password"));
             }
 
             // Verify password (in a real app, you'd use a password hasher)
-            // For demo purposes, we're checking directly
-            // In production, use BCrypt or Identity password hasher
             if (!VerifyPassword(request.Password, account.PasswordHash))
             {
-                return Unauthorized("Invalid username or password");
+                return Unauthorized(new ApiResponse("Invalid email or password"));
             }
 
             // Check if account is active
             if (account.AccountStatus != HIVTreatmentSystem.Domain.Enums.AccountStatus.Active)
             {
-                return Unauthorized($"Account is {account.AccountStatus}. Please contact support.");
+                return Unauthorized(new ApiResponse($"Account is {account.AccountStatus}. Please contact support."));
             }
 
             // Generate JWT token
@@ -78,7 +80,7 @@ namespace HIVTreatmentSystem.API.Controllers
             await _context.SaveChangesAsync();
 
             // Create and return response
-            return new LoginResponse
+            var loginResponse = new LoginResponse
             {
                 Token = token,
                 RefreshToken = "", // Implement refresh token logic if needed
@@ -88,6 +90,7 @@ namespace HIVTreatmentSystem.API.Controllers
                 FullName = account.FullName,
                 Role = account.Role.RoleName
             };
+            return Ok(new ApiResponse("Login successful", loginResponse));
         }
 
         /// <summary>
@@ -107,12 +110,127 @@ namespace HIVTreatmentSystem.API.Controllers
             });
         }
 
-        // Simple password verification - replace with proper password hashing in production
+        /// <summary>
+        /// Register a new account.
+        /// </summary>
+        /// <param name="request">Registration information.</param>
+        /// <returns>Registration result.</returns>
+        [HttpPost("register")]
+        public async Task<ActionResult<ApiResponse>> Register(RegisterRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.Email) ||
+                string.IsNullOrWhiteSpace(request.FullName))
+            {
+                return BadRequest(new ApiResponse("Please provide all required information."));
+            }
+
+            if (await _context.Accounts.AnyAsync(a => a.Username == request.Username))
+            {
+                return Conflict(new ApiResponse("Username already exists."));
+            }
+            if (await _context.Accounts.AnyAsync(a => a.Email == request.Email))
+            {
+                return Conflict(new ApiResponse("Email is already in use."));
+            }
+
+            // Generate password set token and expiry (30 minutes)
+            var token = Guid.NewGuid().ToString();
+            var expiry = DateTime.UtcNow.AddMinutes(30);
+
+            // Create new account with empty password hash
+            var account = new Account
+            {
+                Username = request.Username,
+                PasswordHash = string.Empty, // No password yet
+                Email = request.Email,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                RoleId = request.RoleId,
+                CreatedAt = DateTime.UtcNow,
+                AccountStatus = HIVTreatmentSystem.Domain.Enums.AccountStatus.PendingVerification,
+                PasswordResetToken = token,
+                PasswordResetTokenExpiry = expiry
+            };
+
+            _context.Accounts.Add(account);
+            await _context.SaveChangesAsync();
+
+            // Send email with password set link
+            var setPasswordUrl = $"https://your-frontend.com/set-password?token={token}";
+            var subject = "Set your password for HIV Treatment System";
+            var body = $"<p>Hello {account.FullName},</p>" +
+                       $"<p>Thank you for registering. Please set your password by clicking the link below (valid for 30 minutes):</p>" +
+                       $"<p><a href='{setPasswordUrl}'>Set Password</a></p>" +
+                       $"<p>If you did not request this, please ignore this email.</p>";
+            await _emailService.SendEmailAsync(account.Email, subject, body);
+
+            return Ok(new ApiResponse("Registration successful! Please check your email to set your password.", new { account.AccountId, account.Username, account.Email, account.FullName, account.RoleId }));
+        }
+
+        /// <summary>
+        /// Set a new password using the token sent via email after registration.
+        /// </summary>
+        /// <param name="request">Set password request (token, new password).</param>
+        /// <returns>Result of password set.</returns>
+        [HttpPost("set-password")]
+        public async Task<ActionResult<ApiResponse>> SetPassword(SetPasswordRequest request)
+        {
+            if (string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
+            {
+                return BadRequest(new ApiResponse("Token and new password are required."));
+            }
+
+            var account = await _context.Accounts.FirstOrDefaultAsync(a => a.PasswordResetToken == request.Token);
+            if (account == null)
+            {
+                return BadRequest(new ApiResponse("Invalid or expired token."));
+            }
+            if (!account.PasswordResetTokenExpiry.HasValue || account.PasswordResetTokenExpiry < DateTime.UtcNow)
+            {
+                return BadRequest(new ApiResponse("Token has expired. Please request a new password reset."));
+            }
+
+            // Hash and set new password
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            account.PasswordResetToken = null;
+            account.PasswordResetTokenExpiry = null;
+            account.AccountStatus = HIVTreatmentSystem.Domain.Enums.AccountStatus.Active;
+            await _context.SaveChangesAsync();
+
+            return Ok(new ApiResponse("Password has been set successfully. You can now log in."));
+        }
+
+        /// <summary>
+        /// Get all available roles.
+        /// </summary>
+        /// <returns>List of roles.</returns>
+        [HttpGet("roles")]
+        public async Task<ActionResult<ApiResponse>> GetRoles()
+        {
+            var roles = await _context.Roles
+                .Select(r => new { r.RoleId, r.RoleName, r.Description })
+                .ToListAsync();
+            return Ok(new ApiResponse("Success", roles));
+        }
+
+        /// <summary>
+        /// Logout the current user (client should remove the token).
+        /// </summary>
+        /// <returns>Logout result.</returns>
+        [HttpPost("logout")]
+        [Authorize]
+        public ActionResult<ApiResponse> Logout()
+        {
+            // No server-side action needed for JWT logout.
+            return Ok(new ApiResponse("Logout successful."));
+        }
+
+        // Simple password verification - now using BCrypt
         private bool VerifyPassword(string password, string passwordHash)
         {
-            // In production, use BCrypt.Net.BCrypt.Verify() or similar
-            // For demo purposes, we'll do a simple comparison (assuming passwordHash is plaintext)
-            return password == passwordHash;
+            // Use BCrypt to verify hashed password
+            return BCrypt.Net.BCrypt.Verify(password, passwordHash);
         }
 
         private string GenerateJwtToken(Account account)
