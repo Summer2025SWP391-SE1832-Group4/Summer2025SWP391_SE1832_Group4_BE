@@ -141,7 +141,7 @@ builder.Services.AddCors(options =>
 });
 
 // Add DbContext
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
+builder.Services.AddDbContext<HIVDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Register application services
@@ -149,7 +149,6 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-builder.Services.AddScoped<IPrescriptionRepository, PrescriptionRepository>();
 
 // Register application services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

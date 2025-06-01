@@ -1,35 +1,39 @@
+﻿using System;
 using System.Collections.Generic;
-using HIVTreatmentSystem.Domain.Entities.Base;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
-    /// <summary>
-    /// Thực thể bác sĩ.
-    /// </summary>
-    public class Doctor : BaseEntity<int>
+    public class Doctor
     {
-        /// <summary>
-        /// Chuyên môn.
-        /// </summary>
-        public string Specialization { get; set; }  // ChuyenMon
-        /// <summary>
-        /// Bằng cấp.
-        /// </summary>
-        public string Qualifications { get; set; }  // BangCap
-        /// <summary>
-        /// Số năm kinh nghiệm.
-        /// </summary>
-        public int YearsOfExperience { get; set; }  // SoNamKinhNghiem
-        public string ShortDescription { get; set; }  // MoTaNgan
-        
-        // Foreign key
-        public int AccountId { get; set; }  // Same as DoctorId
-        
+        public int DoctorId { get; set; } // Same as UserId
+
+        [MaxLength(100)]
+        public string? Specialty { get; set; }
+
+        public string? Qualifications { get; set; }
+
+        public int? YearsOfExperience { get; set; }
+
+        [MaxLength(500)]
+        public string? ShortDescription { get; set; }
+
         // Navigation properties
-        public virtual Account Account { get; set; }
-        public virtual ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        public virtual ICollection<MedicalConsultation> MedicalConsultations { get; set; } = new List<MedicalConsultation>();
-        public virtual ICollection<PatientTreatment> PrescribedTreatments { get; set; } = new List<PatientTreatment>();
-        public virtual ICollection<DoctorSchedule> Schedules { get; set; } = new List<DoctorSchedule>();
+        public virtual Account Account { get; set; } = null!;
+        public virtual ICollection<Appointment> Appointments { get; set; } =
+            new List<Appointment>();
+        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } =
+            new List<MedicalRecord>();
+        public virtual ICollection<PatientTreatment> PrescribedTreatments { get; set; } =
+            new List<PatientTreatment>();
+        public virtual ICollection<DoctorSchedule> Schedules { get; set; } =
+            new List<DoctorSchedule>();
+        public virtual ICollection<ExperienceWorking> ExperienceWorkings { get; set; } =
+            new List<ExperienceWorking>();
+        public virtual ICollection<Certificate> Certificates { get; set; } =             
+            new List<Certificate>();
     }
 }
