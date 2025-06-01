@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace HIVTreatmentSystem.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/accounts")]
     public class AccountsController : ControllerBase
     {
         private readonly IAccountService _accountService;
@@ -31,7 +31,7 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new { Accounts = apiDtos, TotalCount = response.TotalCount });
         }
 
-        [HttpGet("{id:int}")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetAccountByIdAsync(int id)
         {
             var response = await _accountService.GetByIdAsync(id);
@@ -39,29 +39,16 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(apiDto);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateAsync([FromBody] AccountRequest apiRequest)
-        {
-            var appRequest = _mapper.Map<Application.Models.Requests.AccountRequest>(apiRequest);
-            var response = await _accountService.CreateAsync(appRequest);
-            var apiDto = _mapper.Map<AccountDto>(response.Account);
-            return CreatedAtAction(
-                nameof(GetAccountByIdAsync),
-                new { id = apiDto.AccountId },
-                apiDto
-            );
-        }
-
-        [HttpPut("{id:int}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateAsync(int id, [FromBody] AccountRequest apiRequest)
         {
-            var appRequest = _mapper.Map<Application.Models.Requests.AccountRequest>(apiRequest);
+            var appRequest = _mapper.Map<AccountRequest>(apiRequest);
             var response = await _accountService.UpdateAsync(id, appRequest);
             var apiDto = _mapper.Map<AccountDto>(response.Account);
             return Ok(apiDto);
         }
 
-        [HttpDelete("{id:int}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAsync(int id)
         {
             await _accountService.DeleteAsync(id);

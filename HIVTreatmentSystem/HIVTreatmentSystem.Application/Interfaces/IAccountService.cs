@@ -20,11 +20,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
             CancellationToken cancellationToken = default
         );
 
-        Task<AccountResponse> CreateAsync(
-            AccountRequest request,
-            CancellationToken cancellationToken = default
-        );
-
         Task<AccountResponse> UpdateAsync(
             int accountId,
             AccountRequest request,

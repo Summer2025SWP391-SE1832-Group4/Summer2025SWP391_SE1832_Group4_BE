@@ -77,44 +77,6 @@ namespace HIVTreatmentSystem.Application.Services.Account
             return new AccountResponse { Account = dto };
         }
 
-        public async Task<AccountResponse> CreateAsync(
-            AccountRequest request,
-            CancellationToken cancellationToken = default
-        )
-        {
-            var entity = new Domain.Entities.Account
-            {
-                Username = request.Username,
-                PasswordHash = request.PasswordHash ?? string.Empty,
-                Email = request.Email,
-                PhoneNumber = request.PhoneNumber,
-                FullName = request.FullName,
-                CreatedAt = DateTime.UtcNow,
-                AccountStatus = request.AccountStatus,
-                RoleId = request.RoleId,
-                LastLoginAt = null,
-                ProfileImageUrl = request.ProfileImageUrl,
-            };
-
-            await _accountRepository.AddAsync(entity);
-
-            var dto = new AccountDto
-            {
-                AccountId = entity.AccountId,
-                Username = entity.Username,
-                Email = entity.Email,
-                FullName = entity.FullName,
-                AccountStatus = entity.AccountStatus,
-                RoleId = entity.RoleId,
-                CreatedAt = entity.CreatedAt,
-                LastLoginAt = entity.LastLoginAt,
-                PhoneNumber = entity.PhoneNumber,
-                ProfileImageUrl = entity.ProfileImageUrl,
-            };
-
-            return new AccountResponse { Account = dto };
-        }
-
         public async Task<AccountResponse> UpdateAsync(
             int accountId,
             AccountRequest request,

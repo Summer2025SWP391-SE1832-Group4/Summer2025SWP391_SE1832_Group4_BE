@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using HIVTreatmentSystem.Application.Dtos; // Corrected namespace
+using HIVTreatmentSystem.Application.Dtos;
 using HIVTreatmentSystem.Application.Models.Requests;
 
 namespace HIVTreatmentSystem.API.Mappers
@@ -8,11 +8,8 @@ namespace HIVTreatmentSystem.API.Mappers
     {
         public AccountMapper()
         {
-            // App-layer DTO → API-layer DTO
-            CreateMap<HIVTreatmentSystem.Application.Dtos.AccountDto, AccountDto>();
-
-            // API-layer Request → App-layer AccountRequest
-            CreateMap<AccountRequest, Application.Models.Requests.AccountRequest>()
+            CreateMap<AccountDto, AccountDto>();
+            CreateMap<AccountRequest, AccountRequest>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.PasswordHash!));
         }
     }
