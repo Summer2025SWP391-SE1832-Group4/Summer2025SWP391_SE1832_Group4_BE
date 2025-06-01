@@ -5,13 +5,13 @@ using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
-    public interface ITreatmentRepository : IGenericRepository<Treatment, Guid>
+    public interface ITreatmentRepository : IGenericRepository<PatientTreatment, int>
     {
-        Task<Treatment> GetTreatmentWithDetailsAsync(Guid id);
-        Task<IEnumerable<Treatment>> GetTreatmentsByPatientAsync(Guid patientId);
-        Task<IEnumerable<Treatment>> GetTreatmentsByDoctorAsync(Guid doctorId);
-        Task<IEnumerable<Treatment>> GetActiveTreatmentsAsync();
-        Task<IEnumerable<Treatment>> GetTreatmentsByTypeAsync(string treatmentType);
+        Task<PatientTreatment?> GetTreatmentWithDetailsAsync(int patientTreatmentId);
+        Task<IEnumerable<PatientTreatment>> GetTreatmentsByPatientAsync(int patientId);
+        Task<IEnumerable<PatientTreatment>> GetTreatmentsByDoctorAsync(int doctorId);
+        Task<IEnumerable<PatientTreatment>> GetActiveTreatmentsAsync();
+        Task<IEnumerable<PatientTreatment>> GetTreatmentsByStatusAsync(string status);
     }
 }
 
