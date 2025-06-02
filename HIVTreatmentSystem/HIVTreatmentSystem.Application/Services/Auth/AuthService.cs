@@ -1,3 +1,14 @@
+using BCrypt.Net;
+using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Application.Interfaces;
+using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Application.Models.Settings;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
+using HIVTreatmentSystem.Domain.Interfaces;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -5,16 +16,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net;
-using HIVTreatmentSystem.Application.Common;
-using HIVTreatmentSystem.Application.Interfaces;
-using HIVTreatmentSystem.Application.Models.Auth;
-using HIVTreatmentSystem.Application.Models.Settings;
-using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Enums;
-using HIVTreatmentSystem.Domain.Interfaces;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HIVTreatmentSystem.Application.Services.Auth
 {
@@ -259,24 +260,27 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             return response;
         }
 
-        public async Task<bool> ChangePassword(string oldPassword, string newPassword, int id)
+        public async Task<ChangePasswordResponse> ChangePassword(string oldPassword, string newPassword, int id)
         {
             try
             {
                 var account = await _accountRepository.GetByIdAsync(id);
-                bool checkPassword = _passwordHasher.VerifyPassword(
-                    oldPassword,
-                    account.PasswordHash
-                );
+                if (account == null)
+                    return new ChangePasswordResponse { Success = false, Message = "Account not found." };
+                bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
                 if (!checkPassword)
-                    return false;
+                    return new ChangePasswordResponse { Success = false, Message = "Old password is incorrect." };
+                bool isSamePassword = _passwordHasher.VerifyPassword(newPassword, account.PasswordHash);
+                if (isSamePassword)
+                    return new ChangePasswordResponse { Success = false, Message = "New password must be different from the old password." };
                 account.PasswordHash = _passwordHasher.HashPassword(newPassword);
                 _accountRepository.Update(account);
-                return true;
+                return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
+
             }
             catch (Exception ex)
             {
-                return false;
+                return new ChangePasswordResponse { Success = false, Message = "An error occurred while changing the password." };
             }
         }
     }

@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Responses;
 
 namespace HIVTreatmentSystem.Application.Interfaces
 {
@@ -11,6 +12,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ApiResponse> SetPasswordAsync(SetPasswordRequest request);
         Task<ApiResponse> GetRolesAsync();
         Task<TokenValidationResponse> ValidateTokenAsync(string token);
-        Task<bool> ChangePassword(string oldPassword, string newPassword, int id);
+        Task<ChangePasswordResponse> ChangePassword(string oldPassword, string newPassword, int id);
     }
 } 

@@ -6,6 +6,7 @@ using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Infrastructure.Data;
@@ -141,12 +142,12 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, int id)
         {
             var result = await _authService.ChangePassword(request.OldPassword, request.NewPassword, id);
-            if (result)
-                return Ok(new ApiResponse("Change password succeessfully"));
+            var response = new ApiResponse(result.Message);
+
+            if (response.Success)
+                return Ok(response);
             else
-            {
-                return BadRequest(new ApiResponse("Wrong password"));
-            }
+                return BadRequest(response);
         }
     }
 }
