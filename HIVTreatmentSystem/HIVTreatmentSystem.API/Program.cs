@@ -169,24 +169,14 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
-builder.Services.AddScoped<
-    HIVTreatmentSystem.Domain.Interfaces.IAccountRepository,
-    HIVTreatmentSystem.Infrastructure.Repositories.AccountRepository
->();
-builder.Services.AddScoped<
-    HIVTreatmentSystem.Application.Interfaces.IAuthService,
-    HIVTreatmentSystem.Application.Services.Auth.AuthService
->();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
 builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
 
-//Mapper
+// Configure AutoMapper
 builder.Services.AddAutoMapper(typeof(AccountMapper));
-
-// Register application services
-builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
