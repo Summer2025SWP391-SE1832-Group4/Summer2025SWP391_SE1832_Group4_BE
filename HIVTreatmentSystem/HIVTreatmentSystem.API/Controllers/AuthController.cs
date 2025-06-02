@@ -32,13 +32,15 @@ namespace HIVTreatmentSystem.API.Controllers
         private readonly IAuthenticateService _authenticateService;
         private readonly IEmailService _emailService;
 
-        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings, IAuthenticateService authenticateService)
-        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings, IEmailService emailService)
+        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings, IAuthenticateService authenticateService, IEmailService emailService)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _authenticateService = authenticateService;
             _emailService = emailService;
         }
+
+
 
         /// <summary>
         /// Đăng nhập tài khoản.
@@ -266,12 +268,12 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, int id)
         {
             var result = await _authenticateService.ChangePassword(request.OldPassword, request.NewPassword, id);
-            return Ok(new
+            if (result)
+                return Ok(new ApiResponse("Change password succeessfully"));
+            else
             {
-                Code = StatusCodes.Status200OK,
-                Success = true,
-                Message = "Change password successful"            
-            });
+                return BadRequest(new ApiResponse("Wrong password"));
+            }
         }
     }
 }

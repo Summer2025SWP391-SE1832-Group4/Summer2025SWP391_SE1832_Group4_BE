@@ -25,7 +25,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 var account = await _accountRepository.GetByIdAsync(id);
                 bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
-                if (!checkPassword) throw new Exception("Sai mật khẩu");
+                if (!checkPassword) return false;
                 account.PasswordHash = _passwordHasher.HashPassword(newPassword);
                 await _accountRepository.UpdateAsync(account);
                 return true;
