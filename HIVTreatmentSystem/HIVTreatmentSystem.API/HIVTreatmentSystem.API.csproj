@@ -36,4 +36,8 @@
     <_ContentIncludedByDefault Remove="publish\HIVTreatmentSystem.API.runtimeconfig.json" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\Auth\" />
+  </ItemGroup>
+
 </Project>

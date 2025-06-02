@@ -1,9 +1,14 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using HIVTreatmentSystem.API.Models.Auth;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
+using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Settings;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,6 +22,7 @@ namespace HIVTreatmentSystem.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+
         public AuthController(IAuthService authService)
         {
             _authService = authService;
@@ -31,7 +37,10 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<ActionResult<ApiResponse>> Login(LoginRequest request)
         {
             var result = await _authService.LoginAsync(request);
-            if (result.Message == "Invalid email or password" || result.Message.Contains("required"))
+            if (
+                result.Message == "Invalid email or password"
+                || result.Message.Contains("required")
+            )
                 return Unauthorized(result);
             if (!result.Success)
                 return BadRequest(result);
@@ -43,21 +52,25 @@ namespace HIVTreatmentSystem.API.Controllers
         /// </summary>
         /// <returns>Thông tin xác thực token.</returns>
         [HttpPost("validate")]
-        public async Task<ActionResult<TokenValidationResponse>> ValidateToken(TokenValidationRequest request)
+        public async Task<ActionResult<TokenValidationResponse>> ValidateToken(
+            TokenValidationRequest request
+        )
         {
             if (string.IsNullOrEmpty(request.Token))
             {
-                return BadRequest(new TokenValidationResponse
-                {
-                    IsValid = false,
-                    ErrorMessage = "Token is required"
-                });
+                return BadRequest(
+                    new TokenValidationResponse
+                    {
+                        IsValid = false,
+                        ErrorMessage = "Token is required",
+                    }
+                );
             }
 
             var result = await _authService.ValidateTokenAsync(request.Token);
             if (!result.IsValid)
                 return BadRequest(result);
-            
+
             return Ok(result);
         }
 
@@ -111,9 +124,9 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new ApiResponse("Logout successful."));
         }
 
-        // [HttpGet("me")]
+        // [HttpGet("profile")]
         // [Authorize]
-        // public ActionResult GetCurrentUser()
+        // public ActionResult GetUserProfile()
         // {
         //     return Ok(new
         //     {

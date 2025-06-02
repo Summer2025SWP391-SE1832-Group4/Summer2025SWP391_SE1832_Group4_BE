@@ -1,3 +1,14 @@
+using BCrypt.Net;
+using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Application.Interfaces;
+using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Application.Models.Settings;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
+using HIVTreatmentSystem.Domain.Interfaces;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -5,16 +16,6 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using BCrypt.Net;
-using HIVTreatmentSystem.Application.Common;
-using HIVTreatmentSystem.Application.Interfaces;
-using HIVTreatmentSystem.Application.Models.Auth;
-using HIVTreatmentSystem.Application.Models.Settings;
-using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Enums;
-using HIVTreatmentSystem.Domain.Interfaces;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 
 namespace HIVTreatmentSystem.Application.Services.Auth
 {
@@ -24,18 +25,21 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly JwtSettings _jwtSettings;
         private readonly IEmailService _emailService;
         private readonly JwtService _jwtService;
+        private readonly IPasswordHasher _passwordHasher;
 
         public AuthService(
             IAccountRepository accountRepository,
             IOptions<JwtSettings> jwtSettings,
             IEmailService emailService,
-            JwtService jwtService
+            JwtService jwtService,
+            IPasswordHasher passwordHasher
         )
         {
             _accountRepository = accountRepository;
             _jwtSettings = jwtSettings.Value;
             _emailService = emailService;
             _jwtService = jwtService;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<ApiResponse> LoginAsync(LoginRequest request)
@@ -51,7 +55,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Invalid email or password");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, account.PasswordHash))
+            if (!_passwordHasher.VerifyPassword(request.Password, account.PasswordHash))
             {
                 return new ApiResponse("Invalid email or password");
             }
@@ -120,7 +124,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             await _accountRepository.AddAsync(account);
             await _accountRepository.SaveChangesAsync();
 
-            var setPasswordUrl = $"https://your-frontend.com/set-password?token={token}";
+            var setPasswordUrl = $"https://hivtreatment.vercel.app/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -168,7 +172,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Token has expired. Please request a new password reset.");
             }
 
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            account.PasswordHash = _passwordHasher.HashPassword(request.NewPassword);
             account.PasswordResetToken = null;
             account.PasswordResetTokenExpiry = null;
             account.AccountStatus = AccountStatus.Active;
@@ -255,5 +259,67 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             return response;
         }
+
+        public async Task<ChangePasswordResponse> ChangePassword(string oldPassword, string newPassword, int id)
+        {
+            try
+            {
+                var account = await _accountRepository.GetByIdAsync(id);
+                if (account == null)
+                    return new ChangePasswordResponse { Success = false, Message = "Account not found." };
+                bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
+                if (!checkPassword)
+                    return new ChangePasswordResponse { Success = false, Message = "Old password is incorrect." };
+                bool isSamePassword = _passwordHasher.VerifyPassword(newPassword, account.PasswordHash);
+                if (isSamePassword)
+                    return new ChangePasswordResponse { Success = false, Message = "New password must be different from the old password." };
+                account.PasswordHash = _passwordHasher.HashPassword(newPassword);
+                _accountRepository.Update(account);
+                return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
+
+            }
+            catch (Exception ex)
+            {
+                return new ChangePasswordResponse { Success = false, Message = "An error occurred while changing the password." };
+            }
+        }
+
+        public async Task<ApiResponse> ForgotPasswordAsync(string email)
+        {
+            var account = await _accountRepository.GetByEmailAsync(email);
+            if (account == null)
+                return new ApiResponse("Email not found.");
+
+            if (string.IsNullOrEmpty(account.PasswordHash))
+                return new ApiResponse("Please verify your account first.");
+
+            string token = Guid.NewGuid().ToString();
+            account.PasswordResetToken = token;
+            account.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+
+            _accountRepository.Update(account);
+
+            string resetLink = $"https://your-frontend.com/set-password?token={token}";
+            await _emailService.SendEmailAsync(email, "Reset Your Password", $"Click the link to reset: {resetLink}");
+
+            return new ApiResponse("Password reset link has been sent to your email.");
+        }
+
+        public async Task<ApiResponse> ResetPasswordAsync(string token, string newPassword)
+        {
+            var account = await _accountRepository.GetByResetTokenAsync(token);
+            if (account == null || account.PasswordResetTokenExpiry < DateTime.UtcNow)
+                return new ApiResponse("Invalid or expired password reset token.");
+
+            account.PasswordHash = _passwordHasher.HashPassword(newPassword);
+            account.PasswordResetToken = null;
+            account.PasswordResetTokenExpiry = null;
+
+            _accountRepository.Update(account);
+
+            return new ApiResponse("Password has been reset successfully.");
+        }
+
+
     }
 }
