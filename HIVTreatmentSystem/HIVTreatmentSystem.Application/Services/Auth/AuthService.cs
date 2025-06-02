@@ -24,18 +24,21 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly JwtSettings _jwtSettings;
         private readonly IEmailService _emailService;
         private readonly JwtService _jwtService;
+        private readonly IPasswordHasher _passwordHasher;
 
         public AuthService(
             IAccountRepository accountRepository,
             IOptions<JwtSettings> jwtSettings,
             IEmailService emailService,
-            JwtService jwtService
+            JwtService jwtService,
+            IPasswordHasher passwordHasher
         )
         {
             _accountRepository = accountRepository;
             _jwtSettings = jwtSettings.Value;
             _emailService = emailService;
             _jwtService = jwtService;
+            _passwordHasher = passwordHasher;
         }
 
         public async Task<ApiResponse> LoginAsync(LoginRequest request)
@@ -254,6 +257,27 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             }
 
             return response;
+        }
+
+        public async Task<bool> ChangePassword(string oldPassword, string newPassword, int id)
+        {
+            try
+            {
+                var account = await _accountRepository.GetByIdAsync(id);
+                bool checkPassword = _passwordHasher.VerifyPassword(
+                    oldPassword,
+                    account.PasswordHash
+                );
+                if (!checkPassword)
+                    return false;
+                account.PasswordHash = _passwordHasher.HashPassword(newPassword);
+                _accountRepository.Update(account);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

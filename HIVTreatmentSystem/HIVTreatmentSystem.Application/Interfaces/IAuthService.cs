@@ -11,5 +11,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ApiResponse> SetPasswordAsync(SetPasswordRequest request);
         Task<ApiResponse> GetRolesAsync();
         Task<TokenValidationResponse> ValidateTokenAsync(string token);
+        Task<bool> ChangePassword(string oldPassword, string newPassword, int id);
     }
 } 
