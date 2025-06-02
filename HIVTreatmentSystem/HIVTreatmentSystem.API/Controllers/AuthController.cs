@@ -137,5 +137,16 @@ namespace HIVTreatmentSystem.API.Controllers
         //         IsAuthenticated = User.Identity?.IsAuthenticated ?? false
         //     });
         // }
+        [HttpPost("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, int id)
+        {
+            var result = await _authService.ChangePassword(request.OldPassword, request.NewPassword, id);
+            if (result)
+                return Ok(new ApiResponse("Change password succeessfully"));
+            else
+            {
+                return BadRequest(new ApiResponse("Wrong password"));
+            }
+        }
     }
 }
