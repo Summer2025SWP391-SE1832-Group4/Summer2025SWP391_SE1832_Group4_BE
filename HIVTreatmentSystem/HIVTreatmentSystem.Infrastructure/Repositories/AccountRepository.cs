@@ -1,0 +1,59 @@
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Interfaces;
+using HIVTreatmentSystem.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace HIVTreatmentSystem.Infrastructure.Repositories
+{
+    public class AccountRepository : GenericRepository<Account, int>, IAccountRepository
+    {
+        private readonly HIVDbContext _context;
+        public AccountRepository(HIVDbContext context) : base(context)
+        {
+            _context = context;
+        }
+
+        public async Task<Account?> GetByEmailAsync(string email)
+        {
+            return await _context.Accounts.Include(a => a.Role).FirstOrDefaultAsync(a => a.Email == email);
+        }
+
+        public async Task<Account?> GetByUsernameAsync(string username)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
+        }
+
+        public async Task<bool> EmailExistsAsync(string email)
+        {
+            return await _context.Accounts.AnyAsync(a => a.Email == email);
+        }
+
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            return await _context.Accounts.AnyAsync(a => a.Username == username);
+        }
+
+        public async Task AddAsync(Account account)
+        {
+            await _context.Accounts.AddAsync(account);
+        }
+
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<Role?> GetRoleByIdAsync(int roleId)
+        {
+            return await _context.Roles.FindAsync(roleId);
+        }
+
+        public async Task<List<Role>> GetAllRolesAsync()
+        {
+            return await _context.Roles.ToListAsync();
+        }
+    }
+} 
