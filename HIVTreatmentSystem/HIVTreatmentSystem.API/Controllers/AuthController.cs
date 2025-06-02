@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using HIVTreatmentSystem.API.Models.Auth;
+using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Infrastructure.Data;
@@ -24,11 +25,13 @@ namespace HIVTreatmentSystem.API.Controllers
     {
         private readonly HIVDbContext _context;
         private readonly JwtSettings _jwtSettings;
+        private readonly IAuthenticateService _authenticateService;
 
-        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings)
+        public AuthController(HIVDbContext context, IOptions<JwtSettings> jwtSettings, IAuthenticateService authenticateService)
         {
             _context = context;
             _jwtSettings = jwtSettings.Value;
+            _authenticateService = authenticateService;
         }
 
         /// <summary>
@@ -137,6 +140,18 @@ namespace HIVTreatmentSystem.API.Controllers
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        [HttpPost("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request, int id)
+        {
+            var result = await _authenticateService.ChangePassword(request.OldPassword, request.NewPassword, id);
+            return Ok(new
+            {
+                Code = StatusCodes.Status200OK,
+                Success = true,
+                Message = "Change password successful"            
+            });
         }
     }
 }
