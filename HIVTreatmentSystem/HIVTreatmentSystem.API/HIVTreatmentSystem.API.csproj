@@ -28,4 +28,12 @@
     <ProjectReference Include="..\HIVTreatmentSystem.Infrastructure\HIVTreatmentSystem.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\HIVTreatmentSystem.API.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\HIVTreatmentSystem.API.runtimeconfig.json" />
+  </ItemGroup>
+
 </Project>
