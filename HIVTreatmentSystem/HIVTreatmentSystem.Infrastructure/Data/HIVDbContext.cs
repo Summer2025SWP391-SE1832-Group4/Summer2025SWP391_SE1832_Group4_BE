@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HIVTreatmentSystem.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using System.IO;
 
 namespace HIVTreatmentSystem.Infrastructure.Data
 {
@@ -18,7 +18,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
         // DbSets
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Account> Accounts { get; set; } = default!;
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Staff> Staff { get; set; }
@@ -37,7 +37,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
 
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -53,12 +52,14 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
             modelBuilder.Entity<Reminder>().Property(e => e.ReminderType).HasConversion<string>();
 
-            modelBuilder.Entity<ExperienceWorking>()
+            modelBuilder
+                .Entity<ExperienceWorking>()
                 .HasOne(e => e.Doctor)
                 .WithMany(d => d.ExperienceWorkings)
                 .HasForeignKey(e => e.DoctorId);
 
-            modelBuilder.Entity<Blog>()
+            modelBuilder
+                .Entity<Blog>()
                 .HasOne(b => b.BlogTag)
                 .WithMany(t => t.Blogs)
                 .HasForeignKey(b => b.BlogTagId)
@@ -487,9 +488,5 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     }
                 );
         }
-
-        
-
-        
     }
 }
