@@ -283,5 +283,43 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ChangePasswordResponse { Success = false, Message = "An error occurred while changing the password." };
             }
         }
+
+        public async Task<ApiResponse> ForgotPasswordAsync(string email)
+        {
+            var account = await _accountRepository.GetByEmailAsync(email);
+            if (account == null)
+                return new ApiResponse("Email not found.");
+
+            if (string.IsNullOrEmpty(account.PasswordHash))
+                return new ApiResponse("Please verify your account first.");
+
+            string token = Guid.NewGuid().ToString();
+            account.PasswordResetToken = token;
+            account.PasswordResetTokenExpiry = DateTime.UtcNow.AddMinutes(15);
+
+            _accountRepository.Update(account);
+
+            string resetLink = $"https://your-frontend.com/set-password?token={token}";
+            await _emailService.SendEmailAsync(email, "Reset Your Password", $"Click the link to reset: {resetLink}");
+
+            return new ApiResponse("Password reset link has been sent to your email.");
+        }
+
+        public async Task<ApiResponse> ResetPasswordAsync(string token, string newPassword)
+        {
+            var account = await _accountRepository.GetByResetTokenAsync(token);
+            if (account == null || account.PasswordResetTokenExpiry < DateTime.UtcNow)
+                return new ApiResponse("Invalid or expired password reset token.");
+
+            account.PasswordHash = _passwordHasher.HashPassword(newPassword);
+            account.PasswordResetToken = null;
+            account.PasswordResetTokenExpiry = null;
+
+            _accountRepository.Update(account);
+
+            return new ApiResponse("Password has been reset successfully.");
+        }
+
+
     }
 }

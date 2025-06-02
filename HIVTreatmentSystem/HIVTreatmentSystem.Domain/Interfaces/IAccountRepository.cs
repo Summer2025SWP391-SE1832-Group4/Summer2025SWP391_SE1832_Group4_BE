@@ -28,5 +28,6 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task SaveChangesAsync();
         Task<Role?> GetRoleByIdAsync(int roleId);
         Task<List<Role>> GetAllRolesAsync();
+        Task<Account> GetByResetTokenAsync(String token);
     }
 }
