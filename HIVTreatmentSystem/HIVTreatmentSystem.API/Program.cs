@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text;
 using AutoMapper;
 using HIVTreatmentSystem.API.Mappers;
+using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services.Account;
@@ -168,6 +169,14 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Domain.Interfaces.IAccountRepository,
+    HIVTreatmentSystem.Infrastructure.Repositories.AccountRepository
+>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Application.Interfaces.IAuthService,
+    HIVTreatmentSystem.Application.Services.Auth.AuthService
+>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
