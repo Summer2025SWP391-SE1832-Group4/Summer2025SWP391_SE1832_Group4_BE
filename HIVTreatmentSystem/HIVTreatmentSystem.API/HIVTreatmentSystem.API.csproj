@@ -11,6 +11,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="8.0.13" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2" />
@@ -25,6 +26,14 @@
   <ItemGroup>
     <ProjectReference Include="..\HIVTreatmentSystem.Application\HIVTreatmentSystem.Application.csproj" />
     <ProjectReference Include="..\HIVTreatmentSystem.Infrastructure\HIVTreatmentSystem.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="publish\web.config" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.Development.json" />
+    <_ContentIncludedByDefault Remove="publish\appsettings.json" />
+    <_ContentIncludedByDefault Remove="publish\HIVTreatmentSystem.API.deps.json" />
+    <_ContentIncludedByDefault Remove="publish\HIVTreatmentSystem.API.runtimeconfig.json" />
   </ItemGroup>
 
 </Project>

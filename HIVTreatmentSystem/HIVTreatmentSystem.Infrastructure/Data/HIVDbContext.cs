@@ -204,7 +204,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .HasOne(e => e.Doctor)
                     .WithMany(d => d.Appointments)
                     .HasForeignKey(e => e.DoctorId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity
                     .HasOne(e => e.CreatedByUser)
