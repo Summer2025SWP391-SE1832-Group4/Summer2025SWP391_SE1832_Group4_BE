@@ -13,6 +13,7 @@ using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Services;
 using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -136,7 +137,9 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+builder.Services.AddScoped<IExperienceWorkingRepository, ExperienceWorkingRepository>();
+builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IPasswordHasher, HIVTreatmentSystem.Application.Services.Auth.PasswordHasher>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
@@ -147,7 +150,7 @@ app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HIV Treatment System API v1");
-    c.RoutePrefix = "swagger";
+    c.RoutePrefix = string.Empty;
     c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
     c.EnableFilter();
     c.EnableDeepLinking();

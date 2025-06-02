@@ -55,7 +55,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Invalid email or password");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, account.PasswordHash))
+            if (!_passwordHasher.VerifyPassword(request.Password, account.PasswordHash))
             {
                 return new ApiResponse("Invalid email or password");
             }
@@ -124,7 +124,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             await _accountRepository.AddAsync(account);
             await _accountRepository.SaveChangesAsync();
 
-            var setPasswordUrl = $"https://your-frontend.com/set-password?token={token}";
+            var setPasswordUrl = $"https://hivtreatment.vercel.app/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -172,7 +172,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Token has expired. Please request a new password reset.");
             }
 
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            account.PasswordHash = _passwordHasher.HashPassword(request.NewPassword);
             account.PasswordResetToken = null;
             account.PasswordResetTokenExpiry = null;
             account.AccountStatus = AccountStatus.Active;
