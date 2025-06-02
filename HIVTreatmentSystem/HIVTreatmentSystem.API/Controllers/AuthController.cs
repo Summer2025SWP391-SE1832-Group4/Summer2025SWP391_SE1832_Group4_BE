@@ -111,18 +111,18 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new ApiResponse("Logout successful."));
         }
 
-        [HttpGet("profile")]
-        [Authorize]
-        public ActionResult GetUserProfile()
-        {
-            return Ok(new
-            {
-                UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
-                Username = User.FindFirstValue(ClaimTypes.Name),
-                Email = User.FindFirstValue(ClaimTypes.Email),
-                Role = User.FindFirstValue(ClaimTypes.Role),
-                IsAuthenticated = User.Identity?.IsAuthenticated ?? false
-            });
-        }
+        // [HttpGet("profile")]
+        // [Authorize]
+        // public ActionResult GetUserProfile()
+        // {
+        //     return Ok(new
+        //     {
+        //         UserId = User.FindFirstValue(ClaimTypes.NameIdentifier),
+        //         Username = User.FindFirstValue(ClaimTypes.Name),
+        //         Email = User.FindFirstValue(ClaimTypes.Email),
+        //         Role = User.FindFirstValue(ClaimTypes.Role),
+        //         IsAuthenticated = User.Identity?.IsAuthenticated ?? false
+        //     });
+        // }
     }
 }
