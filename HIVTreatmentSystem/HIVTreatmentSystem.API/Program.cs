@@ -12,7 +12,7 @@ using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Services;
-using Microsoft.AspNetCore.Mvc.Filters;
+using HIVTreatmentSystem.Application.Common;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -149,6 +149,8 @@ builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.IAccountRepository, HIVTreatmentSystem.Infrastructure.Repositories.AccountRepository>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IAuthService, HIVTreatmentSystem.Application.Services.Auth.AuthService>();
 
 // Register application services
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
