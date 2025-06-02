@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using HIVTreatmentSystem.Application.Dtos;
 using HIVTreatmentSystem.Application.Models.Requests;
 
 namespace HIVTreatmentSystem.API.Mappers
@@ -8,7 +7,6 @@ namespace HIVTreatmentSystem.API.Mappers
     {
         public AccountMapper()
         {
-            CreateMap<AccountDto, AccountDto>();
             CreateMap<AccountRequest, AccountRequest>()
                 .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => src.PasswordHash!));
         }

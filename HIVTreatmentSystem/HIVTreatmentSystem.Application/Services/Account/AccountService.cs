@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HIVTreatmentSystem.Application.Dtos;
-using HIVTreatmentSystem.Application.Interfaces;
+﻿using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Interfaces;
@@ -36,8 +30,8 @@ namespace HIVTreatmentSystem.Application.Services.Account
                 pageSize: request.PageSize
             );
 
-            var dtos = entities
-                .Select(a => new AccountDto
+            var responses = entities
+                .Select(a => new AccountResponse
                 {
                     AccountId = a.AccountId,
                     Username = a.Username,
@@ -52,7 +46,7 @@ namespace HIVTreatmentSystem.Application.Services.Account
                 })
                 .ToList();
 
-            return new ListAccountsResponse { Accounts = dtos, TotalCount = totalCount };
+            return new ListAccountsResponse { Accounts = responses, TotalCount = totalCount };
         }
 
         public async Task<AccountResponse> GetByIdAsync(
@@ -61,7 +55,8 @@ namespace HIVTreatmentSystem.Application.Services.Account
         )
         {
             var a = await _accountRepository.GetByIdAsync(accountId);
-            var dto = new AccountDto
+
+            return new AccountResponse
             {
                 AccountId = a.AccountId,
                 Username = a.Username,
@@ -74,7 +69,6 @@ namespace HIVTreatmentSystem.Application.Services.Account
                 PhoneNumber = a.PhoneNumber,
                 ProfileImageUrl = a.ProfileImageUrl,
             };
-            return new AccountResponse { Account = dto };
         }
 
         public async Task<AccountResponse> UpdateAsync(
@@ -97,7 +91,7 @@ namespace HIVTreatmentSystem.Application.Services.Account
 
             _accountRepository.Update(entity);
 
-            var dto = new AccountDto
+            return new AccountResponse
             {
                 AccountId = entity.AccountId,
                 Username = entity.Username,
@@ -110,8 +104,6 @@ namespace HIVTreatmentSystem.Application.Services.Account
                 PhoneNumber = entity.PhoneNumber,
                 ProfileImageUrl = entity.ProfileImageUrl,
             };
-
-            return new AccountResponse { Account = dto };
         }
 
         public async Task DeleteAsync(int accountId, CancellationToken cancellationToken = default)
