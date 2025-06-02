@@ -113,16 +113,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// CORS: Cho phép mọi truy cập (áp dụng ở mọi môi trường)
+//CORS: Chỉ cho phép frontend từ localhost:5173
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        builder.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowCredentials(); // ➜ Cần nếu FE gửi cookie hoặc Authorization
     });
 });
+
 
 // DbContext & repositories
 builder.Services.AddDbContext<HIVDbContext>(options =>
@@ -139,7 +141,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-// Luôn bật Swagger cho tiện test (bạn có thể điều chỉnh nếu muốn)
+// Luôn bật Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -153,8 +155,8 @@ app.UseSwaggerUI(c =>
     c.DefaultModelsExpandDepth(-1);
 });
 
-//Sử dụng chính sách DevCorsPolicy ở mọi môi trường
-app.UseCors("AllowAll");
+//Sử dụng chính sách CORS mới
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
