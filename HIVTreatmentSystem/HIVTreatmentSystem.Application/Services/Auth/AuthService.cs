@@ -1,7 +1,11 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using BCrypt.Net;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
@@ -10,11 +14,7 @@ using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.Extensions.Options;
-using BCrypt.Net;
 using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace HIVTreatmentSystem.Application.Services.Auth
 {
@@ -25,7 +25,12 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly IEmailService _emailService;
         private readonly JwtService _jwtService;
 
-        public AuthService(IAccountRepository accountRepository, IOptions<JwtSettings> jwtSettings, IEmailService emailService, JwtService jwtService)
+        public AuthService(
+            IAccountRepository accountRepository,
+            IOptions<JwtSettings> jwtSettings,
+            IEmailService emailService,
+            JwtService jwtService
+        )
         {
             _accountRepository = accountRepository;
             _jwtSettings = jwtSettings.Value;
@@ -53,7 +58,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             if (account.AccountStatus != AccountStatus.Active)
             {
-                return new ApiResponse($"Account is {account.AccountStatus}. Please contact support.");
+                return new ApiResponse(
+                    $"Account is {account.AccountStatus}. Please contact support."
+                );
             }
 
             var token = _jwtService.GenerateToken(account);
@@ -68,16 +75,18 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 Username = account.Username,
                 Email = account.Email,
                 FullName = account.FullName,
-                Role = account.Role.RoleName
+                Role = account.Role.RoleName,
             };
             return new ApiResponse("Login successful", loginResponse);
         }
 
         public async Task<ApiResponse> RegisterAsync(RegisterRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Username) ||
-                string.IsNullOrWhiteSpace(request.Email) ||
-                string.IsNullOrWhiteSpace(request.FullName))
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Email)
+                || string.IsNullOrWhiteSpace(request.FullName)
+            )
             {
                 return new ApiResponse("Please provide all required information.");
             }
@@ -94,7 +103,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             var token = Guid.NewGuid().ToString();
             var expiry = DateTime.UtcNow.AddMinutes(30);
 
-            var account = new Account
+            var account = new Domain.Entities.Account
             {
                 Username = request.Username,
                 PasswordHash = string.Empty,
@@ -105,7 +114,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 CreatedAt = DateTime.UtcNow,
                 AccountStatus = AccountStatus.PendingVerification,
                 PasswordResetToken = token,
-                PasswordResetTokenExpiry = expiry
+                PasswordResetTokenExpiry = expiry,
             };
 
             await _accountRepository.AddAsync(account);
@@ -113,29 +122,48 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             var setPasswordUrl = $"https://your-frontend.com/set-password?token={token}";
             var subject = "Set your password for HIV Treatment System";
-            var body = $"<p>Hello {account.FullName},</p>" +
-                       $"<p>Thank you for registering. Please set your password by clicking the link below (valid for 30 minutes):</p>" +
-                       $"<p><a href='{setPasswordUrl}'>Set Password</a></p>" +
-                       $"<p>If you did not request this, please ignore this email.</p>";
+            var body =
+                $"<p>Hello {account.FullName},</p>"
+                + $"<p>Thank you for registering. Please set your password by clicking the link below (valid for 30 minutes):</p>"
+                + $"<p><a href='{setPasswordUrl}'>Set Password</a></p>"
+                + $"<p>If you did not request this, please ignore this email.</p>";
             await _emailService.SendEmailAsync(account.Email, subject, body);
 
-            return new ApiResponse("Registration successful! Please check your email to set your password.", new { account.AccountId, account.Username, account.Email, account.FullName, account.RoleId });
+            return new ApiResponse(
+                "Registration successful! Please check your email to set your password.",
+                new
+                {
+                    account.AccountId,
+                    account.Username,
+                    account.Email,
+                    account.FullName,
+                    account.RoleId,
+                }
+            );
         }
 
         public async Task<ApiResponse> SetPasswordAsync(SetPasswordRequest request)
         {
-            if (string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
+            if (
+                string.IsNullOrWhiteSpace(request.Token)
+                || string.IsNullOrWhiteSpace(request.NewPassword)
+            )
             {
                 return new ApiResponse("Token and new password are required.");
             }
 
-            var accounts = await _accountRepository.FindAsync(a => a.PasswordResetToken == request.Token);
+            var accounts = await _accountRepository.FindAsync(a =>
+                a.PasswordResetToken == request.Token
+            );
             var account = accounts.FirstOrDefault();
             if (account == null)
             {
                 return new ApiResponse("Invalid or expired token.");
             }
-            if (!account.PasswordResetTokenExpiry.HasValue || account.PasswordResetTokenExpiry < DateTime.UtcNow)
+            if (
+                !account.PasswordResetTokenExpiry.HasValue
+                || account.PasswordResetTokenExpiry < DateTime.UtcNow
+            )
             {
                 return new ApiResponse("Token has expired. Please request a new password reset.");
             }
@@ -152,30 +180,46 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         public async Task<ApiResponse> GetRolesAsync()
         {
             var roles = await _accountRepository.GetAllRolesAsync();
-            return new ApiResponse("Success", roles.Select(r => new { r.RoleId, r.RoleName, r.Description }).ToList());
+            return new ApiResponse(
+                "Success",
+                roles
+                    .Select(r => new
+                    {
+                        r.RoleId,
+                        r.RoleName,
+                        r.Description,
+                    })
+                    .ToList()
+            );
         }
 
         public async Task<TokenValidationResponse> ValidateTokenAsync(string token)
         {
             var response = new TokenValidationResponse();
-            
+
             try
             {
                 // Thiết lập các tham số xác thực token
                 var tokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                        Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)
+                    ),
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidIssuer = _jwtSettings.Issuer,
                     ValidAudience = _jwtSettings.Audience,
-                    ClockSkew = TimeSpan.Zero
+                    ClockSkew = TimeSpan.Zero,
                 };
 
                 // Thực hiện xác thực token
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out var validatedToken);
+                var principal = tokenHandler.ValidateToken(
+                    token,
+                    tokenValidationParameters,
+                    out var validatedToken
+                );
                 var jwtToken = validatedToken as JwtSecurityToken;
 
                 if (jwtToken == null)
@@ -212,4 +256,4 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             return response;
         }
     }
-} 
+}
