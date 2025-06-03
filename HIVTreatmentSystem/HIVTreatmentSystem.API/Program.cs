@@ -13,6 +13,7 @@ using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Services;
 using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -113,16 +114,18 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-// CORS: Cho phép mọi truy cập (áp dụng ở mọi môi trường)
+//CORS: Chỉ cho phép frontend từ localhost:5173
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAll", builder =>
+    options.AddPolicy("AllowFrontend", policy =>
     {
-        builder.AllowAnyOrigin()
+        policy.WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowCredentials(); // ➜ Cần nếu FE gửi cookie hoặc Authorization
     });
 });
+
 
 // DbContext & repositories
 builder.Services.AddDbContext<HIVDbContext>(options =>
@@ -134,18 +137,20 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IPasswordHasher, BCryptPasswordHasher>();
+builder.Services.AddScoped<IExperienceWorkingRepository, ExperienceWorkingRepository>();
+builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IPasswordHasher, HIVTreatmentSystem.Application.Services.Auth.PasswordHasher>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 
-// Luôn bật Swagger cho tiện test (bạn có thể điều chỉnh nếu muốn)
+// Luôn bật Swagger
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "HIV Treatment System API v1");
-    c.RoutePrefix = "swagger";
+    c.RoutePrefix = string.Empty;
     c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
     c.EnableFilter();
     c.EnableDeepLinking();
@@ -154,8 +159,8 @@ app.UseSwaggerUI(c =>
     c.DefaultModelsExpandDepth(-1);
 });
 
-//Sử dụng chính sách DevCorsPolicy ở mọi môi trường
-app.UseCors("AllowAll");
+//Sử dụng chính sách CORS mới
+app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 

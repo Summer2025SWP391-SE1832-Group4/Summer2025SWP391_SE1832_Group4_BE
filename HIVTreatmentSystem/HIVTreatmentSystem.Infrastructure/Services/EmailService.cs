@@ -72,21 +72,21 @@ namespace HIVTreatmentSystem.Infrastructure.Services
         /// </summary>
         public async Task SendAppointmentReminderAsync(string to, string patientName, string doctorName, DateTime appointmentTime, string location)
         {
-            string subject = $"Nhắc nhở lịch hẹn - HIV Treatment System";
+            string subject = $"Appointment Reminder - HIV Treatment System";
             string body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;'>
                     <div style='text-align: center; margin-bottom: 20px;'>
-                        <h2 style='color: #3498db;'>Nhắc nhở lịch hẹn</h2>
+                        <h2 style='color: #3498db;'>Appointment Reminder</h2>
                     </div>
-                    <p>Xin chào <strong>{patientName}</strong>,</p>
-                    <p>Đây là email nhắc nhở về lịch hẹn sắp tới của bạn tại HIV Treatment System:</p>
+                    <p>Dear <strong>{patientName}</strong>,</p>
+                    <p>This is a reminder for your upcoming appointment at HIV Treatment System:</p>
                     <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                        <p><strong>Bác sĩ:</strong> {doctorName}</p>
-                        <p><strong>Thời gian:</strong> {appointmentTime:dd/MM/yyyy HH:mm}</p>
-                        <p><strong>Địa điểm:</strong> {location}</p>
+                        <p><strong>Doctor:</strong> {doctorName}</p>
+                        <p><strong>Date & Time:</strong> {appointmentTime:dd/MM/yyyy HH:mm}</p>
+                        <p><strong>Location:</strong> {location}</p>
                     </div>
-                    <p>Vui lòng đến đúng giờ. Nếu bạn cần thay đổi lịch hẹn, vui lòng liên hệ với chúng tôi trước ít nhất 24 giờ.</p>
-                    <p style='margin-top: 30px;'>Trân trọng,<br>Đội ngũ HIV Treatment System</p>
+                    <p>Please arrive on time. If you need to reschedule, kindly contact us at least 24 hours in advance.</p>
+                    <p style='margin-top: 30px;'>Best regards,<br>The HIV Treatment System Team</p>
                 </div>
             ";
 
@@ -98,21 +98,21 @@ namespace HIVTreatmentSystem.Infrastructure.Services
         /// </summary>
         public async Task SendMedicationReminderAsync(string to, string patientName, string medicationName, string dosage, string instructions)
         {
-            string subject = $"Nhắc nhở uống thuốc - HIV Treatment System";
+            string subject = $"Medication Reminder - HIV Treatment System";
             string body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;'>
                     <div style='text-align: center; margin-bottom: 20px;'>
-                        <h2 style='color: #3498db;'>Nhắc nhở uống thuốc</h2>
+                        <h2 style='color: #3498db;'>Medication Reminder</h2>
                     </div>
-                    <p>Xin chào <strong>{patientName}</strong>,</p>
-                    <p>Đây là email nhắc nhở bạn uống thuốc đúng giờ theo chỉ định:</p>
+                    <p>Dear <strong>{patientName}</strong>,</p>
+                    <p>This is a reminder to take your medication as prescribed:</p>
                     <div style='background-color: #f8f9fa; padding: 15px; border-radius: 5px; margin: 15px 0;'>
-                        <p><strong>Thuốc:</strong> {medicationName}</p>
-                        <p><strong>Liều lượng:</strong> {dosage}</p>
-                        <p><strong>Hướng dẫn:</strong> {instructions}</p>
+                        <p><strong>Medication:</strong> {medicationName}</p>
+                        <p><strong>Dosage:</strong> {dosage}</p>
+                        <p><strong>Instructions:</strong> {instructions}</p>
                     </div>
-                    <p>Việc tuân thủ đúng liệu trình điều trị rất quan trọng cho sức khỏe của bạn.</p>
-                    <p style='margin-top: 30px;'>Trân trọng,<br>Đội ngũ HIV Treatment System</p>
+                    <p>Adhering to your treatment plan is crucial for your health and well-being.</p>
+                    <p style='margin-top: 30px;'>Best regards,<br>The HIV Treatment System Team</p>
                 </div>
             ";
 
@@ -124,19 +124,19 @@ namespace HIVTreatmentSystem.Infrastructure.Services
         /// </summary>
         public async Task SendPasswordResetAsync(string to, string resetLink, string userName)
         {
-            string subject = $"Đặt lại mật khẩu - HIV Treatment System";
+            string subject = $"Password Reset Request - HIV Treatment System";
             string body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;'>
                     <div style='text-align: center; margin-bottom: 20px;'>
-                        <h2 style='color: #3498db;'>Yêu cầu đặt lại mật khẩu</h2>
+                        <h2 style='color: #3498db;'>Password Reset Request</h2>
                     </div>
-                    <p>Xin chào <strong>{userName}</strong>,</p>
-                    <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Vui lòng nhấp vào nút bên dưới để đặt lại mật khẩu:</p>
+                    <p>Dear <strong>{userName}</strong>,</p>
+                    <p>We have received a request to reset your account password. Please click the button below to reset your password:</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{resetLink}' style='background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Đặt lại mật khẩu</a>
+                        <a href='{resetLink}' style='background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Reset Password</a>
                     </div>
-                    <p>Liên kết này sẽ hết hạn sau 24 giờ. Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này hoặc liên hệ với chúng tôi nếu bạn có thắc mắc.</p>
-                    <p style='margin-top: 30px;'>Trân trọng,<br>Đội ngũ HIV Treatment System</p>
+                    <p>This link will expire in 24 hours. If you did not request a password reset, please ignore this email or contact us if you have any concerns.</p>
+                    <p style='margin-top: 30px;'>Best regards,<br>The HIV Treatment System Team</p>
                 </div>
             ";
 
@@ -148,19 +148,19 @@ namespace HIVTreatmentSystem.Infrastructure.Services
         /// </summary>
         public async Task SendAccountVerificationAsync(string to, string verificationLink, string userName)
         {
-            string subject = $"Xác minh tài khoản - HIV Treatment System";
+            string subject = $"Account Verification - HIV Treatment System";
             string body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;'>
                     <div style='text-align: center; margin-bottom: 20px;'>
-                        <h2 style='color: #3498db;'>Xác minh tài khoản</h2>
+                        <h2 style='color: #3498db;'>Account Verification</h2>
                     </div>
-                    <p>Xin chào <strong>{userName}</strong>,</p>
-                    <p>Cảm ơn bạn đã đăng ký tài khoản tại HIV Treatment System. Để hoàn tất quá trình đăng ký, vui lòng xác minh email của bạn bằng cách nhấp vào nút bên dưới:</p>
+                    <p>Dear <strong>{userName}</strong>,</p>
+                    <p>Thank you for registering with the HIV Treatment System. To complete your registration, please verify your email address by clicking the button below:</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='{verificationLink}' style='background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Xác minh tài khoản</a>
+                        <a href='{verificationLink}' style='background-color: #27ae60; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Verify Account</a>
                     </div>
-                    <p>Nếu bạn không tạo tài khoản này, vui lòng bỏ qua email này.</p>
-                    <p style='margin-top: 30px;'>Trân trọng,<br>Đội ngũ HIV Treatment System</p>
+                    <p>If you did not create this account, please ignore this email.</p>
+                    <p style='margin-top: 30px;'>Best regards,<br>The HIV Treatment System Team</p>
                 </div>
             ";
 
@@ -172,19 +172,19 @@ namespace HIVTreatmentSystem.Infrastructure.Services
         /// </summary>
         public async Task SendTestResultsNotificationAsync(string to, string patientName, string testType, DateTime testDate)
         {
-            string subject = $"Thông báo kết quả xét nghiệm - HIV Treatment System";
+            string subject = $"Test Results Notification - HIV Treatment System";
             string body = $@"
                 <div style='font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 5px;'>
                     <div style='text-align: center; margin-bottom: 20px;'>
-                        <h2 style='color: #3498db;'>Thông báo kết quả xét nghiệm</h2>
+                        <h2 style='color: #3498db;'>Test Results Notification</h2>
                     </div>
-                    <p>Xin chào <strong>{patientName}</strong>,</p>
-                    <p>Kết quả xét nghiệm <strong>{testType}</strong> của bạn ngày <strong>{testDate:dd/MM/yyyy}</strong> đã có.</p>
-                    <p>Vui lòng đăng nhập vào hệ thống hoặc liên hệ với bác sĩ của bạn để xem chi tiết kết quả.</p>
+                    <p>Dear <strong>{patientName}</strong>,</p>
+                    <p>Your <strong>{testType}</strong> test results dated <strong>{testDate:dd/MM/yyyy}</strong> are now available.</p>
+                    <p>Please log in to the system or contact your doctor to view the details.</p>
                     <div style='text-align: center; margin: 30px 0;'>
-                        <a href='https://hivtreatmentsystem.com/login' style='background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Đăng nhập</a>
+                        <a href='https://hivtreatmentsystem.com/login' style='background-color: #3498db; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold;'>Log In</a>
                     </div>
-                    <p style='margin-top: 30px;'>Trân trọng,<br>Đội ngũ HIV Treatment System</p>
+                    <p style='margin-top: 30px;'>Best regards,<br>The HIV Treatment System Team</p>
                 </div>
             ";
 
