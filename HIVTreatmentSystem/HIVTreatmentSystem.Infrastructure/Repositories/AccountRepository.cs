@@ -122,7 +122,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
         public async Task<Account?> GetByEmailAsync(string email)
         {
-            return await _context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            return await _context.Accounts
+                .Include(a => a.Role)
+                .FirstOrDefaultAsync(a => a.Email == email);
         }
 
         public async Task<List<Role>> GetAllRolesAsync()
