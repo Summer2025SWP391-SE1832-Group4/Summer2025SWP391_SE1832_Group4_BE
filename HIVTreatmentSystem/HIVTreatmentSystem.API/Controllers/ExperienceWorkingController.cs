@@ -60,9 +60,8 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> Create([FromBody] ExperienceWorkingDto dto)
         {
             var result = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.DoctorId }, result);
         }
-
         /// <summary>
         /// Update an existing experience working record.
         /// </summary>
