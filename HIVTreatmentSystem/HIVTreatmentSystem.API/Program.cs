@@ -161,6 +161,11 @@ builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
     HIVTreatmentSystem.Application.Services.Auth.PasswordHasher
 >();
+builder.Services.AddScoped<IStaffRepository, StaffRepository>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
+    HIVTreatmentSystem.Application.Services.Auth.PasswordHasher
+>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

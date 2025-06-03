@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
+using HIVTreatmentSystem.Application.Common;
 using Microsoft.AspNetCore.Mvc;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.ExperienceWorking;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -28,7 +31,11 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> GetByDoctorId(int doctorId)
         {
             var result = await _service.GetByDoctorIdAsync(doctorId);
-            return Ok(result);
+            if (result == null || !result.Any())
+            {
+                return Ok(new ApiResponse("No experience working records found.", new List<ExperienceWorkingDto>()));
+            }
+            return Ok(new ApiResponse("Success", result));
         }
 
         /// <summary>
@@ -40,7 +47,7 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> GetById(int id)
         {
             var result = await _service.GetByIdAsync(id);
-            if (result == null) return NotFound();
+            if (result == null) return NotFound(new ApiResponse("Experience working record not found."));
             return Ok(result);
         }
 
@@ -53,9 +60,8 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> Create([FromBody] ExperienceWorkingDto dto)
         {
             var result = await _service.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+            return CreatedAtAction(nameof(GetById), new { id = result.DoctorId }, result);
         }
-
         /// <summary>
         /// Update an existing experience working record.
         /// </summary>
@@ -79,8 +85,8 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var success = await _service.DeleteAsync(id);
-            if (!success) return NotFound();
-            return NoContent();
+            if (!success) return NotFound(new ApiResponse("Experience working record not found."));
+            return Ok(new ApiResponse("Experience working record deleted successfully."));
         }
     }
 } 

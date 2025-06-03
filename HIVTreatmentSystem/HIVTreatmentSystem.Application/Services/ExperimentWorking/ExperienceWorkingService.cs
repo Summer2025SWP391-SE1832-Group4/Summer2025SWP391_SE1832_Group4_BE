@@ -22,7 +22,6 @@ namespace HIVTreatmentSystem.Application.Services
             var list = await _repo.GetByDoctorIdAsync(doctorId);
             return list.Select(x => new ExperienceWorkingDto
             {
-                Id = x.Id,
                 DoctorId = x.DoctorId,
                 HospitalName = x.HospitalName,
                 Position = x.Position,
@@ -37,7 +36,6 @@ namespace HIVTreatmentSystem.Application.Services
             if (x == null) return null;
             return new ExperienceWorkingDto
             {
-                Id = x.Id,
                 DoctorId = x.DoctorId,
                 HospitalName = x.HospitalName,
                 Position = x.Position,
@@ -58,7 +56,6 @@ namespace HIVTreatmentSystem.Application.Services
             };
             await _repo.AddAsync(entity);
             await _repo.SaveChangesAsync();
-            dto.Id = entity.Id;
             return dto;
         }
         public async Task<ExperienceWorkingDto> UpdateAsync(int id, ExperienceWorkingDto dto)
