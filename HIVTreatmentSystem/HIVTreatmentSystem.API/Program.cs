@@ -140,6 +140,7 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IExperienceWorkingRepository, ExperienceWorkingRepository>();
 builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>();
 builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IPasswordHasher, HIVTreatmentSystem.Application.Services.Auth.PasswordHasher>();
+builder.Services.AddScoped<IStaffRepository, StaffRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
