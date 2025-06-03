@@ -11,6 +11,8 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
         public bool VerifyPassword(string password, string hash)
         {
+            if (string.IsNullOrEmpty(hash))
+                return false;
             return BCrypt.Net.BCrypt.Verify(password, hash);
         }
     }
