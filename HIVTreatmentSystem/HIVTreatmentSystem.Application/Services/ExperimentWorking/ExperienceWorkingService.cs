@@ -69,9 +69,9 @@ namespace HIVTreatmentSystem.Application.Services
         {
             var entity = await _repo.GetByIdAsync(id);
             if (entity == null) return null;
-            if (!string.IsNullOrEmpty(dto.HospitalName) && dto.HospitalName != "string")
+            if (!string.IsNullOrEmpty(dto.HospitalName) && dto.HospitalName != DefaultHospitalName)
                 entity.HospitalName = dto.HospitalName;
-            if (!string.IsNullOrEmpty(dto.Position) && dto.Position != "string")
+            if (!string.IsNullOrEmpty(dto.Position) && dto.Position != DefaultPosition)
                 entity.Position = dto.Position;
             if (dto.FromDate.HasValue && dto.FromDate.Value != DateTime.MinValue)
                 entity.FromDate = dto.FromDate.Value;
