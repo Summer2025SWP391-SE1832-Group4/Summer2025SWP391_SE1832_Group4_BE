@@ -11,5 +11,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ExperienceWorkingDto> CreateAsync(ExperienceWorkingDto dto);
         Task<ExperienceWorkingDto> UpdateAsync(int id, ExperienceWorkingDto dto);
         Task<bool> DeleteAsync(int id);
+        Task<IEnumerable<ExperienceWorkingDto>> UpdateByDoctorIdAsync(int doctorId, ExperienceWorkingDoctorDTO dto);
     }
 } 

@@ -167,6 +167,10 @@ builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Services.Auth.PasswordHasher
 >();
 builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.IDoctorScheduleRepository, HIVTreatmentSystem.Infrastructure.Repositories.DoctorScheduleRepository>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IDoctorScheduleService, HIVTreatmentSystem.Application.Services.DoctorScheduleService>();
+builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository, HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService, HIVTreatmentSystem.Application.Services.SystemAuditLogService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 

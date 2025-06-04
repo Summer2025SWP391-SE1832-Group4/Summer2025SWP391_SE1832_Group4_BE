@@ -13,3 +13,4 @@ resources:
 
 env_variables:
   ASPNETCORE_ENVIRONMENT: "Production" 
+  

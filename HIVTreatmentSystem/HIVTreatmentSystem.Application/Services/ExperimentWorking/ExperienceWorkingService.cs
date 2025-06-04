@@ -48,27 +48,72 @@ namespace HIVTreatmentSystem.Application.Services
         {
             var entity = new ExperienceWorking
             {
-                DoctorId = dto.DoctorId,
+                DoctorId = dto.DoctorId.HasValue ? dto.DoctorId.Value : throw new System.ArgumentException("DoctorId is required"),
                 HospitalName = dto.HospitalName,
                 Position = dto.Position,
-                FromDate = dto.FromDate,
+                FromDate = dto.FromDate.HasValue ? dto.FromDate.Value : throw new System.ArgumentException("FromDate is required"),
                 ToDate = dto.ToDate
             };
             await _repo.AddAsync(entity);
             await _repo.SaveChangesAsync();
-            return dto;
+            return new ExperienceWorkingDto
+            {
+                DoctorId = entity.DoctorId,
+                HospitalName = entity.HospitalName,
+                Position = entity.Position,
+                FromDate = entity.FromDate,
+                ToDate = entity.ToDate
+            };
         }
         public async Task<ExperienceWorkingDto> UpdateAsync(int id, ExperienceWorkingDto dto)
         {
             var entity = await _repo.GetByIdAsync(id);
             if (entity == null) return null;
-            entity.HospitalName = dto.HospitalName;
-            entity.Position = dto.Position;
-            entity.FromDate = dto.FromDate;
-            entity.ToDate = dto.ToDate;
+            if (!string.IsNullOrEmpty(dto.HospitalName) && dto.HospitalName != DefaultHospitalName)
+                entity.HospitalName = dto.HospitalName;
+            if (!string.IsNullOrEmpty(dto.Position) && dto.Position != DefaultPosition)
+                entity.Position = dto.Position;
+            if (dto.FromDate.HasValue && dto.FromDate.Value != DateTime.MinValue)
+                entity.FromDate = dto.FromDate.Value;
+            if (dto.ToDate.HasValue && dto.ToDate.Value != DateTime.MinValue)
+                entity.ToDate = dto.ToDate;
             _repo.Update(entity);
             await _repo.SaveChangesAsync();
-            return dto;
+            return new ExperienceWorkingDto
+            {
+                DoctorId = entity.DoctorId,
+                HospitalName = entity.HospitalName,
+                Position = entity.Position,
+                FromDate = entity.FromDate,
+                ToDate = entity.ToDate
+            };
+        }
+
+        public async Task<IEnumerable<ExperienceWorkingDto>> UpdateByDoctorIdAsync(int doctorId,
+            ExperienceWorkingDoctorDTO dto)
+        {
+            var entities = (await _repo.GetByDoctorIdAsync(doctorId)).ToList();
+            foreach (var entity in entities)
+            {
+                if (!string.IsNullOrEmpty(dto.HospitalName) && dto.HospitalName != "string")
+                    entity.HospitalName = dto.HospitalName;
+                if (!string.IsNullOrEmpty(dto.Position) && dto.Position != "string")
+                    entity.Position = dto.Position;
+                if (dto.FromDate.HasValue && dto.FromDate.Value != DateTime.MinValue)
+                    entity.FromDate = dto.FromDate.Value;
+                if (dto.ToDate.HasValue && dto.ToDate.Value != DateTime.MinValue)
+                    entity.ToDate = dto.ToDate;
+                _repo.Update(entity);
+            }
+            await _repo.SaveChangesAsync();
+            return entities.Select(entity => new ExperienceWorkingDto
+            {
+                DoctorId = entity.DoctorId,
+                HospitalName = entity.HospitalName,
+                Position = entity.Position,
+                FromDate = entity.FromDate,
+                ToDate = entity.ToDate
+            });
         }
 
         public async Task<bool> DeleteAsync(int id)
