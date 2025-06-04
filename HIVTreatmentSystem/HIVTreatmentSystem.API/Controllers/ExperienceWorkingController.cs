@@ -73,7 +73,7 @@ namespace HIVTreatmentSystem.API.Controllers
         {
             var result = await _service.UpdateAsync(id, dto);
             if (result == null) return NotFound();
-            return Ok(result);
+            return Ok(new ApiResponse("Experience working record updated successfully.", result));
         }
 
         /// <summary>
@@ -87,6 +87,19 @@ namespace HIVTreatmentSystem.API.Controllers
             var success = await _service.DeleteAsync(id);
             if (!success) return NotFound(new ApiResponse("Experience working record not found."));
             return Ok(new ApiResponse("Experience working record deleted successfully."));
+        }
+
+        /// <summary>
+        /// Update all experience working records for a specific doctor (partial update).
+        /// </summary>
+        /// <param name="doctorId">The doctor's ID.</param>
+        /// <param name="dto">The updated experience working data (only non-null fields will be updated).</param>
+        /// <returns>The updated experience working records.</returns>
+        [HttpPut("doctor/{doctorId}")]
+        public async Task<IActionResult> UpdateByDoctorId(int doctorId, [FromBody] ExperienceWorkingDoctorDTO dto)
+        {
+            var result = await _service.UpdateByDoctorIdAsync(doctorId, dto);
+            return Ok(new ApiResponse("Your work experience information has been updated successfully.", result));
         }
     }
 } 

@@ -140,14 +140,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 {
                     DoctorId = account.AccountId
                 };
-                var workingExpriment = new ExperienceWorking
-                {
-                    DoctorId = account.AccountId
-                };
                 await _doctorRepository.AddAsync(doctor);
                 
                 //Thêm ID của doctor vào trong Expriment working
-                await _experienceWorkingRepository.AddAsync(workingExpriment);
             }
             else if (request.RoleId == 4) // Staff
             {
