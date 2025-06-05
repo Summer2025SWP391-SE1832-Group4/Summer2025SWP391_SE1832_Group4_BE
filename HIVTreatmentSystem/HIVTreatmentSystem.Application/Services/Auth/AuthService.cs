@@ -26,13 +26,19 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly IEmailService _emailService;
         private readonly JwtService _jwtService;
         private readonly IPasswordHasher _passwordHasher;
+        private readonly IStaffRepository _staffRepository;
+        private readonly IDoctorRepository _doctorRepository;
+        private readonly IExperienceWorkingRepository _experienceWorkingRepository;
 
         public AuthService(
             IAccountRepository accountRepository,
             IOptions<JwtSettings> jwtSettings,
             IEmailService emailService,
             JwtService jwtService,
-            IPasswordHasher passwordHasher
+            IPasswordHasher passwordHasher,
+            IStaffRepository staffRepository,
+            IDoctorRepository doctorRepository,
+            IExperienceWorkingRepository experienceWorkingRepository
         )
         {
             _accountRepository = accountRepository;
@@ -40,6 +46,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             _emailService = emailService;
             _jwtService = jwtService;
             _passwordHasher = passwordHasher;
+            _staffRepository = staffRepository;
+            _doctorRepository = doctorRepository;
+            _experienceWorkingRepository = experienceWorkingRepository;
         }
 
         public async Task<ApiResponse> LoginAsync(LoginRequest request)
@@ -55,7 +64,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Invalid email or password");
             }
 
-            if (!BCrypt.Net.BCrypt.Verify(request.Password, account.PasswordHash))
+            if (!_passwordHasher.VerifyPassword(request.Password, account.PasswordHash))
             {
                 return new ApiResponse("Invalid email or password");
             }
@@ -124,7 +133,27 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             await _accountRepository.AddAsync(account);
             await _accountRepository.SaveChangesAsync();
 
-            var setPasswordUrl = $"https://your-frontend.com/set-password?token={token}";
+            // Tạo Doctor/Staff nếu cần (chỉ tạo bản ghi rỗng, không có thông tin chuyên biệt)
+            if (request.RoleId == 3) // Doctor
+            {
+                var doctor = new Doctor
+                {
+                    DoctorId = account.AccountId
+                };
+                await _doctorRepository.AddAsync(doctor);
+                
+                //Thêm ID của doctor vào trong Expriment working
+            }
+            else if (request.RoleId == 4) // Staff
+            {
+                var staff = new Staff
+                {
+                    StaffId = account.AccountId
+                };
+                await _staffRepository.AddAsync(staff);
+            }
+
+            var setPasswordUrl = $"https://hivtreatment.vercel.app/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -172,7 +201,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Token has expired. Please request a new password reset.");
             }
 
-            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            account.PasswordHash = _passwordHasher.HashPassword(request.NewPassword);
             account.PasswordResetToken = null;
             account.PasswordResetTokenExpiry = null;
             account.AccountStatus = AccountStatus.Active;
