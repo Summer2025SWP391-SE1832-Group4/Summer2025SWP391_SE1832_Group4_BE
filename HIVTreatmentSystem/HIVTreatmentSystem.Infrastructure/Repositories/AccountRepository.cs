@@ -129,5 +129,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Roles.ToListAsync();
         }
+
+        public async Task<Account> GetByResetTokenAsync(String token)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.PasswordResetToken == token);
+        }
     }
 }
