@@ -95,3 +95,4 @@ logs/
 *.nuget.targets 
 
 appsettings*.json
+/HIVTreatmentSystem/HIVTreatmentSystem.API/appsettings.json
