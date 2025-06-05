@@ -1,12 +1,13 @@
-using System.Reflection;
-using System.Text;
 using AutoMapper;
+using HIVTreatmentSystem.API.Mappers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services;
 using HIVTreatmentSystem.Application.Services.Account;
 using HIVTreatmentSystem.Application.Services.Auth;
+using HIVTreatmentSystem.Application.Services.CertificateService;
+using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using HIVTreatmentSystem.Infrastructure.Repositories;
@@ -15,6 +16,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,9 +174,12 @@ builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.IDoctorScheduleR
 builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IDoctorScheduleService, HIVTreatmentSystem.Application.Services.DoctorScheduleService>();
 builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository, HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository>();
 builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService, HIVTreatmentSystem.Application.Services.SystemAuditLogService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-
+builder.Services.AddAutoMapper(typeof(CertificateMapper));
+builder.Services.AddAutoMapper(typeof(DoctorMapper));
 var app = builder.Build();
 
 // Luôn bật Swagger
