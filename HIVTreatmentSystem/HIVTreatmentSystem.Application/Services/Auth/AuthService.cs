@@ -153,7 +153,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 await _staffRepository.AddAsync(staff);
             }
 
-            var setPasswordUrl = $"https://hivtreatment.vercel.app/passwordAfterRegister-page?token={token}";
+            var setPasswordUrl = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -328,7 +328,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             _accountRepository.Update(account);
 
-            string resetLink = $"https://your-frontend.com/set-password?token={token}";
+            string resetLink = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
             await _emailService.SendEmailAsync(
     email,
     "Reset Your Password",
