@@ -180,6 +180,8 @@ builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
+builder.Services.AddAutoMapper(typeof(AccountMapper));
+
 var app = builder.Build();
 
 // Luôn bật Swagger
