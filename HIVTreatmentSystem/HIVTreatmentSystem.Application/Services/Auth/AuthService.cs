@@ -328,7 +328,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             _accountRepository.Update(account);
 
-            string resetLink = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
+            string resetLink = $"http://localhost:5173/resetPassword-page?token={token}";
             await _emailService.SendEmailAsync(
     email,
     "Reset Your Password",
