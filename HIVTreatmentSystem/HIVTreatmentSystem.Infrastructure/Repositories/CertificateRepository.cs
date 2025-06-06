@@ -32,6 +32,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             var query = _context.Certificates
                 .Include(c => c.Doctor)
+                .ThenInclude(d => d.Account)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(title))
@@ -41,7 +42,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 query = query.Where(c => c.IssuedBy.Contains(issuedBy));
 
             if (!string.IsNullOrWhiteSpace(doctorName))
-                query = query.Where(c => c.Doctor.FullName.Contains(doctorName));
+                query = query.Where(c => c.Doctor.Account.FullName.Contains(doctorName));
 
             if (startDate.HasValue)
                 query = query.Where(c => c.IssuedDate >= startDate.Value);
@@ -53,7 +54,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             {
                 "title" => isDescending ? query.OrderByDescending(c => c.Title) : query.OrderBy(c => c.Title),
                 "issuedby" => isDescending ? query.OrderByDescending(c => c.IssuedBy) : query.OrderBy(c => c.IssuedBy),
-                "doctorname" => isDescending ? query.OrderByDescending(c => c.Doctor.FullName) : query.OrderBy(c => c.Doctor.FullName),
+                "doctorname" => isDescending ? query.OrderByDescending(c => c.Doctor.Account.FullName) : query.OrderBy(c => c.Doctor.Account.FullName),
                 _ => isDescending ? query.OrderByDescending(c => c.Title) : query.OrderBy(c => c.Title),
             };
 
