@@ -1,6 +1,8 @@
 using System.Reflection;
 using System.Text;
 using AutoMapper;
+using CinemaBooking.API.Middlewares;
+using CinemaBooking.API.Middlewares.LoggingMiddleware;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
@@ -194,6 +196,9 @@ app.UseSwaggerUI(c =>
 app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
+app.UseCustomExceptionHandler();
+app.UseCustomLogging();
+app.UseAuthentication();
 
 app.UseAuthentication();
 app.UseAuthorization();
