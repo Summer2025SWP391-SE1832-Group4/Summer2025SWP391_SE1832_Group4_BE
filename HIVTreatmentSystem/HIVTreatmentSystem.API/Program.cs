@@ -10,6 +10,7 @@ using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services;
 using HIVTreatmentSystem.Application.Services.Account;
 using HIVTreatmentSystem.Application.Services.Auth;
+using HIVTreatmentSystem.Application.Services.CertificateService;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using HIVTreatmentSystem.Infrastructure.Repositories;
