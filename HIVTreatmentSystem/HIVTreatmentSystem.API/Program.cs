@@ -3,6 +3,7 @@ using System.Text;
 using AutoMapper;
 using CinemaBooking.API.Middlewares;
 using CinemaBooking.API.Middlewares.LoggingMiddleware;
+using HIVTreatmentSystem.API.Mappers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
@@ -173,8 +174,13 @@ builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.IDoctorScheduleR
 builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IDoctorScheduleService, HIVTreatmentSystem.Application.Services.DoctorScheduleService>();
 builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository, HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository>();
 builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService, HIVTreatmentSystem.Application.Services.SystemAuditLogService>();
+builder.Services.AddScoped<ICertificateService, CertificateService>();
+builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(typeof(CertificateMapper));
+builder.Services.AddAutoMapper(typeof(DoctorMapper));
+builder.Services.AddAutoMapper(typeof(AccountMapper));
 
 var app = builder.Build();
 

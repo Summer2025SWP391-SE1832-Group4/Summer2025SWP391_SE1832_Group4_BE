@@ -93,3 +93,6 @@ logs/
 # NuGet v3's project.json files produces more ignorable files
 *.nuget.props
 *.nuget.targets 
+
+
+/HIVTreatmentSystem/HIVTreatmentSystem.API/appsettings.json

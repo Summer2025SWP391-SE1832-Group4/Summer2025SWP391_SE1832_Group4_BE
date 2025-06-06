@@ -156,7 +156,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 await _staffRepository.AddAsync(staff);
             }
 
-            var setPasswordUrl = $"https://hivtreatment.vercel.app/passwordAfterRegister-page?token={token}";
+            var setPasswordUrl = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -331,8 +331,36 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             _accountRepository.Update(account);
 
-            string resetLink = $"https://your-frontend.com/set-password?token={token}";
-            await _emailService.SendEmailAsync(email, "Reset Your Password", $"Click the link to reset: {resetLink}");
+            string resetLink = $"http://localhost:5173/resetPassword-page?token={token}";
+            await _emailService.SendEmailAsync(
+    email,
+    "Reset Your Password",
+    $@"
+    <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;'>
+        <h2 style='color: #333;'>Reset Your Password</h2>
+        <p style='font-size: 16px; color: #555;'>
+            We received a request to reset your password. If this was you, click the button below to proceed.
+        </p>
+        <div style='text-align: center; margin: 30px 0;'>
+            <a href='{resetLink}' style='display: inline-block; padding: 12px 24px; font-size: 16px; color: white; background-color: #007bff; text-decoration: none; border-radius: 5px;'>
+                Reset Password
+            </a>
+        </div>
+        <p style='font-size: 14px; color: #555;'>
+            If the button above doesn't work, you can also reset your password by clicking this link:
+            <a href='{resetLink}' style='color: #007bff; text-decoration: none;'>Reset Password</a>
+        </p>
+        <p style='font-size: 14px; color: #999;'>
+            If you didn't request a password reset, you can safely ignore this email.
+        </p>
+        <p style='font-size: 12px; color: #bbb;'>
+            &copy; {DateTime.Now.Year} Modern State. All rights reserved.
+        </p>
+    </div>"
+);
+
+
+
 
             return new ApiResponse("Password reset link has been sent to your email.");
         }

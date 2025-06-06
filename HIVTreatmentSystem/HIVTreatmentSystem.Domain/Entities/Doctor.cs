@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,6 +23,10 @@ namespace HIVTreatmentSystem.Domain.Entities
         public string? ShortDescription { get; set; }
 
         // Navigation properties
+        // Add this line for foreign key to Account
+        public int AccountId { get; set; }
+
+        [ForeignKey(nameof(AccountId))]
         public virtual Account Account { get; set; } = null!;
         public virtual ICollection<Appointment> Appointments { get; set; } =
             new List<Appointment>();

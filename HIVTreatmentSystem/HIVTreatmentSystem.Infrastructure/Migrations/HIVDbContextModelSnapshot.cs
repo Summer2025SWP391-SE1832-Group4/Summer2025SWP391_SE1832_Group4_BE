@@ -238,6 +238,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Qualifications")
                         .HasColumnType("nvarchar(max)");
 
