@@ -8,7 +8,12 @@ namespace HIVTreatmentSystem.Application.Common
 
         public ApiResponse(string message = "", object? data = null)
         {
-            Success = data != null || (message != null && !message.ToLower().Contains("error") && !message.ToLower().Contains("invalid") && !message.ToLower().Contains("failed"));
+            Success = data != null || (message != null && 
+                !message.ToLower().Contains("error") && 
+                !message.ToLower().Contains("invalid") && 
+                !message.ToLower().Contains("failed") &&
+                !message.ToLower().Contains("already exists") &&
+                !message.ToLower().Contains("already in use"));
             Message = message;
             Data = data;
         }

@@ -83,10 +83,25 @@ namespace HIVTreatmentSystem.API.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<ApiResponse>> Register(RegisterRequest request)
         {
-            var result = await _authService.RegisterAsync(request);
-            if (!result.Success)
-                return BadRequest(result);
-            return Ok(result);
+            try
+            {
+                var result = await _authService.RegisterAsync(request);
+                // Check for duplicate data errors first
+                if (result.Message.Contains("already exists") || result.Message.Contains("already in use"))
+                {
+                    return StatusCode(400, new ApiResponse(result.Message));
+                }
+                // Then check for other errors
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, new ApiResponse(ex.Message));
+            }
         }
 
         /// <summary>

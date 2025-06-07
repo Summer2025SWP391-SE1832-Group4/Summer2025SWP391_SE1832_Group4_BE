@@ -104,6 +104,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 || string.IsNullOrWhiteSpace(request.FullName)
             )
             {
+                
                 return new ApiResponse("Please provide all required information.");
             }
 
