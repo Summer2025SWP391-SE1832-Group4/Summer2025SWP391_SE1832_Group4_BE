@@ -1,6 +1,7 @@
 ﻿using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 
 namespace HIVTreatmentSystem.Application.Services.Account
@@ -14,39 +15,44 @@ namespace HIVTreatmentSystem.Application.Services.Account
             _accountRepository = accountRepository;
         }
 
-        public async Task<ListAccountsResponse> GetPagedAsync(
-            ListAccountsRequest request,
-            CancellationToken cancellationToken = default
+        public async Task<(IEnumerable<AccountResponse> Items, int TotalCount)> GetAllAsync(
+            string? usernameFilter,
+            string? emailFilter,
+            AccountStatus? statusFilter,
+            int? roleIdFilter,
+            string? sortBy,
+            bool sortDesc,
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
         )
         {
-            var (entities, totalCount) = await _accountRepository.GetPagedAsync(
-                usernameFilter: request.Username,
-                emailFilter: request.Email,
-                statusFilter: request.AccountStatus,
-                roleIdFilter: request.RoleId,
-                sortBy: request.SortBy,
-                sortDescending: request.SortDescending,
-                pageNumber: request.PageNumber,
-                pageSize: request.PageSize
+            var (entities, total) = await _accountRepository.GetPagedAsync(
+                usernameFilter,
+                emailFilter,
+                statusFilter,
+                roleIdFilter,
+                sortBy,
+                sortDesc,
+                pageNumber,
+                pageSize
             );
 
-            var responses = entities
-                .Select(a => new AccountResponse
-                {
-                    AccountId = a.AccountId,
-                    Username = a.Username,
-                    Email = a.Email,
-                    FullName = a.FullName,
-                    AccountStatus = a.AccountStatus,
-                    RoleId = a.RoleId,
-                    CreatedAt = a.CreatedAt,
-                    LastLoginAt = a.LastLoginAt,
-                    PhoneNumber = a.PhoneNumber,
-                    ProfileImageUrl = a.ProfileImageUrl,
-                })
-                .ToList();
+            var items = entities.Select(a => new AccountResponse
+            {
+                AccountId = a.AccountId,
+                Username = a.Username,
+                Email = a.Email,
+                FullName = a.FullName,
+                AccountStatus = a.AccountStatus,
+                RoleId = a.RoleId,
+                CreatedAt = a.CreatedAt,
+                LastLoginAt = a.LastLoginAt,
+                PhoneNumber = a.PhoneNumber,
+                ProfileImageUrl = a.ProfileImageUrl,
+            });
 
-            return new ListAccountsResponse { Accounts = responses, TotalCount = totalCount };
+            return (items, total);
         }
 
         public async Task<AccountResponse> GetByIdAsync(
