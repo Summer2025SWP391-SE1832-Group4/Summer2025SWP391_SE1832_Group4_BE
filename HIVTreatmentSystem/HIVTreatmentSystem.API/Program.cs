@@ -200,7 +200,7 @@ builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
 builder.Services.AddAutoMapper(typeof(AccountMapper));
-builder.Services.AddAutoMapper(typeof(BlogMapper));
+builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
 
 var app = builder.Build();
 

@@ -51,7 +51,7 @@ namespace HIVTreatmentSystem.API.Controllers
             );
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<IActionResult> GetById(int id)
         {
             try
@@ -95,7 +95,7 @@ namespace HIVTreatmentSystem.API.Controllers
             );
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("id")]
         public async Task<IActionResult> Update(int id, [FromBody] BlogRequest req)
         {
             try
@@ -123,7 +123,7 @@ namespace HIVTreatmentSystem.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("id")]
         public async Task<IActionResult> Delete(int id)
         {
             try

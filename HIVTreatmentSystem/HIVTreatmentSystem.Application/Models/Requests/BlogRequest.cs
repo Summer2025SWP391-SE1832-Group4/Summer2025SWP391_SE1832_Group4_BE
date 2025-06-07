@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace HIVTreatmentSystem.Application.Models.Requests
 {
@@ -14,6 +9,9 @@ namespace HIVTreatmentSystem.Application.Models.Requests
 
         [Required]
         public string Content { get; set; } = null!;
+
+        [MaxLength(255)]
+        public string? BlogImageUrl { get; set; }
 
         [Required]
         public int BlogTagId { get; set; }

@@ -10,11 +10,11 @@ namespace HIVTreatmentSystem.API.Controllers
     [ApiController]
     public class BlogTagsController : ControllerBase
     {
-        private readonly IBlogTagService _svc;
+        private readonly IBlogTagService _blogTagService;
 
-        public BlogTagsController(IBlogTagService svc)
+        public BlogTagsController(IBlogTagService blogTagService)
         {
-            _svc = svc;
+            _blogTagService = blogTagService;
         }
 
         [HttpGet]
@@ -26,7 +26,7 @@ namespace HIVTreatmentSystem.API.Controllers
             [FromQuery] int pageSize = 20
         )
         {
-            var (items, total) = await _svc.GetAllAsync(
+            var (items, total) = await _blogTagService.GetAllAsync(
                 name,
                 sortBy,
                 sortDesc,
@@ -43,12 +43,12 @@ namespace HIVTreatmentSystem.API.Controllers
             );
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("id")]
         public async Task<IActionResult> GetById(int id)
         {
             try
             {
-                var dto = await _svc.GetByIdAsync(id);
+                var dto = await _blogTagService.GetByIdAsync(id);
                 return Ok(
                     new ApiResponse
                     {
@@ -74,7 +74,7 @@ namespace HIVTreatmentSystem.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] BlogTagRequest req)
         {
-            var dto = await _svc.CreateAsync(req);
+            var dto = await _blogTagService.CreateAsync(req);
             return CreatedAtAction(
                 nameof(GetById),
                 new { id = dto.BlogTagId },
@@ -87,12 +87,12 @@ namespace HIVTreatmentSystem.API.Controllers
             );
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("id")]
         public async Task<IActionResult> Update(int id, [FromBody] BlogTagRequest req)
         {
             try
             {
-                var dto = await _svc.UpdateAsync(id, req);
+                var dto = await _blogTagService.UpdateAsync(id, req);
                 return Ok(
                     new ApiResponse
                     {
@@ -115,12 +115,12 @@ namespace HIVTreatmentSystem.API.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("id")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                await _svc.DeleteAsync(id);
+                await _blogTagService.DeleteAsync(id);
                 return Ok(
                     new ApiResponse
                     {

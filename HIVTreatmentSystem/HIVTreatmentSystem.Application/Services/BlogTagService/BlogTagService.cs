@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using AutoMapper;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
@@ -13,11 +9,13 @@ namespace HIVTreatmentSystem.Application.Services.BlogTagService
 {
     public class BlogTagService : IBlogTagService
     {
-        private readonly IBlogTagRepository _repo;
+        private readonly IBlogTagRepository _blogTagRepository;
+        private readonly IMapper _mapper;
 
-        public BlogTagService(IBlogTagRepository repo)
+        public BlogTagService(IBlogTagRepository blogTagRepository, IMapper mapper)
         {
-            _repo = repo;
+            _blogTagRepository = blogTagRepository;
+            _mapper = mapper;
         }
 
         public async Task<(IEnumerable<BlogTagResponse> Items, int TotalCount)> GetAllAsync(
@@ -29,33 +27,23 @@ namespace HIVTreatmentSystem.Application.Services.BlogTagService
             CancellationToken ct = default
         )
         {
-            var (entities, total) = await _repo.GetPagedAsync(
+            var (entities, total) = await _blogTagRepository.GetPagedAsync(
                 nameFilter,
                 sortBy,
                 sortDesc,
                 pageNumber,
                 pageSize
             );
-            var items = entities.Select(t => new BlogTagResponse
-            {
-                BlogTagId = t.BlogTagId,
-                Name = t.Name,
-                Description = t.Description,
-            });
+            var items = _mapper.Map<IEnumerable<BlogTagResponse>>(entities);
             return (items, total);
         }
 
         public async Task<BlogTagResponse> GetByIdAsync(int id, CancellationToken ct = default)
         {
-            var t = await _repo.GetByIdAsync(id);
-            if (t == null)
+            var entity = await _blogTagRepository.GetByIdAsync(id);
+            if (entity == null)
                 throw new KeyNotFoundException("không tìm thấy thẻ");
-            return new BlogTagResponse
-            {
-                BlogTagId = t.BlogTagId,
-                Name = t.Name,
-                Description = t.Description,
-            };
+            return _mapper.Map<BlogTagResponse>(entity);
         }
 
         public async Task<BlogTagResponse> CreateAsync(
@@ -63,14 +51,9 @@ namespace HIVTreatmentSystem.Application.Services.BlogTagService
             CancellationToken ct = default
         )
         {
-            var entity = new BlogTag { Name = request.Name, Description = request.Description };
-            await _repo.AddAsync(entity);
-            return new BlogTagResponse
-            {
-                BlogTagId = entity.BlogTagId,
-                Name = entity.Name,
-                Description = entity.Description,
-            };
+            var entity = _mapper.Map<BlogTag>(request);
+            await _blogTagRepository.AddAsync(entity);
+            return _mapper.Map<BlogTagResponse>(entity);
         }
 
         public async Task<BlogTagResponse> UpdateAsync(
@@ -79,26 +62,20 @@ namespace HIVTreatmentSystem.Application.Services.BlogTagService
             CancellationToken ct = default
         )
         {
-            var t = await _repo.GetByIdAsync(id);
-            if (t == null)
+            var entity = await _blogTagRepository.GetByIdAsync(id);
+            if (entity == null)
                 throw new KeyNotFoundException("không tìm thấy thẻ");
-            t.Name = request.Name;
-            t.Description = request.Description;
-            _repo.Update(t);
-            return new BlogTagResponse
-            {
-                BlogTagId = t.BlogTagId,
-                Name = t.Name,
-                Description = t.Description,
-            };
+            _mapper.Map(request, entity);
+            _blogTagRepository.Update(entity);
+            return _mapper.Map<BlogTagResponse>(entity);
         }
 
         public async Task DeleteAsync(int id, CancellationToken ct = default)
         {
-            var t = await _repo.GetByIdAsync(id);
-            if (t == null)
+            var entity = await _blogTagRepository.GetByIdAsync(id);
+            if (entity == null)
                 throw new KeyNotFoundException("không tìm thấy thẻ");
-            _repo.Remove(t);
+            _blogTagRepository.Remove(entity);
         }
     }
 }
