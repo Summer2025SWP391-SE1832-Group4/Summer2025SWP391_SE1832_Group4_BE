@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250605163704_UpdateDBV3")]
-    partial class UpdateDBV3
+    [Migration("20250606062044_UpdateDoctorEntities")]
+    partial class UpdateDoctorEntities
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -243,10 +243,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
-
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Qualifications")
                         .HasColumnType("nvarchar(max)");

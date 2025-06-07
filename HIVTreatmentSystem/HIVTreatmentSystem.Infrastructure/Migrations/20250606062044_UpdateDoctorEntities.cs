@@ -5,7 +5,7 @@
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class UpdateDBV3 : Migration
+    public partial class UpdateDoctorEntities : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

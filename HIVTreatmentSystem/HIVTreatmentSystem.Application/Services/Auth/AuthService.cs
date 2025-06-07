@@ -85,9 +85,12 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 Token = token,
                 RefreshToken = "",
                 Expiration = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryInMinutes),
+                AccountID = account.AccountId,
                 Username = account.Username,
                 Email = account.Email,
                 FullName = account.FullName,
+                Phone = account.PhoneNumber,
+                profileImageUrl = account.ProfileImageUrl,
                 Role = account.Role.RoleName,
             };
             return new ApiResponse("Login successful", loginResponse);
@@ -101,6 +104,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 || string.IsNullOrWhiteSpace(request.FullName)
             )
             {
+                
                 return new ApiResponse("Please provide all required information.");
             }
 

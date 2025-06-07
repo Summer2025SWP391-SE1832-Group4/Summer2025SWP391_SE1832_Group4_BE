@@ -11,7 +11,6 @@ namespace HIVTreatmentSystem.Domain.Entities
     public class Doctor
     {
         public int DoctorId { get; set; } // Same as UserId
-        public string FullName { get; set; }
 
         [MaxLength(100)]
         public string? Specialty { get; set; }

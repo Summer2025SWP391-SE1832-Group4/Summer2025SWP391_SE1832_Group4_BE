@@ -241,10 +241,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Qualifications")
                         .HasColumnType("nvarchar(max)");
 
