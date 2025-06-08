@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using HIVTreatmentSystem.Domain.Entities;
 
@@ -7,10 +8,12 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 {
     public interface IDoctorRepository : IGenericRepository<Doctor, int>
     {
+        Task<IEnumerable<Doctor>> FindAsync(Expression<Func<Doctor, bool>> predicate);
+        Task<Doctor?> GetByIdAsync(int id);
+        Task<IEnumerable<Doctor>> GetAllAsync();
         Task<Doctor?> GetDoctorWithDetailsAsync(int doctorId);
-        Task<IEnumerable<Doctor>> GetDoctorsBySpecializationAsync(string specialization);
-        Task<IEnumerable<Doctor>> GetDoctorsByDepartmentAsync(string department);
-        Task<IEnumerable<Doctor>> GetDoctorsWithActivePatientsAsync();
+        Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyAsync(string specialty);
+        Task<IEnumerable<Doctor>> GetDoctorsWithSchedulesAsync();
     }
 }
 

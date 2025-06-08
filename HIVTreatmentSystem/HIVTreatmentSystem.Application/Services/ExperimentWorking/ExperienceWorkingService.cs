@@ -22,6 +22,7 @@ namespace HIVTreatmentSystem.Application.Services
             var list = await _repo.GetByDoctorIdAsync(doctorId);
             return list.Select(x => new ExperienceWorkingDto
             {
+                Id = x.Id,
                 DoctorId = x.DoctorId,
                 HospitalName = x.HospitalName,
                 Position = x.Position,
@@ -36,6 +37,7 @@ namespace HIVTreatmentSystem.Application.Services
             if (x == null) return null;
             return new ExperienceWorkingDto
             {
+                Id = x.Id,
                 DoctorId = x.DoctorId,
                 HospitalName = x.HospitalName,
                 Position = x.Position,
@@ -48,16 +50,17 @@ namespace HIVTreatmentSystem.Application.Services
         {
             var entity = new ExperienceWorking
             {
-                DoctorId = dto.DoctorId.HasValue ? dto.DoctorId.Value : throw new System.ArgumentException("DoctorId is required"),
+                DoctorId = dto.DoctorId,
                 HospitalName = dto.HospitalName,
                 Position = dto.Position,
-                FromDate = dto.FromDate.HasValue ? dto.FromDate.Value : throw new System.ArgumentException("FromDate is required"),
+                FromDate = dto.FromDate ?? DateTime.Now,
                 ToDate = dto.ToDate
             };
             await _repo.AddAsync(entity);
             await _repo.SaveChangesAsync();
             return new ExperienceWorkingDto
             {
+                Id = entity.Id,
                 DoctorId = entity.DoctorId,
                 HospitalName = entity.HospitalName,
                 Position = entity.Position,
@@ -65,6 +68,7 @@ namespace HIVTreatmentSystem.Application.Services
                 ToDate = entity.ToDate
             };
         }
+
         public async Task<ExperienceWorkingDto> UpdateAsync(int id, ExperienceWorkingDto dto)
         {
             var entity = await _repo.GetByIdAsync(id);
@@ -73,14 +77,15 @@ namespace HIVTreatmentSystem.Application.Services
                 entity.HospitalName = dto.HospitalName;
             if (!string.IsNullOrEmpty(dto.Position) && dto.Position != "string")
                 entity.Position = dto.Position;
-            if (dto.FromDate.HasValue && dto.FromDate.Value != DateTime.MinValue)
+            if (dto.FromDate.HasValue)
                 entity.FromDate = dto.FromDate.Value;
-            if (dto.ToDate.HasValue && dto.ToDate.Value != DateTime.MinValue)
+            if (dto.ToDate.HasValue)
                 entity.ToDate = dto.ToDate;
             _repo.Update(entity);
             await _repo.SaveChangesAsync();
             return new ExperienceWorkingDto
             {
+                Id = entity.Id,
                 DoctorId = entity.DoctorId,
                 HospitalName = entity.HospitalName,
                 Position = entity.Position,
@@ -99,15 +104,16 @@ namespace HIVTreatmentSystem.Application.Services
                     entity.HospitalName = dto.HospitalName;
                 if (!string.IsNullOrEmpty(dto.Position) && dto.Position != "string")
                     entity.Position = dto.Position;
-                if (dto.FromDate.HasValue && dto.FromDate.Value != DateTime.MinValue)
+                if (dto.FromDate.HasValue)
                     entity.FromDate = dto.FromDate.Value;
-                if (dto.ToDate.HasValue && dto.ToDate.Value != DateTime.MinValue)
+                if (dto.ToDate.HasValue)
                     entity.ToDate = dto.ToDate;
                 _repo.Update(entity);
             }
             await _repo.SaveChangesAsync();
             return entities.Select(entity => new ExperienceWorkingDto
             {
+                Id = entity.Id,
                 DoctorId = entity.DoctorId,
                 HospitalName = entity.HospitalName,
                 Position = entity.Position,

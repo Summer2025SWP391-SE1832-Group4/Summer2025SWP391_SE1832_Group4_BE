@@ -166,6 +166,7 @@ builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>(
 builder.Services.AddScoped<IBlogTagService, BlogTagService>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IDoctorService, HIVTreatmentSystem.Application.Services.DoctorService.DoctorService>();
 
 builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
