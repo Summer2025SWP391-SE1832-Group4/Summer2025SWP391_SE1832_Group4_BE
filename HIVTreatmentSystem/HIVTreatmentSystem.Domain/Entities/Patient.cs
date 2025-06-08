@@ -1,10 +1,11 @@
-﻿using System;
+﻿using HIVTreatmentSystem.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
@@ -32,6 +33,9 @@ namespace HIVTreatmentSystem.Domain.Entities
         public string? AdditionalNotes { get; set; }
 
         // Navigation properties
+        public int AccountId { get; set; }
+
+        [ForeignKey(nameof(AccountId))]
         public virtual Account Account { get; set; } = null!;
         public virtual ICollection<Appointment> Appointments { get; set; } =
             new List<Appointment>();
