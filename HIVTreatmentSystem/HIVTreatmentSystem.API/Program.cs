@@ -186,6 +186,7 @@ builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
 builder.Services.AddAutoMapper(typeof(AccountMapper));
 builder.Services.AddAutoMapper(typeof(AppointmentMapper));
+builder.Services.AddAutoMapper(typeof(PatientMapper));
 
 var app = builder.Build();
 

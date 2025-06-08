@@ -48,7 +48,11 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 query = query.Where(c => c.IssuedDate >= startDate.Value);
 
             if (endDate.HasValue)
-                query = query.Where(c => c.IssuedDate <= endDate.Value);
+            {
+                var endOfDay = endDate.Value.Date.AddDays(1).AddTicks(-1);
+                query = query.Where(c => c.IssuedDate <= endOfDay);
+            }
+
 
             query = sortBy?.ToLower() switch
             {

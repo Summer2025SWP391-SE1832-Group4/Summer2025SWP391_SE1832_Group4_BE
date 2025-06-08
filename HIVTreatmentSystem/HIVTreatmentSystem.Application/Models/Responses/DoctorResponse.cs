@@ -10,7 +10,6 @@ namespace HIVTreatmentSystem.Application.Models.Responses
     public class DoctorResponse
     {
         public int DoctorId { get; set; } 
-        public string FullName { get; set; }
 
         public string? Specialty { get; set; }
 

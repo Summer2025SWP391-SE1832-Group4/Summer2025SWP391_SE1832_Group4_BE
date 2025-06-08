@@ -15,13 +15,19 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<IEnumerable<Appointment>> GetAppointmentsByDateRangeAsync(DateTime startDate, DateTime endDate);
         Task<IEnumerable<Appointment>> GetAppointmentsByStatusAsync(string status);
         Task<IEnumerable<Appointment>> GetAllAppointmentsAsync(
-    string? doctorName,
-    string? patientName,
-    string? appointmentType,
-    AppointmentStatus? status,
-    DateTime? startDate,
-    DateTime? endDate,
-    bool isDescending,
-    string? sortBy);
+            string? doctorName,
+            string? patientName,
+            string? appointmentType,
+            AppointmentStatus? status,
+            DateTime? startDate,
+            DateTime? endDate,
+            bool isDescending,
+            string? sortBy);
+        Task CreateAsync(Appointment appointment);
+        Task UpdateAsync(Appointment appointment);
+
+        Task DeleteAsync(Appointment appointment);
+
+
     }
 } 

@@ -19,8 +19,8 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<Appointment?> GetAppointmentWithDetailsAsync(int appointmentId)
         {
             return await _context.Appointments
-                .Include(a => a.Patient)
-                .Include(a => a.Doctor)
+                .Include(a => a.Patient).ThenInclude(p => p.Account)
+                .Include(a => a.Doctor).ThenInclude(d => d.Account)
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId);
         }
 
@@ -125,5 +125,23 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await query.ToListAsync();
         }
 
+        public async Task CreateAsync(Appointment appointment)
+        {
+            _context.Appointments.Add(appointment);
+            await _context.SaveChangesAsync();
+
+        }
+
+        public async Task UpdateAsync(Appointment appointment)
+        {
+            _context.Appointments.Update(appointment);
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task DeleteAsync(Appointment appointment)
+        {
+            _context.Appointments.Remove(appointment);
+            await _context.SaveChangesAsync();
+        }
     }
 }

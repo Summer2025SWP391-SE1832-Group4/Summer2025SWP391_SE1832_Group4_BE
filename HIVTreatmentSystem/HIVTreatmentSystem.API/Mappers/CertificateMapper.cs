@@ -12,8 +12,8 @@ namespace HIVTreatmentSystem.API.Mappers
             CreateMap<Certificate, CertificateResponse>()
             .ForMember(dest => dest.DoctorName,
                opt => opt.MapFrom(src => src.Doctor.Account.FullName));
-            CreateMap<CertificateRequest, Certificate>()
-                    .ForMember(dest => dest.CertificateId, opt => opt.Ignore());
+            CreateMap<CertificateRequest, Certificate>();
+
 
         }
     }
