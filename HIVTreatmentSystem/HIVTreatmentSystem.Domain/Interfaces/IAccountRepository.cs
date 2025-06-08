@@ -21,6 +21,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
             int pageSize
         );
         Task<Account?> GetByEmailAsync(string email);
+        Task<bool>GetByPhoneNumberExitsAsync(string phoneNumber);
         Task<Account?> GetByUsernameAsync(string username);
         Task<bool> EmailExistsAsync(string email);
         Task<bool> UsernameExistsAsync(string username);
