@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 namespace HIVTreatmentSystem.Domain.Entities
 {
     public class Blog
@@ -14,6 +15,8 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public string Content { get; set; }
 
+        [MaxLength(255)]
+        public string? BlogImageUrl { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
         public int BlogTagId { get; set; }
