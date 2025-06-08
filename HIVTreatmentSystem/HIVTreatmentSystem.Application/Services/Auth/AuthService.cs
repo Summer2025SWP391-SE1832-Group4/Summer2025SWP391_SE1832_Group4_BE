@@ -108,6 +108,11 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 return new ApiResponse("Please provide all required information.");
             }
 
+            if (await _accountRepository.GetByPhoneNumberExitsAsync(request.PhoneNumber))
+            {
+                return new ApiResponse("Phone number is already in use.");
+            }
+
             if (await _accountRepository.UsernameExistsAsync(request.Username))
             {
                 return new ApiResponse("Username already exists.");
