@@ -90,11 +90,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return (Accounts: items, TotalCount: totalCount);
         }
 
-        public async Task<bool> GetByPhoneNumberExitsAsync(string phoneNumber)
-        {
-            return await _context.Accounts.AnyAsync(phone => phone.PhoneNumber == phoneNumber);
-        }
-
         public async Task<Account?> GetByUsernameAsync(string username)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Username == username);
