@@ -1,5 +1,4 @@
-﻿
-using HIVTreatmentSystem.Domain.Entities;
+﻿using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 
 public interface ICertificateRepository
@@ -20,4 +19,6 @@ public interface ICertificateRepository
 
     Task<bool> DeleteAsync(Certificate certificate);
 
+    // Thêm phương thức này
+    Task<List<Certificate>> GetAllAsync();
 }
