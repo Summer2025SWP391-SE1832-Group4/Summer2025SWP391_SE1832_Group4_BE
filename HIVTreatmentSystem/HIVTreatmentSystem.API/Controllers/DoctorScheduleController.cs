@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Domain.Entities;
 using System.Security.Claims;
+using HIVTreatmentSystem.Domain.DTOs;
+using HIVTreatmentSystem.Domain.Interfaces;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -14,16 +16,21 @@ namespace HIVTreatmentSystem.API.Controllers
     /// API Controller for managing doctor schedules.
     /// </summary>
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/doctorSchedule")]
     public class DoctorScheduleController : ControllerBase
     {
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
+        private readonly IMonthlyScheduleService _monthlyScheduleService;
 
-        public DoctorScheduleController(IDoctorScheduleService service, ISystemAuditLogService auditService)
+        public DoctorScheduleController(
+            IDoctorScheduleService service, 
+            ISystemAuditLogService auditService, 
+            IMonthlyScheduleService monthlyScheduleService)
         {
             _service = service;
             _auditService = auditService;
+            _monthlyScheduleService = monthlyScheduleService;
         }
 
         private async Task LogAction(string action, string? entityId = null, string? details = null)
@@ -118,6 +125,20 @@ namespace HIVTreatmentSystem.API.Controllers
             await LogAction("Deleted doctor schedule", id.ToString());
             if (!success) return NotFound();
             return Ok(new ApiResponse("Doctor schedule deleted successfully."));
+        }
+        
+        /// <summary>
+        /// Create weekly schedules for a doctor schedule.
+        /// </summary>
+        [HttpPost("weekly")]
+        public async Task<IActionResult> CreateWeeklySchedule([FromBody] CreateWeeklyScheduleDto dto)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var schedules = await _service.CreateWeeklyScheduleAsync(dto);
+            await LogAction("Created weekly schedules for all doctors", null, System.Text.Json.JsonSerializer.Serialize(dto));
+            return Ok(new ApiResponse("Weekly schedules created successfully.", schedules));
         }
     }
 } 
