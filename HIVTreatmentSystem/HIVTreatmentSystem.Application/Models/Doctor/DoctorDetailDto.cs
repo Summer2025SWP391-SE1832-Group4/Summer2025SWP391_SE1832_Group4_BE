@@ -14,7 +14,6 @@ namespace HIVTreatmentSystem.Application.Models.Doctor
         public int? YearsOfExperience { get; set; }
         public string? ShortDescription { get; set; }
         public string? ProfileImageUrl { get; set; }
-        public List<DoctorScheduleDto> Schedules { get; set; } = new List<DoctorScheduleDto>();
         public List<ExperienceWorkingDto> ExperienceWorkings { get; set; } = new List<ExperienceWorkingDto>();
         public List<CertificateDto> Certificates { get; set; } = new List<CertificateDto>();
     }

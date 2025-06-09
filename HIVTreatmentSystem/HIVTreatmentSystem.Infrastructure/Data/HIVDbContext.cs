@@ -29,7 +29,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<PatientTreatment> PatientTreatments { get; set; }
         public DbSet<Reminder> Reminders { get; set; }
         public DbSet<EducationalMaterial> EducationalMaterials { get; set; }
-        public DbSet<DoctorSchedule> DoctorSchedules { get; set; }
         public DbSet<SystemAuditLog> SystemAuditLogs { get; set; }
         public DbSet<ExperienceWorking> ExperienceWorkings { get; set; }
         public DbSet<Certificate> Certificates { get; set; }
@@ -75,11 +74,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 .Property(e => e.MaterialType)
                 .HasConversion<string>();
 
-            modelBuilder
-                .Entity<DoctorSchedule>()
-                .Property(e => e.AvailabilityStatus)
-                .HasConversion<string>();
-
             // Configure primary keys and relationships
             ConfigureRoleEntity(modelBuilder);
             ConfigureUserEntity(modelBuilder);
@@ -93,7 +87,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             ConfigurePatientTreatmentEntity(modelBuilder);
             ConfigureReminderEntity(modelBuilder);
             ConfigureEducationalMaterialEntity(modelBuilder);
-            ConfigureDoctorScheduleEntity(modelBuilder);
             ConfigureSystemAuditLogEntity(modelBuilder);
 
             // Seed initial data
@@ -362,33 +355,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(u => u.AuthoredMaterials)
                     .HasForeignKey(e => e.AuthorId)
                     .OnDelete(DeleteBehavior.SetNull);
-            });
-        }
-
-        private void ConfigureDoctorScheduleEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<DoctorSchedule>(entity =>
-            {
-                entity.HasKey(e => e.ScheduleId);
-                entity.Property(e => e.Notes).HasMaxLength(255);
-
-                entity
-                    .HasOne(e => e.Doctor)
-                    .WithMany(d => d.Schedules)
-                    .HasForeignKey(e => e.DoctorId)
-                    .OnDelete(DeleteBehavior.Cascade);
-
-                // Check constraint for day of week (1-7)
-                entity.HasCheckConstraint(
-                    "CK_DoctorSchedule_DayOfWeek",
-                    "DayOfWeek BETWEEN 1 AND 7"
-                );
-
-                // Check constraint for time validation
-                entity.HasCheckConstraint(
-                    "CK_DoctorSchedule_TimeValidation",
-                    "EndTime > StartTime"
-                );
             });
         }
 

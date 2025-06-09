@@ -264,55 +264,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.ToTable("Doctors");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.DoctorSchedule", b =>
-                {
-                    b.Property<int>("ScheduleId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduleId"));
-
-                    b.Property<string>("AvailabilityStatus")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("DoctorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("EffectiveFrom")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("EffectiveTo")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<string>("Notes")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("SlotDurationMinutes")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.HasKey("ScheduleId");
-
-                    b.HasIndex("DoctorId");
-
-                    b.ToTable("DoctorSchedules", t =>
-                        {
-                            t.HasCheckConstraint("CK_DoctorSchedule_DayOfWeek", "DayOfWeek BETWEEN 1 AND 7");
-
-                            t.HasCheckConstraint("CK_DoctorSchedule_TimeValidation", "EndTime > StartTime");
-                        });
-                });
-
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.EducationalMaterial", b =>
                 {
                     b.Property<int>("MaterialId")
@@ -955,17 +906,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.DoctorSchedule", b =>
-                {
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.Doctor", "Doctor")
-                        .WithMany("Schedules")
-                        .HasForeignKey("DoctorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Doctor");
-                });
-
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.EducationalMaterial", b =>
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "Author")
@@ -1173,8 +1113,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("MedicalRecords");
 
                     b.Navigation("PrescribedTreatments");
-
-                    b.Navigation("Schedules");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
