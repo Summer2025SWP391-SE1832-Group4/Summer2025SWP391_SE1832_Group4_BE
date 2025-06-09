@@ -21,16 +21,13 @@ namespace HIVTreatmentSystem.API.Controllers
     {
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
-        private readonly IMonthlyScheduleService _monthlyScheduleService;
 
         public DoctorScheduleController(
             IDoctorScheduleService service, 
-            ISystemAuditLogService auditService, 
-            IMonthlyScheduleService monthlyScheduleService)
+            ISystemAuditLogService auditService)
         {
             _service = service;
             _auditService = auditService;
-            _monthlyScheduleService = monthlyScheduleService;
         }
 
         private async Task LogAction(string action, string? entityId = null, string? details = null)
@@ -128,8 +125,15 @@ namespace HIVTreatmentSystem.API.Controllers
         }
         
         /// <summary>
-        /// Create weekly schedules for a doctor schedule.
+        /// Tạo lịch theo tuần cho tất cả bác sĩ
         /// </summary>
+        /// <param name="dto">Thông tin tạo lịch:
+        /// - startTime: Thời gian bắt đầu (ví dụ: 08:00)
+        /// - endTime: Thời gian kết thúc (ví dụ: 17:00)
+        /// - slotDurationMinutes: Độ dài mỗi slot (phút), mặc định là 30
+        /// - notes: Ghi chú (tùy chọn)
+        /// </param>
+        /// <returns>Danh sách các slot đã tạo</returns>
         [HttpPost("weekly")]
         public async Task<IActionResult> CreateWeeklySchedule([FromBody] CreateWeeklyScheduleDto dto)
         {

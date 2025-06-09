@@ -77,7 +77,7 @@ namespace HIVTreatmentSystem.Application.Services
 
         public async Task<List<DoctorScheduleDto>> CreateWeeklyScheduleAsync(CreateWeeklyScheduleDto dto)
         {
-            // Calculate next week's Monday
+            // Tính toán ngày thứ 2 của tuần tiếp theo
             var today = DateTime.Today;
             var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
             var nextMonday = today.AddDays(daysUntilMonday);
@@ -85,38 +85,61 @@ namespace HIVTreatmentSystem.Application.Services
 
             var schedules = new List<DoctorSchedule>();
             var doctors = await _doctorRepo.GetAllAsync();
+            // Nếu không chỉ định độ dài slot, mặc định là 30 phút
+            var slotDuration = dto.SlotDurationMinutes ?? 30;
 
             foreach (var doctor in doctors)
             {
-                // Check if doctor already has schedules in this period
+                // Kiểm tra xem bác sĩ đã có lịch trong khoảng thời gian này chưa
                 var existingSchedules = await _repo.GetByDoctorIdAsync(doctor.DoctorId);
                 if (existingSchedules.Any(s => 
                     s.EffectiveFrom <= nextSunday && 
                     (s.EffectiveTo == null || s.EffectiveTo >= nextMonday)))
                 {
-                    continue;
+                    continue; // Bỏ qua nếu đã có lịch
                 }
 
-                // Create schedule for Monday to Friday (5 days)
+                // Tạo lịch cho 5 ngày từ thứ 2 đến thứ 6
                 for (int day = 1; day <= 5; day++)
                 {
-                    var schedule = new DoctorSchedule
+                    var currentTime = dto.StartTime;
+                    // Tạo các slot cho đến khi hết thời gian làm việc
+                    while (currentTime < dto.EndTime)
                     {
-                        DoctorId = doctor.DoctorId,
-                        DayOfWeek = day,
-                        StartTime = dto.StartTime,
-                        EndTime = dto.EndTime,
-                        AvailabilityStatus = ScheduleAvailability.Available,
-                        EffectiveFrom = nextMonday,
-                        EffectiveTo = nextSunday,
-                        SlotDurationMinutes = dto.SlotDurationMinutes ?? 30,
-                        Notes = dto.Notes
-                    };
+                        // Tính thời gian còn lại và độ dài slot hiện tại
+                        var remainingMinutes = (dto.EndTime - currentTime).TotalMinutes;
+                        var currentSlotDuration = Math.Min(slotDuration, remainingMinutes);
 
-                    schedules.Add(schedule);
+                        // Chỉ tạo slot nếu thời gian còn lại đủ 15 phút
+                        if (currentSlotDuration >= 15)
+                        {
+                            var schedule = new DoctorSchedule
+                            {
+                                DoctorId = doctor.DoctorId,
+                                DayOfWeek = day,
+                                StartTime = currentTime,
+                                EndTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration)),
+                                AvailabilityStatus = ScheduleAvailability.Available,
+                                EffectiveFrom = nextMonday,
+                                EffectiveTo = nextSunday,
+                                SlotDurationMinutes = (int)currentSlotDuration,
+                                Notes = dto.Notes
+                            };
+
+                            schedules.Add(schedule);
+                            // Cập nhật thời gian cho slot tiếp theo
+                            currentTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration));
+                        }
+                        else
+                        {
+                            // Nếu thời gian còn lại < 15 phút thì dừng
+                            break;
+                        }
+                    }
                 }
             }
 
+            // Lưu tất cả các slot vào database
             if (schedules.Any())
             {
                 await _repo.AddRangeAsync(schedules);
