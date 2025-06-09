@@ -16,5 +16,6 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string IssuedBy { get; set; }
 
         public string DoctorName { get; set; }
+        public DoctorResponse Doctor { get; set; } = null!;
     }
 }

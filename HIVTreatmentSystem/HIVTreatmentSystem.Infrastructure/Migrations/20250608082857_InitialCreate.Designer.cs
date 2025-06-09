@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250606062044_UpdateDoctorEntities")]
-    partial class UpdateDoctorEntities
+    [Migration("20250608082857_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -485,6 +485,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>
                 {
                     b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("AdditionalNotes")
