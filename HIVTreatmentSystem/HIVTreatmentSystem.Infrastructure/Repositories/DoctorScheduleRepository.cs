@@ -13,6 +13,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
     /// </summary>
     public class DoctorScheduleRepository : GenericRepository<DoctorSchedule, int>, IDoctorScheduleRepository
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly HIVDbContext _context;
 
         public DoctorScheduleRepository(HIVDbContext context) : base(context)
