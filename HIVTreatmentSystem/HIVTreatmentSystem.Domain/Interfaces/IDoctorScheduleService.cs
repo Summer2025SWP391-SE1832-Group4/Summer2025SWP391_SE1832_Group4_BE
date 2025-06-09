@@ -8,7 +8,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
     public interface IMonthlyScheduleService
     {
         /// <summary>
-        /// 
+        /// S
         /// </summary>
         /// <param name="dto"></param>
         /// <returns></returns>

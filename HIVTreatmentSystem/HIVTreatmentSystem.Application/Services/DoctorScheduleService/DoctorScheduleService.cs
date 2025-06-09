@@ -16,7 +16,7 @@ namespace HIVTreatmentSystem.Application.Services
     public class DoctorScheduleService : IDoctorScheduleService
     {
         /// <summary>
-        /// 
+        /// D
         /// </summary>
         private readonly IDoctorScheduleRepository _repo;
         private readonly IDoctorRepository _doctorRepo;
