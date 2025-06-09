@@ -92,5 +92,11 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        // Thêm phương thức này
+        public async Task<List<Certificate>> GetAllAsync()
+        {
+            return await _context.Certificates.ToListAsync();
+        }
     }
 }

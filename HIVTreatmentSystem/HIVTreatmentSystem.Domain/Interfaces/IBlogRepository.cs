@@ -1,0 +1,24 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using HIVTreatmentSystem.Domain.Entities;
+
+namespace HIVTreatmentSystem.Domain.Interfaces
+{
+    public interface IBlogRepository : IGenericRepository<Blog, int>
+    {
+        Task<(IEnumerable<Blog> Items, int TotalCount)> GetPagedAsync(
+            string? titleFilter,
+            string? contentFilter,
+            int? tagIdFilter,
+            DateTime? createdFrom,
+            DateTime? createdTo,
+            string? sortBy,
+            bool sortDesc,
+            int pageNumber,
+            int pageSize
+        );
+    }
+}

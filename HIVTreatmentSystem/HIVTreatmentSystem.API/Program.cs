@@ -11,6 +11,8 @@ using HIVTreatmentSystem.Application.Services;
 using HIVTreatmentSystem.Application.Services.Account;
 using HIVTreatmentSystem.Application.Services.AppointmentService;
 using HIVTreatmentSystem.Application.Services.Auth;
+using HIVTreatmentSystem.Application.Services.BlogService;
+using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
@@ -153,7 +155,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddDbContext<HIVDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
-
+builder.Services.AddScoped<IBlogTagRepository, BlogTagRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
@@ -162,6 +164,11 @@ builder.Services.AddScoped<IAccountRepository, AccountRepository>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IExperienceWorkingRepository, ExperienceWorkingRepository>();
 builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>();
+builder.Services.AddScoped<IBlogTagService, BlogTagService>();
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
+builder.Services.AddScoped<IBlogService, BlogService>();
+builder.Services.AddScoped<IDoctorService, HIVTreatmentSystem.Application.Services.DoctorService.DoctorService>();
+
 builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
     HIVTreatmentSystem.Application.Services.Auth.PasswordHasher
@@ -172,10 +179,22 @@ builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Services.Auth.PasswordHasher
 >();
 builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.IDoctorScheduleRepository, HIVTreatmentSystem.Infrastructure.Repositories.DoctorScheduleRepository>();
-builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.IDoctorScheduleService, HIVTreatmentSystem.Application.Services.DoctorScheduleService>();
-builder.Services.AddScoped<HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository, HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository>();
-builder.Services.AddScoped<HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService, HIVTreatmentSystem.Application.Services.SystemAuditLogService>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Domain.Interfaces.IDoctorScheduleRepository,
+    HIVTreatmentSystem.Infrastructure.Repositories.DoctorScheduleRepository
+>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Application.Interfaces.IDoctorScheduleService,
+    HIVTreatmentSystem.Application.Services.DoctorScheduleService
+>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository,
+    HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository
+>();
+builder.Services.AddScoped<
+    HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService,
+    HIVTreatmentSystem.Application.Services.SystemAuditLogService
+>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
@@ -187,6 +206,7 @@ builder.Services.AddAutoMapper(typeof(DoctorMapper));
 builder.Services.AddAutoMapper(typeof(AccountMapper));
 builder.Services.AddAutoMapper(typeof(AppointmentMapper));
 builder.Services.AddAutoMapper(typeof(PatientMapper));
+builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
 
 var app = builder.Build();
 

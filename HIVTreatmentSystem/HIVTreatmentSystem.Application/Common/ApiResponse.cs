@@ -1,3 +1,5 @@
+using System;
+
 namespace HIVTreatmentSystem.Application.Common
 {
     public class ApiResponse
@@ -16,6 +18,27 @@ namespace HIVTreatmentSystem.Application.Common
                 !message.ToLower().Contains("already in use"));
             Message = message;
             Data = data;
+        }
+    }
+
+    public class ApiResponse<T>
+    {
+        public bool Success { get; set; }
+        public string Message { get; set; }
+        public T Data { get; set; }
+
+        public ApiResponse(string message, T data = default)
+        {
+            Success = true;
+            Message = message;
+            Data = data;
+        }
+
+        public ApiResponse(string errorMessage)
+        {
+            Success = false;
+            Message = errorMessage;
+            Data = default;
         }
     }
 } 

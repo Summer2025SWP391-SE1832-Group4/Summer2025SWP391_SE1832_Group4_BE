@@ -1,6 +1,8 @@
-﻿using HIVTreatmentSystem.Application.Interfaces;
+﻿using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Domain.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,27 +20,35 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAccountsAsync([FromQuery] ListAccountsRequest request)
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? username,
+            [FromQuery] string? email,
+            [FromQuery] AccountStatus? accountStatus,
+            [FromQuery] int? roleId,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool sortDesc = false,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 20
+        )
         {
-            ListAccountsResponse response = await _accountService.GetPagedAsync(request);
-
-            var apiDtos = response
-                .Accounts.Select(a => new AccountResponse
+            var (items, total) = await _accountService.GetAllAsync(
+                username,
+                email,
+                accountStatus,
+                roleId,
+                sortBy,
+                sortDesc,
+                pageNumber,
+                pageSize
+            );
+            return Ok(
+                new ApiResponse
                 {
-                    AccountId = a.AccountId,
-                    Username = a.Username,
-                    Email = a.Email,
-                    FullName = a.FullName,
-                    AccountStatus = a.AccountStatus,
-                    RoleId = a.RoleId,
-                    CreatedAt = a.CreatedAt,
-                    LastLoginAt = a.LastLoginAt,
-                    PhoneNumber = a.PhoneNumber,
-                    ProfileImageUrl = a.ProfileImageUrl,
-                })
-                .ToList();
-
-            return Ok(new { Accounts = apiDtos, TotalCount = response.TotalCount });
+                    Success = true,
+                    Message = "Danh sách tài khoản",
+                    Data = new { Items = items, TotalCount = total },
+                }
+            );
         }
 
         [HttpGet("{id}")]
