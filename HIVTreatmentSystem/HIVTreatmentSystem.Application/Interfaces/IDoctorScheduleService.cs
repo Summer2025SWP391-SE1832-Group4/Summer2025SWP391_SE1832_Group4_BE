@@ -15,5 +15,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<DoctorScheduleDto> CreateAsync(DoctorScheduleDto dto);
         Task<DoctorScheduleDto> UpdateAsync(int id, DoctorScheduleDto dto);
         Task<bool> DeleteAsync(int id);
+        Task<List<DoctorScheduleDto>> CreateWeeklyScheduleAsync(CreateWeeklyScheduleDto dto);
     }
 } 
