@@ -87,6 +87,7 @@ namespace HIVTreatmentSystem.Application.Services
             var doctors = await _doctorRepo.GetAllAsync();
             // Nếu không chỉ định độ dài slot, mặc định là 30 phút
             var slotDuration = dto.SlotDurationMinutes ?? 30;
+            var slotDuration = dto.SlotDurationMinutes ?? 30;
 
             foreach (var doctor in doctors)
             {
@@ -125,6 +126,27 @@ namespace HIVTreatmentSystem.Application.Services
                                 SlotDurationMinutes = (int)currentSlotDuration,
                                 Notes = dto.Notes
                             };
+                    var currentTime = dto.StartTime;
+                    while (currentTime < dto.EndTime)
+                    {
+                        var remainingMinutes = (dto.EndTime - currentTime).TotalMinutes;
+                        var currentSlotDuration = Math.Min(slotDuration, remainingMinutes);
+
+                        // Only create slot if remaining time is at least 15 minutes
+                        if (currentSlotDuration >= 15)
+                        {
+                            var schedule = new DoctorSchedule
+                            {
+                                DoctorId = doctor.DoctorId,
+                                DayOfWeek = day,
+                                StartTime = currentTime,
+                                EndTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration)),
+                                AvailabilityStatus = ScheduleAvailability.Available,
+                                EffectiveFrom = nextMonday,
+                                EffectiveTo = nextSunday,
+                                SlotDurationMinutes = (int)currentSlotDuration,
+                                Notes = dto.Notes
+                            };
 
                             schedules.Add(schedule);
                             // Cập nhật thời gian cho slot tiếp theo
@@ -133,6 +155,14 @@ namespace HIVTreatmentSystem.Application.Services
                         else
                         {
                             // Nếu thời gian còn lại < 15 phút thì dừng
+                            break;
+                        }
+                    }
+                            schedules.Add(schedule);
+                            currentTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration));
+                        }
+                        else
+                        {
                             break;
                         }
                     }
