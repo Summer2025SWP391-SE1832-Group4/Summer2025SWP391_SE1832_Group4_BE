@@ -1,12 +1,13 @@
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Collections.Generic;
+using System.Security.Claims;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Domain.Entities;
-using System.Security.Claims;
 using HIVTreatmentSystem.Domain.DTOs;
 using HIVTreatmentSystem.Domain.Interfaces;
 
@@ -15,25 +16,28 @@ namespace HIVTreatmentSystem.API.Controllers
     /// <summary>
     /// API Controller for managing doctor schedules.
     /// </summary>
+    [Authorize]
     [ApiController]
     [Route("api/doctorSchedule")]
     public class DoctorScheduleController : ControllerBase
     {
-        /// <summary>
-        /// 
-        /// </summary>
+        // [DOCTOR SCHEDULE API] - Controller dependencies
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
         private readonly IMonthlyScheduleService _monthlyScheduleService;
 
+        // [DOCTOR SCHEDULE API] - Constructor with all required services
         public DoctorScheduleController(
             IDoctorScheduleService service, 
-            ISystemAuditLogService auditService)
+            ISystemAuditLogService auditService, 
+            IMonthlyScheduleService monthlyScheduleService)
         {
             _service = service;
             _auditService = auditService;
+            _monthlyScheduleService = monthlyScheduleService;
         }
 
+        // [DOCTOR SCHEDULE API] - Helper method for audit logging
         private async Task LogAction(string action, string? entityId = null, string? details = null)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -54,7 +58,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get all schedules for a specific doctor by ID.
+        /// [DOCTOR SCHEDULE API] - Get all schedules for a specific doctor by ID
         /// </summary>
         [HttpGet("doctor/{doctorId}")]
         public async Task<IActionResult> GetByDoctorId(int doctorId)
@@ -68,7 +72,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get all schedules for a specific doctor by name.
+        /// [DOCTOR SCHEDULE API] - Get all schedules for a specific doctor by name
         /// </summary>
         [HttpGet("doctor/by-name/{doctorName}")]
         public async Task<IActionResult> GetByDoctorName(string doctorName)
@@ -82,7 +86,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get a specific schedule by its ID.
+        /// [DOCTOR SCHEDULE API] - Get a specific schedule by its ID
         /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
@@ -94,7 +98,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Create a new doctor schedule.
+        /// [DOCTOR SCHEDULE API] - Create a new doctor schedule
         /// </summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] DoctorScheduleDto dto)
@@ -105,7 +109,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Update an existing doctor schedule.
+        /// [DOCTOR SCHEDULE API] - Update an existing doctor schedule
         /// </summary>
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] DoctorScheduleDto dto)
@@ -117,7 +121,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Delete a doctor schedule by its ID.
+        /// [DOCTOR SCHEDULE API] - Delete a doctor schedule by its ID
         /// </summary>
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
@@ -129,7 +133,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
         
         /// <summary>
-        /// Create weekly schedules for a doctor schedule.
+        /// [DOCTOR SCHEDULE API] - Create weekly schedules for a doctor schedule
         /// </summary>
         [HttpPost("weekly")]
         public async Task<IActionResult> CreateWeeklySchedule([FromBody] CreateWeeklyScheduleDto dto)
