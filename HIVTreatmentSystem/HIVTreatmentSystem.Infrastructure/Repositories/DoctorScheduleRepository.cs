@@ -9,10 +9,13 @@ using System.Threading.Tasks;
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
     /// <summary>
-    /// Repository implementation for DoctorSchedule entity.
+    /// Repository implementation for DoctorSchedule entity..
     /// </summary>
     public class DoctorScheduleRepository : GenericRepository<DoctorSchedule, int>, IDoctorScheduleRepository
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly HIVDbContext _context;
 
         public DoctorScheduleRepository(HIVDbContext context) : base(context)

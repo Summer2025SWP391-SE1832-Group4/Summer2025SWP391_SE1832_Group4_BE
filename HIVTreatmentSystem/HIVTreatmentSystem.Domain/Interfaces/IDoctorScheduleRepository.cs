@@ -10,7 +10,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
     public interface IDoctorScheduleRepository : IGenericRepository<DoctorSchedule, int>
     {
         /// <summary>
-        /// Get all schedules for a specific doctor by ID.
+        /// Get all schedules for a specific doctor by ID..
         /// </summary>
         Task<IEnumerable<DoctorSchedule>> GetByDoctorIdAsync(int doctorId);
 
