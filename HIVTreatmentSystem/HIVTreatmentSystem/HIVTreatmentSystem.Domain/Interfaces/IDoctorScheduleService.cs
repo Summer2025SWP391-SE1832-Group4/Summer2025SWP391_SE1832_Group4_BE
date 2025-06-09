@@ -1,10 +1,13 @@
 // [DOCTOR SCHEDULE API] - Interface for managing doctor schedules
+<<<<<<< HEAD
 // MERGE: Combined changes from dev and main branches
 // - Added CreateWeeklyScheduleAsync method for bulk schedule creation
 // - Added XML documentation for all methods
 // - Added special comments for API methods
 // - Added support for weekly schedule creation
 // - Added support for slot duration configuration
+=======
+>>>>>>> origin/dev
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
 using System.Collections.Generic;
 using System.Threading.Tasks;

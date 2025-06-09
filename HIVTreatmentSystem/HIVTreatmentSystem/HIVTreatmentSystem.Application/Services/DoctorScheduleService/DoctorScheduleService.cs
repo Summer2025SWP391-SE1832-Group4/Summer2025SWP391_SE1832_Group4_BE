@@ -1,4 +1,5 @@
 // [DOCTOR SCHEDULE API] - Service implementation for managing doctor schedules
+<<<<<<< HEAD
 // MERGE: Combined changes from dev and main branches
 // - Added ISystemAuditLogService for tracking operations
 // - Added IMonthlyScheduleService for future integration
@@ -6,6 +7,8 @@
 // - Added error handling with detailed logging
 // - Added minimum slot duration check (15 minutes)
 // - Added transaction support with IUnitOfWork
+=======
+>>>>>>> origin/dev
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
 using HIVTreatmentSystem.Domain.Entities;

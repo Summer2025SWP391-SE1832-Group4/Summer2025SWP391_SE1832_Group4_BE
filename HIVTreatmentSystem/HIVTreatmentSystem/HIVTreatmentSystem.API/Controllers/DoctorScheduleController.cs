@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 // [DOCTOR SCHEDULE API] - Controller for managing doctor schedules
 // MERGE: Combined changes from dev and main branches
 // - Added audit logging for all operations
@@ -5,6 +6,8 @@
 // - Added model validation
 // - Added error handling with proper status codes
 // - Added XML documentation for all endpoints
+=======
+>>>>>>> origin/dev
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
 using Microsoft.AspNetCore.Authorization;
