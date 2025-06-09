@@ -1,195 +1,233 @@
+// [DOCTOR SCHEDULE API] - Service implementation for managing doctor schedules
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
 using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HIVTreatmentSystem.Application.Services
+namespace HIVTreatmentSystem.Application.Services.DoctorScheduleService
 {
-    /// <summary>
-    /// Service implementation for managing doctor schedules.
-    /// </summary>
     public class DoctorScheduleService : IDoctorScheduleService
     {
-        private readonly IDoctorScheduleRepository _repo;
-        private readonly IDoctorRepository _doctorRepo;
+        // [DOCTOR SCHEDULE API] - Dependencies
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ISystemAuditLogService _auditService;
         private readonly IMonthlyScheduleService _monthlyScheduleService;
+        private const int MIN_SLOT_DURATION = 15; // Minimum slot duration in minutes
 
+        // [DOCTOR SCHEDULE API] - Constructor with all required services
         public DoctorScheduleService(
-            IDoctorScheduleRepository repo, 
-            IDoctorRepository doctorRepo,
+            IUnitOfWork unitOfWork,
             ISystemAuditLogService auditService,
             IMonthlyScheduleService monthlyScheduleService)
         {
-            _repo = repo;
-            _doctorRepo = doctorRepo;
+            _unitOfWork = unitOfWork;
             _auditService = auditService;
             _monthlyScheduleService = monthlyScheduleService;
         }
 
-        // [DOCTOR SCHEDULE API] Get schedules by doctor ID
+        // [DOCTOR SCHEDULE API] - Get schedules by doctor ID
         public async Task<IEnumerable<DoctorScheduleDto>> GetByDoctorIdAsync(int doctorId)
         {
-            var list = await _repo.GetByDoctorIdAsync(doctorId);
-            return list.Select(x => ToDto(x));
+            var schedules = await _unitOfWork.DoctorScheduleRepository
+                .GetAll()
+                .Where(s => s.DoctorId == doctorId)
+                .ToListAsync();
+
+            return schedules.Select(ToDto);
         }
 
-        // [DOCTOR SCHEDULE API] Get schedules by doctor name
+        // [DOCTOR SCHEDULE API] - Get schedules by doctor name
         public async Task<IEnumerable<DoctorScheduleDto>> GetByDoctorNameAsync(string doctorName)
         {
-            var list = await _repo.GetByDoctorNameAsync(doctorName);
-            return list.Select(x => ToDto(x));
+            var schedules = await _unitOfWork.DoctorScheduleRepository
+                .GetAll()
+                .Where(s => s.Doctor.FullName.Contains(doctorName))
+                .ToListAsync();
+
+            return schedules.Select(ToDto);
         }
 
-        // [DOCTOR SCHEDULE API] Get schedule by ID
+        // [DOCTOR SCHEDULE API] - Get schedule by ID
         public async Task<DoctorScheduleDto> GetByIdAsync(int id)
         {
-            var x = await _repo.GetByIdAsync(id);
-            return x == null ? null : ToDto(x);
+            var schedule = await _unitOfWork.DoctorScheduleRepository.GetByIdAsync(id);
+            return schedule != null ? ToDto(schedule) : null;
         }
 
-        // [DOCTOR SCHEDULE API] Create new schedule
+        // [DOCTOR SCHEDULE API] - Create new schedule
         public async Task<DoctorScheduleDto> CreateAsync(DoctorScheduleDto dto)
         {
-            var entity = ToEntity(dto);
-            await _repo.AddAsync(entity);
-            return ToDto(entity);
+            var schedule = ToEntity(dto);
+            await _unitOfWork.DoctorScheduleRepository.AddAsync(schedule);
+            await _unitOfWork.SaveChangesAsync();
+            return ToDto(schedule);
         }
 
-        // [DOCTOR SCHEDULE API] Update existing schedule
+        // [DOCTOR SCHEDULE API] - Update existing schedule
         public async Task<DoctorScheduleDto> UpdateAsync(int id, DoctorScheduleDto dto)
         {
-            var entity = await _repo.GetByIdAsync(id);
-            if (entity == null) return null;
-            
-            entity.DayOfWeek = dto.DayOfWeek;
-            entity.StartTime = dto.StartTime;
-            entity.EndTime = dto.EndTime;
-            entity.AvailabilityStatus = (ScheduleAvailability)dto.AvailabilityStatus;
-            entity.EffectiveFrom = dto.EffectiveFrom;
-            entity.EffectiveTo = dto.EffectiveTo;
-            entity.SlotDurationMinutes = dto.SlotDurationMinutes;
-            entity.Notes = dto.Notes;
-            
-            _repo.Update(entity);
-            return ToDto(entity);
+            var schedule = await _unitOfWork.DoctorScheduleRepository.GetByIdAsync(id);
+            if (schedule == null) return null;
+
+            UpdateEntity(schedule, dto);
+            await _unitOfWork.SaveChangesAsync();
+            return ToDto(schedule);
         }
 
-        // [DOCTOR SCHEDULE API] Delete schedule
+        // [DOCTOR SCHEDULE API] - Delete schedule
         public async Task<bool> DeleteAsync(int id)
         {
-            var entity = await _repo.GetByIdAsync(id);
-            if (entity == null) return false;
-            _repo.Remove(entity);
+            var schedule = await _unitOfWork.DoctorScheduleRepository.GetByIdAsync(id);
+            if (schedule == null) return false;
+
+            _unitOfWork.DoctorScheduleRepository.Delete(schedule);
+            await _unitOfWork.SaveChangesAsync();
             return true;
         }
 
-        // [DOCTOR SCHEDULE API] Create weekly schedules for all doctors
-        // RESOLVED: Merge conflict between Fix-Doctor-schedual-weekly and dev branches
-        // - Added ISystemAuditLogService and IMonthlyScheduleService from dev branch
-        // - Kept detailed slot creation logic from Fix-Doctor-schedual-weekly branch
-        // - Added audit logging for schedule creation
-        // - Improved comments and messages
+        // [DOCTOR SCHEDULE API] - Create weekly schedules
         public async Task<List<DoctorScheduleDto>> CreateWeeklyScheduleAsync(CreateWeeklyScheduleDto dto)
         {
-            // Calculate next week's Monday
-            var today = DateTime.Today;
-            var daysUntilMonday = ((int)DayOfWeek.Monday - (int)today.DayOfWeek + 7) % 7;
-            var nextMonday = today.AddDays(daysUntilMonday);
-            var nextSunday = nextMonday.AddDays(6);
-
-            var schedules = new List<DoctorSchedule>();
-            var doctors = await _doctorRepo.GetAllAsync();
-            var slotDuration = dto.SlotDurationMinutes ?? 30;
-
-            foreach (var doctor in doctors)
+            try
             {
-                // Check if doctor already has schedules in this period
-                var existingSchedules = await _repo.GetByDoctorIdAsync(doctor.DoctorId);
-                if (existingSchedules.Any(s => 
-                    s.EffectiveFrom <= nextSunday && 
-                    (s.EffectiveTo == null || s.EffectiveTo >= nextMonday)))
+                // Validate input
+                if (dto.StartTime >= dto.EndTime)
                 {
-                    continue;
+                    throw new ArgumentException("Start time must be before end time");
                 }
 
-                // Create schedule for Monday to Friday (5 days)
-                for (int day = 1; day <= 5; day++)
+                var slotDuration = dto.SlotDurationMinutes ?? 30;
+                if (slotDuration < MIN_SLOT_DURATION)
                 {
-                    var currentTime = dto.StartTime;
-                    while (currentTime < dto.EndTime)
+                    throw new ArgumentException($"Slot duration must be at least {MIN_SLOT_DURATION} minutes");
+                }
+
+                var createdSchedules = new List<DoctorScheduleDto>();
+
+                // Get all active doctors
+                var doctors = await _unitOfWork.DoctorRepository
+                    .GetAll()
+                    .Where(d => d.Status == true)
+                    .ToListAsync();
+
+                if (!doctors.Any())
+                {
+                    throw new InvalidOperationException("No active doctors found");
+                }
+
+                // Calculate next Monday and Sunday
+                var nextMonday = DateTime.Today.AddDays(((int)DayOfWeek.Monday - (int)DateTime.Today.DayOfWeek + 7) % 7);
+                var nextSunday = nextMonday.AddDays(6);
+
+                foreach (var doctor in doctors)
+                {
+                    try
                     {
-                        var remainingMinutes = (dto.EndTime - currentTime).TotalMinutes;
-                        var currentSlotDuration = Math.Min(slotDuration, remainingMinutes);
+                        // Check if schedule already exists for this week
+                        var existingSchedule = await _unitOfWork.DoctorScheduleRepository
+                            .GetAll()
+                            .AnyAsync(s => s.DoctorId == doctor.Id && 
+                                         s.StartTime.Date >= nextMonday && 
+                                         s.EndTime.Date <= nextSunday);
 
-                        // Only create slot if remaining time is at least 15 minutes
-                        if (currentSlotDuration >= 15)
+                        if (existingSchedule)
                         {
-                            var schedule = new DoctorSchedule
+                            await _auditService.LogAsync(
+                                $"Skipped creating schedule for doctor {doctor.Id} - Schedule already exists for week {nextMonday:yyyy-MM-dd} to {nextSunday:yyyy-MM-dd}",
+                                "DoctorSchedule",
+                                "Create");
+                            continue;
+                        }
+
+                        // Create time slots for each weekday
+                        for (int day = 0; day < 7; day++)
+                        {
+                            var currentDate = nextMonday.AddDays(day);
+                            var startTime = currentDate.Add(dto.StartTime.TimeOfDay);
+                            var endTime = currentDate.Add(dto.EndTime.TimeOfDay);
+
+                            // Create slots for the day
+                            var currentSlotStart = startTime;
+                            while (currentSlotStart.AddMinutes(slotDuration) <= endTime)
                             {
-                                DoctorId = doctor.DoctorId,
-                                DayOfWeek = day,
-                                StartTime = currentTime,
-                                EndTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration)),
-                                AvailabilityStatus = ScheduleAvailability.Available,
-                                EffectiveFrom = nextMonday,
-                                EffectiveTo = nextSunday,
-                                SlotDurationMinutes = (int)currentSlotDuration,
-                                Notes = dto.Notes
-                            };
+                                var schedule = new DoctorSchedule
+                                {
+                                    DoctorId = doctor.Id,
+                                    StartTime = currentSlotStart,
+                                    EndTime = currentSlotStart.AddMinutes(slotDuration),
+                                    Status = true
+                                };
 
-                            schedules.Add(schedule);
-                            currentTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration));
+                                await _unitOfWork.DoctorScheduleRepository.AddAsync(schedule);
+                                createdSchedules.Add(ToDto(schedule));
+                                currentSlotStart = currentSlotStart.AddMinutes(slotDuration);
+                            }
                         }
-                        else
-                        {
-                            break;
-                        }
+
+                        await _auditService.LogAsync(
+                            $"Created weekly schedule for doctor {doctor.Id} from {nextMonday:yyyy-MM-dd} to {nextSunday:yyyy-MM-dd}",
+                            "DoctorSchedule",
+                            "Create");
+                    }
+                    catch (Exception ex)
+                    {
+                        await _auditService.LogAsync(
+                            $"Error creating schedule for doctor {doctor.Id}: {ex.Message}",
+                            "DoctorSchedule",
+                            "Error");
+                        throw;
                     }
                 }
-            }
 
-            // Save all slots to database
-            if (schedules.Any())
+                await _unitOfWork.SaveChangesAsync();
+                return createdSchedules;
+            }
+            catch (Exception ex)
             {
-                await _repo.AddRangeAsync(schedules);
-                await _auditService.LogAsync("Weekly schedules created", "DoctorSchedule", "Create");
+                await _auditService.LogAsync(
+                    $"Error in CreateWeeklyScheduleAsync: {ex.Message}",
+                    "DoctorSchedule",
+                    "Error");
+                throw;
             }
-
-            return schedules.Select(ToDto).ToList();
         }
 
-        // [DOCTOR SCHEDULE API] Helper method to convert entity to DTO
-        private DoctorScheduleDto ToDto(DoctorSchedule x) => new DoctorScheduleDto
+        // [DOCTOR SCHEDULE API] - Helper methods for DTO conversion
+        private DoctorScheduleDto ToDto(DoctorSchedule entity)
         {
-            DoctorId = x.DoctorId,
-            DayOfWeek = x.DayOfWeek,
-            StartTime = x.StartTime,
-            EndTime = x.EndTime,
-            AvailabilityStatus = (int)x.AvailabilityStatus,
-            EffectiveFrom = x.EffectiveFrom,
-            EffectiveTo = x.EffectiveTo,
-            SlotDurationMinutes = x.SlotDurationMinutes,
-            Notes = x.Notes
-        };
+            return new DoctorScheduleDto
+            {
+                Id = entity.Id,
+                DoctorId = entity.DoctorId,
+                StartTime = entity.StartTime,
+                EndTime = entity.EndTime,
+                Status = entity.Status
+            };
+        }
 
-        // [DOCTOR SCHEDULE API] Helper method to convert DTO to entity
-        private DoctorSchedule ToEntity(DoctorScheduleDto dto) => new DoctorSchedule
+        private DoctorSchedule ToEntity(DoctorScheduleDto dto)
         {
-            DoctorId = dto.DoctorId,
-            DayOfWeek = dto.DayOfWeek,
-            StartTime = dto.StartTime,
-            EndTime = dto.EndTime,
-            AvailabilityStatus = (ScheduleAvailability)dto.AvailabilityStatus,
-            EffectiveFrom = dto.EffectiveFrom,
-            EffectiveTo = dto.EffectiveTo,
-            SlotDurationMinutes = dto.SlotDurationMinutes,
-            Notes = dto.Notes
-        };
+            return new DoctorSchedule
+            {
+                Id = dto.Id,
+                DoctorId = dto.DoctorId,
+                StartTime = dto.StartTime,
+                EndTime = dto.EndTime,
+                Status = dto.Status
+            };
+        }
+
+        private void UpdateEntity(DoctorSchedule entity, DoctorScheduleDto dto)
+        {
+            entity.DoctorId = dto.DoctorId;
+            entity.StartTime = dto.StartTime;
+            entity.EndTime = dto.EndTime;
+            entity.Status = dto.Status;
+        }
     }
 } 

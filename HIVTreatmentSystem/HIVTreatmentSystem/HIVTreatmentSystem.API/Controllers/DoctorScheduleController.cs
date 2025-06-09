@@ -4,101 +4,146 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
+using System.Security.Claims;
+using HIVTreatmentSystem.Application.Common;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.DTOs;
+using HIVTreatmentSystem.Domain.Interfaces;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
+    /// <summary>
+    /// API Controller for managing doctor schedules.
+    /// </summary>
     [Authorize]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/doctorSchedule")]
     public class DoctorScheduleController : ControllerBase
     {
-        private readonly IDoctorScheduleService _doctorScheduleService;
+        // [DOCTOR SCHEDULE API] - Controller dependencies
+        private readonly IDoctorScheduleService _service;
+        private readonly ISystemAuditLogService _auditService;
+        private readonly IMonthlyScheduleService _monthlyScheduleService;
 
-        public DoctorScheduleController(IDoctorScheduleService doctorScheduleService)
+        // [DOCTOR SCHEDULE API] - Constructor with all required services
+        public DoctorScheduleController(
+            IDoctorScheduleService service, 
+            ISystemAuditLogService auditService, 
+            IMonthlyScheduleService monthlyScheduleService)
         {
-            _doctorScheduleService = doctorScheduleService;
+            _service = service;
+            _auditService = auditService;
+            _monthlyScheduleService = monthlyScheduleService;
+        }
+
+        // [DOCTOR SCHEDULE API] - Helper method for audit logging
+        private async Task LogAction(string action, string? entityId = null, string? details = null)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var username = User.FindFirstValue(ClaimTypes.Name);
+            var role = User.FindFirstValue(ClaimTypes.Role);
+            var ip = HttpContext.Connection.RemoteIpAddress?.ToString();
+            await _auditService.LogAsync(new SystemAuditLog
+            {
+                AccountId = int.TryParse(userId, out var id) ? id : null,
+                Username = username,
+                RoleAtTimeOfAction = role,
+                Action = action,
+                AffectedEntity = "DoctorSchedule",
+                AffectedEntityId = entityId,
+                IpAddress = ip,
+                ActionDetails = details
+            });
         }
 
         /// <summary>
-        /// Get all schedules for a specific doctor by ID
+        /// [DOCTOR SCHEDULE API] - Get all schedules for a specific doctor by ID
         /// </summary>
         [HttpGet("doctor/{doctorId}")]
-        public async Task<ActionResult<IEnumerable<DoctorScheduleDto>>> GetByDoctorId(int doctorId)
+        public async Task<IActionResult> GetByDoctorId(int doctorId)
         {
-            var schedules = await _doctorScheduleService.GetByDoctorIdAsync(doctorId);
-            return Ok(schedules);
+            var result = await _service.GetByDoctorIdAsync(doctorId);
+            if (result == null || !result.Any())
+            {
+                return Ok(new ApiResponse("No doctor schedules found.", new List<DoctorScheduleDto>()));
+            }
+            return Ok(new ApiResponse("Success", result));
         }
 
         /// <summary>
-        /// Get all schedules for a specific doctor by name
+        /// [DOCTOR SCHEDULE API] - Get all schedules for a specific doctor by name
         /// </summary>
-        [HttpGet("doctor/name/{doctorName}")]
-        public async Task<ActionResult<IEnumerable<DoctorScheduleDto>>> GetByDoctorName(string doctorName)
+        [HttpGet("doctor/by-name/{doctorName}")]
+        public async Task<IActionResult> GetByDoctorName(string doctorName)
         {
-            var schedules = await _doctorScheduleService.GetByDoctorNameAsync(doctorName);
-            return Ok(schedules);
+            var result = await _service.GetByDoctorNameAsync(doctorName);
+            if (result == null || !result.Any())
+            {
+                return Ok(new ApiResponse("No doctor schedules found.", new List<DoctorScheduleDto>()));
+            }
+            return Ok(new ApiResponse("Success", result));
         }
 
         /// <summary>
-        /// Get a specific schedule by ID
+        /// [DOCTOR SCHEDULE API] - Get a specific schedule by its ID
         /// </summary>
         [HttpGet("{id}")]
-        public async Task<ActionResult<DoctorScheduleDto>> GetById(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var schedule = await _doctorScheduleService.GetByIdAsync(id);
-            if (schedule == null)
-            {
-                return NotFound();
-            }
-            return Ok(schedule);
+            var result = await _service.GetByIdAsync(id);
+            if (result == null)
+                return NotFound(new ApiResponse("Doctor schedule not found."));
+            return Ok(new ApiResponse("Success", result));
         }
 
         /// <summary>
-        /// Create a new doctor schedule
+        /// [DOCTOR SCHEDULE API] - Create a new doctor schedule
         /// </summary>
         [HttpPost]
-        public async Task<ActionResult<DoctorScheduleDto>> Create(DoctorScheduleDto dto)
+        public async Task<IActionResult> Create([FromBody] DoctorScheduleDto dto)
         {
-            var createdSchedule = await _doctorScheduleService.CreateAsync(dto);
-            return CreatedAtAction(nameof(GetById), new { id = createdSchedule.DoctorId }, createdSchedule);
+            var result = await _service.CreateAsync(dto);
+            await LogAction("Created doctor schedule", null, System.Text.Json.JsonSerializer.Serialize(dto));
+            return Ok(new ApiResponse("Doctor schedule created successfully.", result));
         }
 
         /// <summary>
-        /// Update an existing doctor schedule
+        /// [DOCTOR SCHEDULE API] - Update an existing doctor schedule
         /// </summary>
         [HttpPut("{id}")]
-        public async Task<ActionResult<DoctorScheduleDto>> Update(int id, DoctorScheduleDto dto)
+        public async Task<IActionResult> Update(int id, [FromBody] DoctorScheduleDto dto)
         {
-            var updatedSchedule = await _doctorScheduleService.UpdateAsync(id, dto);
-            if (updatedSchedule == null)
-            {
-                return NotFound();
-            }
-            return Ok(updatedSchedule);
+            var result = await _service.UpdateAsync(id, dto);
+            await LogAction("Updated doctor schedule", id.ToString(), System.Text.Json.JsonSerializer.Serialize(dto));
+            if (result == null) return NotFound();
+            return Ok(new ApiResponse("Doctor schedule updated successfully.", result));
         }
 
         /// <summary>
-        /// Delete a doctor schedule
+        /// [DOCTOR SCHEDULE API] - Delete a doctor schedule by its ID
         /// </summary>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var result = await _doctorScheduleService.DeleteAsync(id);
-            if (!result)
-            {
-                return NotFound();
-            }
-            return NoContent();
+            var success = await _service.DeleteAsync(id);
+            await LogAction("Deleted doctor schedule", id.ToString());
+            if (!success) return NotFound();
+            return Ok(new ApiResponse("Doctor schedule deleted successfully."));
         }
-
+        
         /// <summary>
-        /// Create weekly schedules for all doctors
+        /// [DOCTOR SCHEDULE API] - Create weekly schedules for a doctor schedule
         /// </summary>
         [HttpPost("weekly")]
-        public async Task<ActionResult<List<DoctorScheduleDto>>> CreateWeeklySchedule(CreateWeeklyScheduleDto dto)
+        public async Task<IActionResult> CreateWeeklySchedule([FromBody] CreateWeeklyScheduleDto dto)
         {
-            var schedules = await _doctorScheduleService.CreateWeeklyScheduleAsync(dto);
-            return Ok(schedules);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var schedules = await _service.CreateWeeklyScheduleAsync(dto);
+            await LogAction("Created weekly schedules for all doctors", null, System.Text.Json.JsonSerializer.Serialize(dto));
+            return Ok(new ApiResponse("Weekly schedules created successfully.", schedules));
         }
     }
 } 

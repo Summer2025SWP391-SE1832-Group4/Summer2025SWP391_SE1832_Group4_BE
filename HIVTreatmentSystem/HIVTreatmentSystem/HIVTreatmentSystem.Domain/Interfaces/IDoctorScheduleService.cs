@@ -1,3 +1,4 @@
+// [DOCTOR SCHEDULE API] - Interface for managing doctor schedules
 using HIVTreatmentSystem.Application.Models.DoctorSchedule;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -9,25 +10,25 @@ namespace HIVTreatmentSystem.Domain.Interfaces
     /// </summary>
     public interface IDoctorScheduleService
     {
-        // [DOCTOR SCHEDULE API] Get schedules by doctor ID
+        // [DOCTOR SCHEDULE API] - Get schedules by doctor ID
         Task<IEnumerable<DoctorScheduleDto>> GetByDoctorIdAsync(int doctorId);
 
-        // [DOCTOR SCHEDULE API] Get schedules by doctor name
+        // [DOCTOR SCHEDULE API] - Get schedules by doctor name
         Task<IEnumerable<DoctorScheduleDto>> GetByDoctorNameAsync(string doctorName);
 
-        // [DOCTOR SCHEDULE API] Get schedule by ID
+        // [DOCTOR SCHEDULE API] - Get schedule by ID
         Task<DoctorScheduleDto> GetByIdAsync(int id);
 
-        // [DOCTOR SCHEDULE API] Create new schedule
+        // [DOCTOR SCHEDULE API] - Create new schedule
         Task<DoctorScheduleDto> CreateAsync(DoctorScheduleDto dto);
 
-        // [DOCTOR SCHEDULE API] Update existing schedule
+        // [DOCTOR SCHEDULE API] - Update existing schedule
         Task<DoctorScheduleDto> UpdateAsync(int id, DoctorScheduleDto dto);
 
-        // [DOCTOR SCHEDULE API] Delete schedule
+        // [DOCTOR SCHEDULE API] - Delete schedule
         Task<bool> DeleteAsync(int id);
 
-        // [DOCTOR SCHEDULE API] Create weekly schedules for all doctors
+        // [DOCTOR SCHEDULE API] - Create weekly schedules
         Task<List<DoctorScheduleDto>> CreateWeeklyScheduleAsync(CreateWeeklyScheduleDto dto);
     }
 } 
