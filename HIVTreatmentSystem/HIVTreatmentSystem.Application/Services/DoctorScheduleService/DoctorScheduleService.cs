@@ -85,6 +85,7 @@ namespace HIVTreatmentSystem.Application.Services
 
             var schedules = new List<DoctorSchedule>();
             var doctors = await _doctorRepo.GetAllAsync();
+            var slotDuration = dto.SlotDurationMinutes ?? 30;
 
             foreach (var doctor in doctors)
             {
@@ -100,20 +101,36 @@ namespace HIVTreatmentSystem.Application.Services
                 // Create schedule for Monday to Friday (5 days)
                 for (int day = 1; day <= 5; day++)
                 {
-                    var schedule = new DoctorSchedule
+                    var currentTime = dto.StartTime;
+                    while (currentTime < dto.EndTime)
                     {
-                        DoctorId = doctor.DoctorId,
-                        DayOfWeek = day,
-                        StartTime = dto.StartTime,
-                        EndTime = dto.EndTime,
-                        AvailabilityStatus = ScheduleAvailability.Available,
-                        EffectiveFrom = nextMonday,
-                        EffectiveTo = nextSunday,
-                        SlotDurationMinutes = dto.SlotDurationMinutes ?? 30,
-                        Notes = dto.Notes
-                    };
+                        var remainingMinutes = (dto.EndTime - currentTime).TotalMinutes;
+                        var currentSlotDuration = Math.Min(slotDuration, remainingMinutes);
 
-                    schedules.Add(schedule);
+                        // Only create slot if remaining time is at least 15 minutes
+                        if (currentSlotDuration >= 15)
+                        {
+                            var schedule = new DoctorSchedule
+                            {
+                                DoctorId = doctor.DoctorId,
+                                DayOfWeek = day,
+                                StartTime = currentTime,
+                                EndTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration)),
+                                AvailabilityStatus = ScheduleAvailability.Available,
+                                EffectiveFrom = nextMonday,
+                                EffectiveTo = nextSunday,
+                                SlotDurationMinutes = (int)currentSlotDuration,
+                                Notes = dto.Notes
+                            };
+
+                            schedules.Add(schedule);
+                            currentTime = currentTime.Add(TimeSpan.FromMinutes(currentSlotDuration));
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
                 }
             }
 

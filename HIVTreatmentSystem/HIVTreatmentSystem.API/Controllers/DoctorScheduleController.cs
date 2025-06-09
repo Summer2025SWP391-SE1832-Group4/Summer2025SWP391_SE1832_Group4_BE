@@ -21,16 +21,13 @@ namespace HIVTreatmentSystem.API.Controllers
     {
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
-        private readonly IMonthlyScheduleService _monthlyScheduleService;
 
         public DoctorScheduleController(
             IDoctorScheduleService service, 
-            ISystemAuditLogService auditService, 
-            IMonthlyScheduleService monthlyScheduleService)
+            ISystemAuditLogService auditService)
         {
             _service = service;
             _auditService = auditService;
-            _monthlyScheduleService = monthlyScheduleService;
         }
 
         private async Task LogAction(string action, string? entityId = null, string? details = null)
