@@ -19,6 +19,9 @@ namespace HIVTreatmentSystem.API.Controllers
     [Route("api/doctorSchedule")]
     public class DoctorScheduleController : ControllerBase
     {
+        /// <summary>
+        /// 
+        /// </summary>
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
 
