@@ -24,6 +24,7 @@ namespace HIVTreatmentSystem.API.Controllers
         /// </summary>
         private readonly IDoctorScheduleService _service;
         private readonly ISystemAuditLogService _auditService;
+        private readonly IMonthlyScheduleService _monthlyScheduleService;
 
         public DoctorScheduleController(
             IDoctorScheduleService service, 
