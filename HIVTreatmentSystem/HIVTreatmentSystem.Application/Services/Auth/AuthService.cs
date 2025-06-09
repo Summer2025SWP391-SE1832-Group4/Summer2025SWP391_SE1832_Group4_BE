@@ -299,13 +299,13 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 var account = await _accountRepository.GetByIdAsync(id);
                 if (account == null)
-                    return new ChangePasswordResponse { Success = false, Message = "Account not found." };
+                    return new ChangePasswordResponse { Success = false, Message = "Error: Account not found." };
                 bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
                 if (!checkPassword)
-                    return new ChangePasswordResponse { Success = false, Message = "Old password is incorrect." };
+                    return new ChangePasswordResponse { Success = false, Message = "Error: Old password is incorrect." };
                 bool isSamePassword = _passwordHasher.VerifyPassword(newPassword, account.PasswordHash);
                 if (isSamePassword)
-                    return new ChangePasswordResponse { Success = false, Message = "New password must be different from the old password." };
+                    return new ChangePasswordResponse { Success = false, Message = "Error: New password must be different from the old password." };
                 account.PasswordHash = _passwordHasher.HashPassword(newPassword);
                 _accountRepository.Update(account);
                 return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };

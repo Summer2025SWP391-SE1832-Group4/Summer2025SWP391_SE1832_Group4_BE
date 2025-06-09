@@ -9,6 +9,7 @@ using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Application.Services;
 using HIVTreatmentSystem.Application.Services.Account;
+using HIVTreatmentSystem.Application.Services.AppointmentService;
 using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Services.BlogService;
 using HIVTreatmentSystem.Application.Services.BlogTagService;
@@ -196,11 +197,15 @@ builder.Services.AddScoped<
 >();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
+builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
+builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
 builder.Services.AddAutoMapper(typeof(AccountMapper));
+builder.Services.AddAutoMapper(typeof(AppointmentMapper));
+builder.Services.AddAutoMapper(typeof(PatientMapper));
 builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
 
 var app = builder.Build();
