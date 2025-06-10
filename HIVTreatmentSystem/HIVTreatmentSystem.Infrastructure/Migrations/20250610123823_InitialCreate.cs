@@ -67,6 +67,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BlogImageUrl = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     BlogTagId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -248,35 +249,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     table.PrimaryKey("PK_Certificates", x => x.CertificateId);
                     table.ForeignKey(
                         name: "FK_Certificates_Doctors_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "Doctors",
-                        principalColumn: "DoctorId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DoctorSchedules",
-                columns: table => new
-                {
-                    ScheduleId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
-                    DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time", nullable: false),
-                    AvailabilityStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    EffectiveFrom = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    EffectiveTo = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    SlotDurationMinutes = table.Column<int>(type: "int", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DoctorSchedules", x => x.ScheduleId);
-                    table.CheckConstraint("CK_DoctorSchedule_DayOfWeek", "DayOfWeek BETWEEN 1 AND 7");
-                    table.CheckConstraint("CK_DoctorSchedule_TimeValidation", "EndTime > StartTime");
-                    table.ForeignKey(
-                        name: "FK_DoctorSchedules_Doctors_DoctorId",
                         column: x => x.DoctorId,
                         principalTable: "Doctors",
                         principalColumn: "DoctorId",
@@ -594,11 +566,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 column: "DoctorId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DoctorSchedules_DoctorId",
-                table: "DoctorSchedules",
-                column: "DoctorId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_EducationalMaterials_AuthorId",
                 table: "EducationalMaterials",
                 column: "AuthorId");
@@ -714,9 +681,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Certificates");
-
-            migrationBuilder.DropTable(
-                name: "DoctorSchedules");
 
             migrationBuilder.DropTable(
                 name: "EducationalMaterials");

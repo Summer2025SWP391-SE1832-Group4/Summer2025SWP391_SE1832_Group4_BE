@@ -49,19 +49,7 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
                 Qualifications = doctor.Qualifications,
                 YearsOfExperience = doctor.YearsOfExperience,
                 ShortDescription = doctor.ShortDescription,
-                Schedules = doctor.Schedules.Select(s => new DoctorScheduleDto
-                {
-                    ScheduleId = s.ScheduleId,
-                    DoctorId = s.DoctorId,
-                    DayOfWeek = s.DayOfWeek,
-                    StartTime = s.StartTime,
-                    EndTime = s.EndTime,
-                    AvailabilityStatus = (int)s.AvailabilityStatus,
-                    EffectiveFrom = s.EffectiveFrom,
-                    EffectiveTo = s.EffectiveTo,
-                    SlotDurationMinutes = s.SlotDurationMinutes,
-                    Notes = s.Notes
-                }).ToList(),
+                
                 ExperienceWorkings = doctor.ExperienceWorkings.Select(e => new ExperienceWorkingDto
                 {
                     ExperienceId = e.Id,
