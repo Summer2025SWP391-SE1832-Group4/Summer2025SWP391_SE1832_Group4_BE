@@ -34,8 +34,6 @@ namespace HIVTreatmentSystem.Domain.Entities
             new List<MedicalRecord>();
         public virtual ICollection<PatientTreatment> PrescribedTreatments { get; set; } =
             new List<PatientTreatment>();
-        public virtual ICollection<DoctorSchedule> Schedules { get; set; } =
-            new List<DoctorSchedule>();
         public virtual ICollection<ExperienceWorking> ExperienceWorkings { get; set; } =
             new List<ExperienceWorking>();
         public virtual ICollection<Certificate> Certificates { get; set; } =             

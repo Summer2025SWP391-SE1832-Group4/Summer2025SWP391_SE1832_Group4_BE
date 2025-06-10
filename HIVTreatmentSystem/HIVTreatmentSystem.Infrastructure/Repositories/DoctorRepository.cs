@@ -23,7 +23,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .Where(predicate)
@@ -34,7 +33,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .FirstOrDefaultAsync(d => d.DoctorId == id);
@@ -44,7 +42,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .ToListAsync();
@@ -54,7 +51,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .FirstOrDefaultAsync(d => d.DoctorId == doctorId);
@@ -64,7 +60,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .Where(d => d.Specialty == specialty)
@@ -75,7 +70,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
                 .ToListAsync();
@@ -85,7 +79,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.Schedules)
                 .ToListAsync();
         }
 
@@ -96,7 +89,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(a => a.Doctor)
                     .ThenInclude(d => d.Account)
                 .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Schedules)
                 .Where(a => a.AppointmentDateTime >= currentDate)
                 .Select(a => a.Doctor)
                 .Where(d => d != null)
