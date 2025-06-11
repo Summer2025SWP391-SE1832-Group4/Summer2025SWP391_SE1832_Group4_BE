@@ -100,11 +100,14 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"));
 
-                    b.Property<DateTime>("AppointmentDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("AppointmentDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("AppointmentNotes")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeOnly>("AppointmentTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("AppointmentType")
                         .HasMaxLength(50)

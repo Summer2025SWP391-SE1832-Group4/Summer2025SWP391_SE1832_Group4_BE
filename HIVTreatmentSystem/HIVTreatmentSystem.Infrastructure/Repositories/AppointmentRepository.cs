@@ -38,20 +38,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Appointment>> GetUpcomingAppointmentsAsync()
-        {
-            var now = DateTime.UtcNow;
-            return await _context.Appointments
-                .Where(a => a.AppointmentDateTime >= now)
-                .ToListAsync();
-        }
-
-        public async Task<IEnumerable<Appointment>> GetAppointmentsByDateRangeAsync(DateTime startDate, DateTime endDate)
-        {
-            return await _context.Appointments
-                .Where(a => a.AppointmentDateTime >= startDate && a.AppointmentDateTime <= endDate)
-                .ToListAsync();
-        }
+       
 
         public async Task<IEnumerable<Appointment>> GetAppointmentsByStatusAsync(string status)
         {
@@ -65,8 +52,8 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
     string? patientName,
     string? appointmentType,
     AppointmentStatus? status,
-    DateTime? startDate,
-    DateTime? endDate,
+    DateOnly? startDate,
+    DateOnly? endDate,
     bool isDescending,
     string? sortBy)
         {
@@ -90,10 +77,14 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 query = query.Where(a => a.Status == status.Value);
 
             if (startDate.HasValue)
-                query = query.Where(a => a.AppointmentDateTime >= startDate.Value);
+            {
+                query = query.Where(a => a.AppointmentDate >= startDate);
+            }
 
             if (endDate.HasValue)
-                query = query.Where(a => a.AppointmentDateTime <= endDate.Value);
+            {
+                query = query.Where(a => a.AppointmentDate <= endDate);
+            }
 
             query = sortBy?.ToLower() switch
             {
@@ -105,9 +96,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                     ? query.OrderByDescending(a => a.Patient.Account.FullName)
                     : query.OrderBy(a => a.Patient.Account.FullName),
 
-                "appointmentdatetime" => isDescending
-                    ? query.OrderByDescending(a => a.AppointmentDateTime)
-                    : query.OrderBy(a => a.AppointmentDateTime),
+                "appointmentdate" => isDescending
+                    ? query.OrderByDescending(a => a.AppointmentDate)
+                    : query.OrderBy(a => a.AppointmentDate),
 
                 "status" => isDescending
                     ? query.OrderByDescending(a => a.Status)
@@ -118,8 +109,8 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                     : query.OrderBy(a => a.AppointmentType),
 
                 _ => isDescending
-                    ? query.OrderByDescending(a => a.AppointmentDateTime)
-                    : query.OrderBy(a => a.AppointmentDateTime)
+                    ? query.OrderByDescending(a => a.AppointmentDate)
+                    : query.OrderBy(a => a.AppointmentDate)
             };
 
             return await query.ToListAsync();
@@ -143,5 +134,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             _context.Appointments.Remove(appointment);
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Appointment>> GetAppointmentsByDoctorAsync(int doctorId, DateOnly date)
+        {
+            return await _context.Appointments
+                .Where(a => a.DoctorId == doctorId && a.AppointmentDate == date)
+                .ToListAsync();
+        }
+
     }
 }
