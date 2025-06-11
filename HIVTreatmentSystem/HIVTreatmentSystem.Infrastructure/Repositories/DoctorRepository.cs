@@ -82,18 +82,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        public async Task<IEnumerable<Doctor>> GetDoctorsWithActivePatientsAsync()
-        {
-            var currentDate = DateTime.UtcNow;
-            return await _context.Appointments
-                .Include(a => a.Doctor)
-                    .ThenInclude(d => d.Account)
-                .Include(a => a.Doctor)
-                .Where(a => a.AppointmentDateTime >= currentDate)
-                .Select(a => a.Doctor)
-                .Where(d => d != null)
-                .Distinct()
-                .ToListAsync();
-        }
+        
     }
 }

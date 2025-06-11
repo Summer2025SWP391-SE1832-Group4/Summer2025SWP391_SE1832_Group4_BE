@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250610123823_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250611103241_AppointmentDBUpdate")]
+    partial class AppointmentDBUpdate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -103,11 +103,14 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AppointmentId"));
 
-                    b.Property<DateTime>("AppointmentDateTime")
-                        .HasColumnType("datetime2");
+                    b.Property<DateOnly>("AppointmentDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("AppointmentNotes")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeOnly>("AppointmentTime")
+                        .HasColumnType("time");
 
                     b.Property<string>("AppointmentType")
                         .HasMaxLength(50)

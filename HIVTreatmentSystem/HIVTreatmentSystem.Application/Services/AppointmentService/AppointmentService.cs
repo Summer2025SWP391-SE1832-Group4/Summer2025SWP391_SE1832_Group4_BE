@@ -31,8 +31,8 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         string? patientName,
         string? appointmentType,
         AppointmentStatus? status,
-        DateTime? startDate,
-        DateTime? endDate,
+        DateOnly? startDate,
+        DateOnly? endDate,
         bool isDescending,
         string? sortBy,
         int pageIndex,
@@ -72,6 +72,35 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         {
             try
             {
+                var dayOfWeek = request.AppointmentDate.DayOfWeek;
+                if (dayOfWeek == DayOfWeek.Sunday)
+                {
+                    return new ApiResponse("Error: Can't create appointment on Sunday.");
+                }
+
+                var time = request.AppointmentTime;
+
+                bool isMorning = time >= new TimeOnly(8, 0) && time <= new TimeOnly(11, 30);
+                bool isAfternoon = time >= new TimeOnly(13, 0) && time <= new TimeOnly(16, 30);
+
+                if (!isMorning && !isAfternoon)
+                {
+                    return new ApiResponse("Error: Please create in range 8:00 - 11:30 & 13:00 - 16:30");
+                }
+
+                if (time.Minute != 0 && time.Minute != 30)
+                {
+                    return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
+                }
+
+                var existingAppointments = await _appointmentRepository
+            .GetAppointmentsByDoctorAsync(request.DoctorId, request.AppointmentDate);
+
+                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
+                {
+                    return new ApiResponse("Error: The doctor is already scheduled at this time..");
+                }
+
                 var appointment = _mapper.Map<Appointment>(request);
                 await _appointmentRepository.AddAsync(appointment);
                 return new ApiResponse("Appointment created successfully.");
@@ -86,9 +115,39 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         {
             try
             {
+
                 var appointment = await _appointmentRepository.GetByIdAsync(id);
                 if (appointment == null)
                     return new ApiResponse("Error: Appointment not found");
+
+                var dayOfWeek = request.AppointmentDate.DayOfWeek;
+                if (dayOfWeek == DayOfWeek.Sunday)
+                {
+                    return new ApiResponse("Error: Can't create appointment on Sunday.");
+                }
+
+                var time = request.AppointmentTime;
+
+                bool isMorning = time >= new TimeOnly(8, 0) && time <= new TimeOnly(11, 30);
+                bool isAfternoon = time >= new TimeOnly(13, 0) && time <= new TimeOnly(16, 30);
+
+                if (!isMorning && !isAfternoon)
+                {
+                    return new ApiResponse("Error: Please create in range 8:00 - 11:30 & 13:00 - 16:30");
+                }
+
+                if (time.Minute != 0 && time.Minute != 30)
+                {
+                    return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
+                }
+
+                var existingAppointments = await _appointmentRepository
+            .GetAppointmentsByDoctorAsync(request.DoctorId, request.AppointmentDate);
+
+                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
+                {
+                    return new ApiResponse("Error: The doctor is already scheduled at this time..");
+                }
 
                 _mapper.Map(request, appointment);
 

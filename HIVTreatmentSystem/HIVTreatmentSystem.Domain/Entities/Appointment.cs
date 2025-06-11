@@ -16,7 +16,8 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public int? DoctorId { get; set; }
 
-        public DateTime AppointmentDateTime { get; set; }
+        public DateOnly AppointmentDate { get; set; }
+        public TimeOnly AppointmentTime { get; set; }
 
         [MaxLength(50)]
         public string? AppointmentType { get; set; }
