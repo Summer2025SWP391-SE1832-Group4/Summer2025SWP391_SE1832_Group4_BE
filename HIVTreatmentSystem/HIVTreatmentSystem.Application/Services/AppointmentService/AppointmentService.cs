@@ -7,9 +7,11 @@ using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -19,18 +21,23 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
     {
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly IMapper _mapper;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IPatientRepository _patientRepository;
 
-        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper)
+        public AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper, IHttpContextAccessor httpContextAccessor, IPatientRepository patientRepository)
         {
             _appointmentRepository = appointmentRepository;
             _mapper = mapper;
+            _httpContextAccessor = httpContextAccessor;
+            _patientRepository = patientRepository;
         }
 
         public async Task<PageResult<AppointmentResponse>> GetAllAppointmentsAsync(
         string? doctorName,
         string? patientName,
-        string? appointmentType,
+        AppointmentTypeEnum? appointmentType,
         AppointmentStatus? status,
+        AppointmentServiceEnum? appointmentService,
         DateOnly? startDate,
         DateOnly? endDate,
         bool isDescending,
@@ -43,6 +50,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 patientName,
                 appointmentType,
                 status,
+                appointmentService,
                 startDate,
                 endDate,
                 isDescending,
@@ -101,7 +109,36 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: The doctor is already scheduled at this time..");
                 }
 
+                var claims = _httpContextAccessor.HttpContext?.User?.Claims;
+                if (claims == null || !claims.Any())
+                {
+                    Console.WriteLine("❌ No claims found in HttpContext.User");
+                }
+                else
+                {
+                    foreach (var claim in claims)
+                    {
+                        Console.WriteLine($"✅ Claim: {claim.Type} = {claim.Value}");
+                    }
+                }
+
+                var accountIdStr = _httpContextAccessor.HttpContext?.User?
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+                if (!int.TryParse(accountIdStr, out var accountId))
+                {
+                    return new ApiResponse("Error: Invalid AccountId from token.");
+                }
+
+                var patient = await _patientRepository.GetByAccountIdAsync(accountId);
+                if (patient == null)
+                {
+                    return new ApiResponse("Error: No patient found for this account.");
+                }
+
                 var appointment = _mapper.Map<Appointment>(request);
+                appointment.CreatedByUserId = accountId;
+                appointment.PatientId = patient.PatientId;
                 await _appointmentRepository.AddAsync(appointment);
                 return new ApiResponse("Appointment created successfully.");
             }
@@ -111,7 +148,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             }
         }
 
-        public async Task<ApiResponse> UpdateAppointmentAsync(int id, AppointmentRequest request)
+        public async Task<ApiResponse> UpdateAppointmentAsync(int id, AppointmentUpdateRequest request)
         {
             try
             {
@@ -120,36 +157,53 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 if (appointment == null)
                     return new ApiResponse("Error: Appointment not found");
 
-                var dayOfWeek = request.AppointmentDate.DayOfWeek;
-                if (dayOfWeek == DayOfWeek.Sunday)
+                var appointmentDate = request.AppointmentDate ?? appointment.AppointmentDate;
+                var appointmentTime = request.AppointmentTime ?? appointment.AppointmentTime;
+
+                if (appointmentDate.DayOfWeek == DayOfWeek.Sunday)
                 {
                     return new ApiResponse("Error: Can't create appointment on Sunday.");
                 }
 
-                var time = request.AppointmentTime;
-
-                bool isMorning = time >= new TimeOnly(8, 0) && time <= new TimeOnly(11, 30);
-                bool isAfternoon = time >= new TimeOnly(13, 0) && time <= new TimeOnly(16, 30);
+                bool isMorning = appointmentTime >= new TimeOnly(8, 0) && appointmentTime <= new TimeOnly(11, 30);
+                bool isAfternoon = appointmentTime >= new TimeOnly(13, 0) && appointmentTime <= new TimeOnly(16, 30);
 
                 if (!isMorning && !isAfternoon)
                 {
                     return new ApiResponse("Error: Please create in range 8:00 - 11:30 & 13:00 - 16:30");
                 }
 
-                if (time.Minute != 0 && time.Minute != 30)
+                if (appointmentTime.Minute != 0 && appointmentTime.Minute != 30)
                 {
                     return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
                 }
 
                 var existingAppointments = await _appointmentRepository
-            .GetAppointmentsByDoctorAsync(request.DoctorId, request.AppointmentDate);
+                    .GetAppointmentsByDoctorAsync(appointment.DoctorId, appointmentDate);
 
-                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
+                if (existingAppointments.Any(a => a.AppointmentId != id && a.AppointmentTime == appointmentTime))
                 {
-                    return new ApiResponse("Error: The doctor is already scheduled at this time..");
+                    return new ApiResponse("Error: The doctor is already scheduled at this time.");
                 }
 
-                _mapper.Map(request, appointment);
+                // Map thủ công chỉ những trường không null
+                if (request.AppointmentDate.HasValue)
+                    appointment.AppointmentDate = request.AppointmentDate.Value;
+
+                if (request.AppointmentTime.HasValue)
+                    appointment.AppointmentTime = request.AppointmentTime.Value;
+
+                if (request.AppointmentType.HasValue)
+                    appointment.AppointmentType = request.AppointmentType.Value;
+
+                if (request.Status.HasValue)
+                    appointment.Status = request.Status.Value;
+
+                if (request.AppointmentService.HasValue)
+                    appointment.AppointmentService = request.AppointmentService.Value;
+
+                if (!string.IsNullOrWhiteSpace(request.AppointmentNotes))
+                    appointment.AppointmentNotes = request.AppointmentNotes;
 
                 await _appointmentRepository.UpdateAsync(appointment);
                 return new ApiResponse("Appointment updated successfully.");

@@ -50,8 +50,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<IEnumerable<Appointment>> GetAllAppointmentsAsync(
     string? doctorName,
     string? patientName,
-    string? appointmentType,
+    AppointmentTypeEnum? appointmentType,
     AppointmentStatus? status,
+    AppointmentServiceEnum? appointmentServiceEnum,
     DateOnly? startDate,
     DateOnly? endDate,
     bool isDescending,
@@ -70,8 +71,11 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             if (!string.IsNullOrWhiteSpace(patientName))
                 query = query.Where(a => a.Patient.Account.FullName.Contains(patientName));
 
-            if (!string.IsNullOrWhiteSpace(appointmentType))
-                query = query.Where(a => a.AppointmentType != null && a.AppointmentType.Contains(appointmentType));
+            if (appointmentType.HasValue)
+                query = query.Where(a => a.AppointmentType == appointmentType.Value);
+
+            if (appointmentServiceEnum.HasValue)
+                query = query.Where(a => a.AppointmentService == appointmentServiceEnum.Value);
 
             if (status.HasValue)
                 query = query.Where(a => a.Status == status.Value);
