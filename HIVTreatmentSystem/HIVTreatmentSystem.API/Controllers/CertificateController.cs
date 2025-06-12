@@ -108,11 +108,19 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var certificates = await _certificateService.GetCertificatesByDoctorIdAsync(doctorId);
-                return Ok(certificates);
+                if (certificates == null || !certificates.Any())
+                {
+                    return NotFound(new ApiResponse($"No certificates found for doctor with ID {doctorId}."));
+                }
+                return Ok(new ApiResponse("Success", certificates));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new ApiResponse(ex.Message));
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new { error = ex.Message });
+                return StatusCode(500, new ApiResponse($"An error occurred: {ex.Message}"));
             }
         }
     }
