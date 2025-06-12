@@ -15,8 +15,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<IEnumerable<Appointment>> GetAllAppointmentsAsync(
             string? doctorName,
             string? patientName,
-            string? appointmentType,
+            AppointmentTypeEnum? appointmentType,
             AppointmentStatus? status,
+            AppointmentServiceEnum? appointmentService,
             DateOnly? startDate,
             DateOnly? endDate,
             bool isDescending,

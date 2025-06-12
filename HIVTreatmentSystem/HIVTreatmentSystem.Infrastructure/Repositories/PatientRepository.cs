@@ -44,5 +44,12 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return null;
         }
+
+        public async Task<Patient?> GetByAccountIdAsync(int accountId)
+        {
+            return await _context.Patients
+                .FirstOrDefaultAsync(p => p.AccountId == accountId);
+        }
+
     }
 }

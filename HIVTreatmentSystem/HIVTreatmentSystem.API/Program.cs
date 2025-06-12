@@ -114,8 +114,9 @@ builder.Services.AddSwaggerGen(c =>
                 "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
             Name = "Authorization",
             In = ParameterLocation.Header,
-            Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer",
+            Type = SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT"
         }
     );
 
@@ -218,6 +219,7 @@ builder.Services.AddAutoMapper(typeof(AccountMapper));
 builder.Services.AddAutoMapper(typeof(AppointmentMapper));
 builder.Services.AddAutoMapper(typeof(PatientMapper));
 builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
