@@ -7,6 +7,7 @@ using HIVTreatmentSystem.API.Mappers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Settings;
+using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Application.Services;
 using HIVTreatmentSystem.Application.Services.Account;
 using HIVTreatmentSystem.Application.Services.AppointmentService;
@@ -22,6 +23,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using static HIVTreatmentSystem.Application.Services.SystemAuditLogService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -186,13 +188,28 @@ builder.Services.AddScoped<
     HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository
 >();
 builder.Services.AddScoped<
-    HIVTreatmentSystem.Application.Interfaces.ISystemAuditLogService,
-    HIVTreatmentSystem.Application.Services.SystemAuditLogService
+    ISystemAuditLogService, SystemAuditLogService
 >();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+
+// Add StandardARVRegimen services
+builder.Services.AddScoped<IStandardARVRegimenService, StandardARVRegimenService>();
+builder.Services.AddScoped<IStandardARVRegimenRepository, StandardARVRegimenRepository>();
+
+// Add MedicalRecordService services
+builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
+builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
+
+// Add TestResultService services
+builder.Services.AddScoped<ITestResultService, TestResultService>();
+builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
+
+// Add SystemAuditLog services
+builder.Services.AddScoped<ISystemAuditLogService, SystemAuditLogService>();
+builder.Services.AddScoped<ISystemAuditLogRepository, SystemAuditLogRepository>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));

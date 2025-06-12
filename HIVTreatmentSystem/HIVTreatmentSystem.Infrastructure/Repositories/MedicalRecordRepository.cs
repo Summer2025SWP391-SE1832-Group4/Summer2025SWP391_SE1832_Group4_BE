@@ -1,0 +1,90 @@
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Interfaces;
+using HIVTreatmentSystem.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+
+namespace HIVTreatmentSystem.Infrastructure.Repositories
+{
+    /// <summary>
+    /// Repository implementation for Medical Record operations
+    /// </summary>
+    public class MedicalRecordRepository : IMedicalRecordRepository
+    {
+        private readonly HIVDbContext _context;
+
+        public MedicalRecordRepository(HIVDbContext context)
+        {
+            _context = context;
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<MedicalRecord>> GetAllAsync()
+        {
+            return await _context.MedicalRecords
+                .Include(m => m.Appointment)
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.TestResults)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecord?> GetByIdAsync(int id)
+        {
+            return await _context.MedicalRecords
+                .Include(m => m.Appointment)
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.TestResults)
+                .FirstOrDefaultAsync(m => m.MedicalRecordId == id);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<MedicalRecord>> GetByPatientIdAsync(int patientId)
+        {
+            return await _context.MedicalRecords
+                .Include(m => m.Appointment)
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.TestResults)
+                .Where(m => m.PatientId == patientId)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<MedicalRecord>> GetByDoctorIdAsync(int doctorId)
+        {
+            return await _context.MedicalRecords
+                .Include(m => m.Appointment)
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.TestResults)
+                .Where(m => m.DoctorId == doctorId)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecord> CreateAsync(MedicalRecord medicalRecord)
+        {
+            _context.MedicalRecords.Add(medicalRecord);
+            await _context.SaveChangesAsync();
+            return medicalRecord;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> UpdateAsync(MedicalRecord medicalRecord)
+        {
+            _context.MedicalRecords.Update(medicalRecord);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> DeleteAsync(MedicalRecord medicalRecord)
+        {
+            _context.MedicalRecords.Remove(medicalRecord);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+    }
+} 
