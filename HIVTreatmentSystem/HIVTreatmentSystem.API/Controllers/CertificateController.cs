@@ -102,10 +102,18 @@ namespace HIVTreatmentSystem.API.Controllers
             }
         }
 
-
-
+        [HttpGet("doctor/{doctorId}")]
+        public async Task<IActionResult> GetByDoctorId(int doctorId)
+        {
+            try
+            {
+                var certificates = await _certificateService.GetCertificatesByDoctorIdAsync(doctorId);
+                return Ok(certificates);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
     }
-
-
-
 }

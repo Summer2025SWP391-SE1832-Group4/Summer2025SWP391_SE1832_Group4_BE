@@ -112,6 +112,12 @@ namespace HIVTreatmentSystem.Application.Services.CertificateService
             return true;
         }
 
+        public async Task<List<CertificateResponse>> GetCertificatesByDoctorIdAsync(int doctorId)
+        {
+            var certificates = await _certificateRepository.GetAllAsync();
+            var doctorCertificates = certificates.Where(c => c.DoctorId == doctorId).ToList();
+            return _mapper.Map<List<CertificateResponse>>(doctorCertificates);
+        }
     }
 }
 
