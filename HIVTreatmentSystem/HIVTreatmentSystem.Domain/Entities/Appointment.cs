@@ -14,21 +14,20 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public int PatientId { get; set; }
 
-        public int? DoctorId { get; set; }
+        public int DoctorId { get; set; }
 
         public DateOnly AppointmentDate { get; set; }
         public TimeOnly AppointmentTime { get; set; }
 
         [MaxLength(50)]
-        public string? AppointmentType { get; set; }
+        public AppointmentTypeEnum AppointmentType { get; set; }
 
-        public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.PendingConfirmation;
 
-        public string? ReasonForVisit { get; set; }
+        public AppointmentServiceEnum AppointmentService { get; set; }
 
         public string? AppointmentNotes { get; set; }
 
-        public bool IsAnonymousConsultation { get; set; } = false;
 
         public int? CreatedByUserId { get; set; }
 

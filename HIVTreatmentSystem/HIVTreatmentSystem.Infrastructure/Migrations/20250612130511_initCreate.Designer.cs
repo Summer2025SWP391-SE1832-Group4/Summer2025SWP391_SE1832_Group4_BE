@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250611103241_AppointmentDBUpdate")]
-    partial class AppointmentDBUpdate
+    [Migration("20250612130511_initCreate")]
+    partial class initCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -109,12 +109,15 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<string>("AppointmentNotes")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("AppointmentService")
+                        .HasColumnType("int");
+
                     b.Property<TimeOnly>("AppointmentTime")
                         .HasColumnType("time");
 
-                    b.Property<string>("AppointmentType")
+                    b.Property<int>("AppointmentType")
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -127,14 +130,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<int?>("DoctorId")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsAnonymousConsultation")
-                        .HasColumnType("bit");
-
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
-
-                    b.Property<string>("ReasonForVisit")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
                         .IsRequired()

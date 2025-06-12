@@ -2,6 +2,7 @@
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Domain.Enums;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HIVTreatmentSystem.API.Controllers
@@ -21,12 +22,13 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<IActionResult> GetAllAppointmentsAsync(
         [FromQuery] string? doctorName,
         [FromQuery] string? patientName,
-        [FromQuery] string? appointmentType,
+        [FromQuery] AppointmentTypeEnum? appointmentType,
         [FromQuery] AppointmentStatus? status,
+        [FromQuery] AppointmentServiceEnum? appointmentService,
         [FromQuery] DateOnly? startDate,
         [FromQuery] DateOnly? endDate,
         [FromQuery] bool isDescending = false,
-        [FromQuery] string? sortBy = "appointmentDateTime",
+        [FromQuery] string? sortBy = "",
         [FromQuery] int pageIndex = 1,
         [FromQuery] int pageSize = 10)
         {
@@ -35,6 +37,7 @@ namespace HIVTreatmentSystem.API.Controllers
                 patientName,
                 appointmentType,
                 status,
+                appointmentService,
                 startDate,
                 endDate,
                 isDescending,
@@ -63,7 +66,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] AppointmentRequest request)
+        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] AppointmentUpdateRequest request)
         {
 
                 var result = await _appointmentService.UpdateAppointmentAsync(id, request);

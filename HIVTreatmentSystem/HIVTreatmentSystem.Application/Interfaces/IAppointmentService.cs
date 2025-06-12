@@ -16,8 +16,9 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<PageResult<AppointmentResponse>> GetAllAppointmentsAsync(
         string? doctorName,
         string? patientName,
-        string? appointmentType,
+        AppointmentTypeEnum? appointmentType,
         AppointmentStatus? status,
+        AppointmentServiceEnum? appointmentService,
         DateOnly? startDate,
         DateOnly? endDate,
         bool isDescending,
@@ -26,7 +27,7 @@ namespace HIVTreatmentSystem.Application.Interfaces
         int pageSize);
         Task<AppointmentResponse?> GetAppointmentByIdAsync(int id);
         Task<ApiResponse> CreateAppointmentAsync(AppointmentRequest request);
-        Task<ApiResponse> UpdateAppointmentAsync(int id, AppointmentRequest request);
+        Task<ApiResponse> UpdateAppointmentAsync(int id, AppointmentUpdateRequest request);
         Task<ApiResponse> DeleteAppointmentAsync(int appointmentId);
 
 
