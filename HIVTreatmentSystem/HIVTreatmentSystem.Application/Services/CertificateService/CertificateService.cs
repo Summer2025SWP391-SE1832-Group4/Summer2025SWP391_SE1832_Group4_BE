@@ -114,8 +114,18 @@ namespace HIVTreatmentSystem.Application.Services.CertificateService
 
         public async Task<List<CertificateResponse>> GetCertificatesByDoctorIdAsync(int doctorId)
         {
+            // First check if doctor exists
+            var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+            if (doctor == null)
+            {
+                throw new ArgumentException($"Doctor with ID {doctorId} not found.");
+            }
+
             var certificates = await _certificateRepository.GetAllAsync();
-            var doctorCertificates = certificates.Where(c => c.DoctorId == doctorId).ToList();
+            var doctorCertificates = certificates
+                .Where(c => c.DoctorId == doctorId)
+                .ToList();
+
             return _mapper.Map<List<CertificateResponse>>(doctorCertificates);
         }
     }
