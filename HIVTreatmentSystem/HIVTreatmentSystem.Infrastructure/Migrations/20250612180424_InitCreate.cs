@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initCreate : Migration
+    public partial class InitCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -116,7 +116,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "Doctors",
                 columns: table => new
                 {
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
+                    DoctorId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Specialty = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Qualifications = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     YearsOfExperience = table.Column<int>(type: "int", nullable: true),
@@ -127,8 +128,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Doctors", x => x.DoctorId);
                     table.ForeignKey(
-                        name: "FK_Doctors_Accounts_DoctorId",
-                        column: x => x.DoctorId,
+                        name: "FK_Doctors_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
@@ -165,7 +166,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "Patients",
                 columns: table => new
                 {
-                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    PatientId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     PatientCodeAtFacility = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -180,8 +182,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_Patients", x => x.PatientId);
                     table.ForeignKey(
-                        name: "FK_Patients_Accounts_PatientId",
-                        column: x => x.PatientId,
+                        name: "FK_Patients_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
@@ -285,12 +287,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     AppointmentId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PatientId = table.Column<int>(type: "int", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: true),
+                    DoctorId = table.Column<int>(type: "int", nullable: false),
                     AppointmentDate = table.Column<DateOnly>(type: "date", nullable: false),
                     AppointmentTime = table.Column<TimeOnly>(type: "time", nullable: false),
-                    AppointmentType = table.Column<int>(type: "int", maxLength: 50, nullable: false),
+                    AppointmentType = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AppointmentService = table.Column<int>(type: "int", nullable: false),
+                    AppointmentService = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AppointmentNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedByUserId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETUTCDATE()")
@@ -566,6 +568,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 column: "DoctorId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Doctors_AccountId",
+                table: "Doctors",
+                column: "AccountId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EducationalMaterials_AuthorId",
                 table: "EducationalMaterials",
                 column: "AuthorId");
@@ -600,6 +608,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "IX_MedicalRecords_PatientId",
                 table: "MedicalRecords",
                 column: "PatientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Patients_AccountId",
+                table: "Patients",
+                column: "AccountId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Patients_AnonymousIdentifier",

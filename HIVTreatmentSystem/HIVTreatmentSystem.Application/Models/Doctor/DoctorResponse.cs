@@ -18,5 +18,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public int? YearsOfExperience { get; set; }
 
         public string? ShortDescription { get; set; }
+
+        public AccountResponse? Account { get; set; }
     }
 }

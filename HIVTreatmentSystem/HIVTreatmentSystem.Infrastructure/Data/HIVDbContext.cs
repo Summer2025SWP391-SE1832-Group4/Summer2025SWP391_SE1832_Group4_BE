@@ -144,7 +144,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Patient)
-                    .HasForeignKey<Patient>(e => e.PatientId)
+                    .HasForeignKey<Patient>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
@@ -160,7 +160,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Doctor)
-                    .HasForeignKey<Doctor>(e => e.DoctorId)
+                    .HasForeignKey<Doctor>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
