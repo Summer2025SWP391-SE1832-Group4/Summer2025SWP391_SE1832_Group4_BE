@@ -383,7 +383,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.ToTable("Feedbacks");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
                 {
                     b.Property<int>("MedicalRecordId")
                         .ValueGeneratedOnAdd()
@@ -774,7 +774,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.ToTable("SystemAuditLogs");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResult", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResultService", b =>
                 {
                     b.Property<int>("TestResultId")
                         .ValueGeneratedOnAdd()
@@ -946,11 +946,11 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Appointment", "Appointment")
-                        .WithOne("MedicalRecord")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "AppointmentId")
+                        .WithOne("MedicalRecordService")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", "AppointmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1057,9 +1057,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResult", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResultService", b =>
                 {
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "MedicalRecord")
+                    b.HasOne("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", "MedicalRecordService")
                         .WithMany("TestResults")
                         .HasForeignKey("MedicalRecordId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -1070,7 +1070,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("MedicalRecord");
+                    b.Navigation("MedicalRecordService");
 
                     b.Navigation("Patient");
                 });
@@ -1092,7 +1092,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Appointment", b =>
                 {
-                    b.Navigation("MedicalRecord");
+                    b.Navigation("MedicalRecordService");
 
                     b.Navigation("Reminders");
                 });
@@ -1115,7 +1115,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("PrescribedTreatments");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
                 {
                     b.Navigation("TestResults");
                 });
