@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using AutoMapper;
 using CinemaBooking.API.Middlewares;
 using CinemaBooking.API.Middlewares.LoggingMiddleware;
@@ -30,6 +31,13 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ApiResponseWrapperAttribute>();
 });
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; 
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 
 // Configure JWT Authentication
