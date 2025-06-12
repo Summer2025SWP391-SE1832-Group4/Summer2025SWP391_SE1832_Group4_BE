@@ -29,7 +29,7 @@ namespace HIVTreatmentSystem.Application.Interfaces
 
         Task<bool> UpdateCertificateAsync(int id, CertificateRequest request);
         Task<bool> DeleteCertificateAsync(int id);
-
+        Task<List<CertificateResponse>> GetCertificatesByDoctorIdAsync(int doctorId);
     }
 
 }
