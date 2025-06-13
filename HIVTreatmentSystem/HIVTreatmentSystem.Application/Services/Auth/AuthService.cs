@@ -29,7 +29,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly IStaffRepository _staffRepository;
         private readonly IDoctorRepository _doctorRepository;
         private readonly IExperienceWorkingRepository _experienceWorkingRepository;
-
+        private readonly IPatientRepository _patientRepository;
         public AuthService(
             IAccountRepository accountRepository,
             IOptions<JwtSettings> jwtSettings,
@@ -38,7 +38,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             IPasswordHasher passwordHasher,
             IStaffRepository staffRepository,
             IDoctorRepository doctorRepository,
-            IExperienceWorkingRepository experienceWorkingRepository
+            IExperienceWorkingRepository experienceWorkingRepository,
+            IPatientRepository patientRepository
+
         )
         {
             _accountRepository = accountRepository;
@@ -49,6 +51,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             _staffRepository = staffRepository;
             _doctorRepository = doctorRepository;
             _experienceWorkingRepository = experienceWorkingRepository;
+            _patientRepository = patientRepository;
         }
 
         public async Task<ApiResponse> LoginAsync(LoginRequest request)
@@ -209,10 +212,32 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             account.PasswordResetToken = null;
             account.PasswordResetTokenExpiry = null;
             account.AccountStatus = AccountStatus.Active;
+            var patient = new Patient
+            {
+                AccountId = account.AccountId,
+                PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
+            };
             await _accountRepository.SaveChangesAsync();
 
             return new ApiResponse("Password has been set successfully. You can now log in.");
         }
+
+        private async Task<string> GenerateUniquePatientCodeAsync()
+        {
+            var random = new Random();
+            string code;
+            bool exists;
+
+            do
+            {
+                code = "PT" + random.Next(1, 100000).ToString("D5");
+                exists = await _patientRepository.AnyAsync(code);
+            }
+            while (exists);
+
+            return code;
+        }
+
 
         public async Task<ApiResponse> GetRolesAsync()
         {
