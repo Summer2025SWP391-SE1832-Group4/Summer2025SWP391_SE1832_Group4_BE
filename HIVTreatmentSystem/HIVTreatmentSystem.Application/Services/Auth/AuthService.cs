@@ -219,7 +219,10 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     AccountId = account.AccountId,
                     PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
                 };
+                await _patientRepository.AddAsync(patient);
+
             }
+
             await _accountRepository.SaveChangesAsync();
 
             return new ApiResponse("Password has been set successfully. You can now log in.");
