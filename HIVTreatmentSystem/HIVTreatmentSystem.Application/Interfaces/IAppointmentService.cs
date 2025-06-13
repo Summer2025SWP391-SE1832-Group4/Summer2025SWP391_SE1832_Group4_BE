@@ -30,6 +30,8 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ApiResponse> UpdateAppointmentAsync(int id, AppointmentUpdateRequest request);
         Task<ApiResponse> DeleteAppointmentAsync(int appointmentId);
 
+        Task<ApiResponse> SetStatusScheduledAsync(int appointmentId);
+
 
 
     }

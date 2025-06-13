@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
-    public interface IAppointmentRepository : IGenericRepository<Appointment, int>
+    public interface IAppointmentRepository
     {
         Task<Appointment?> GetAppointmentWithDetailsAsync(int appointmentId);
         Task<IEnumerable<Appointment>> GetAppointmentsByPatientAsync(int patientId);

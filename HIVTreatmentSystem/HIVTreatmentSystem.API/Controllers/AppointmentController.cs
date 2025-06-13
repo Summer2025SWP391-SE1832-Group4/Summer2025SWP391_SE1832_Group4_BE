@@ -78,6 +78,16 @@ namespace HIVTreatmentSystem.API.Controllers
             
         }
 
+        [HttpPut("{id}/schedule")]
+        public async Task<IActionResult> ScheduleAppointment(int id)
+        {
+            var result = await _appointmentService.SetStatusScheduledAsync(id);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {

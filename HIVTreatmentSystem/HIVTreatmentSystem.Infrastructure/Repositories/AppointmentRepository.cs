@@ -10,10 +10,13 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
-    public class AppointmentRepository : GenericRepository<Appointment, int>, IAppointmentRepository
+    public class AppointmentRepository : IAppointmentRepository
     {
-        public AppointmentRepository(HIVDbContext context) : base(context)
+        private readonly HIVDbContext _context;
+
+        public AppointmentRepository(HIVDbContext context)
         {
+            _context = context;
         }
 
         public async Task<Appointment?> GetAppointmentWithDetailsAsync(int appointmentId)
