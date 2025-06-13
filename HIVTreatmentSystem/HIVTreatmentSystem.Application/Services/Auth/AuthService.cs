@@ -212,11 +212,14 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             account.PasswordResetToken = null;
             account.PasswordResetTokenExpiry = null;
             account.AccountStatus = AccountStatus.Active;
-            var patient = new Patient
+            if (account.RoleId == 5)
             {
-                AccountId = account.AccountId,
-                PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
-            };
+                var patient = new Patient
+                {
+                    AccountId = account.AccountId,
+                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
+                };
+            }
             await _accountRepository.SaveChangesAsync();
 
             return new ApiResponse("Password has been set successfully. You can now log in.");
