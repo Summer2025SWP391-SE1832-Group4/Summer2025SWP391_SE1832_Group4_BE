@@ -35,6 +35,8 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetAll()
         {
             var testResults = await _testResultService.GetAllAsync();
+            if (testResults == null || !testResults.Any())
+                return NotFound(new ApiResponse("No test results found."));
             return Ok(new ApiResponse("Success", testResults));
         }
 
@@ -74,6 +76,8 @@ namespace HIVTreatmentSystem.API.Controllers
         public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByMedicalRecordId(int medicalRecordId)
         {
             var testResults = await _testResultService.GetByMedicalRecordIdAsync(medicalRecordId);
+            if (testResults == null || !testResults.Any())
+                return NotFound(new ApiResponse("No test results found for the specified medical record."));
             return Ok(new ApiResponse("Success", testResults));
         }
 
