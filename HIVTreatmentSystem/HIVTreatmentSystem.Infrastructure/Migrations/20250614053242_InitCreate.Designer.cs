@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250612180424_InitCreate")]
+    [Migration("20250614053242_InitCreate")]
     partial class InitCreate
     {
         /// <inheritdoc />
@@ -659,6 +659,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Staff", b =>
                 {
                     b.Property<int>("StaffId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StaffId"));
+
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("Position")
@@ -666,6 +672,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("StaffId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Staff");
                 });
@@ -1058,7 +1067,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "Account")
                         .WithOne("Staff")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Staff", "StaffId")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Staff", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

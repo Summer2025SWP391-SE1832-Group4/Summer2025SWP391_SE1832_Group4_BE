@@ -151,14 +151,14 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 
                 //Thêm ID của doctor vào trong Expriment working
             }
-            //else if (request.RoleId == 4) // Staff
-            //{
-            //    var staff = new Staff
-            //    {
-            //        StaffId = account.AccountId
-            //    };
-            //    await _staffRepository.AddAsync(staff);
-            //}
+            else if (request.RoleId == 4) // Staff
+            {
+                var staff = new Staff
+                {
+                    StaffId = account.AccountId
+                };
+                await _staffRepository.AddAsync(staff);
+            }
 
             var setPasswordUrl = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";

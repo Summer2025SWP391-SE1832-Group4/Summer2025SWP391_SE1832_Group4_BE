@@ -193,15 +193,17 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "Staff",
                 columns: table => new
                 {
-                    StaffId = table.Column<int>(type: "int", nullable: false),
-                    Position = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
+                    StaffId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Position = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    AccountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Staff", x => x.StaffId);
                     table.ForeignKey(
-                        name: "FK_Staff_Accounts_StaffId",
-                        column: x => x.StaffId,
+                        name: "FK_Staff_Accounts_AccountId",
+                        column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "AccountId",
                         onDelete: ReferentialAction.Cascade);
@@ -663,6 +665,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "IX_Roles_RoleName",
                 table: "Roles",
                 column: "RoleName",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Staff_AccountId",
+                table: "Staff",
+                column: "AccountId",
                 unique: true);
 
             migrationBuilder.CreateIndex(

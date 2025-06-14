@@ -175,7 +175,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Staff)
-                    .HasForeignKey<Staff>(e => e.StaffId)
+                    .HasForeignKey<Staff>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
