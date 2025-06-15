@@ -149,5 +149,23 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task<bool> AnyAsync(Patient patient)
+        {
+            return await _context.Appointments.AnyAsync(a =>
+                a.PatientId == patient.PatientId &&
+                (a.Status == AppointmentStatus.Scheduled || a.Status == AppointmentStatus.PendingConfirmation));
+        }
+
+        public async Task<List<Appointment>> GetAppointmentsByAccountIdAsync(int accountId)
+        {
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.Account)
+                .Include(a => a.Patient)
+                    .ThenInclude(p => p.Account)
+                .Where(a => a.Patient.AccountId == accountId)
+                .ToListAsync();
+        }
+
     }
 }

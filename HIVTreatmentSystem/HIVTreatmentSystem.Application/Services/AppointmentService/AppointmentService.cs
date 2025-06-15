@@ -126,6 +126,11 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 {
                     return new ApiResponse("Error: No patient found for this account.");
                 }
+                bool hasActiveAppointment = await _appointmentRepository.AnyAsync(patient);
+                if (hasActiveAppointment)
+                {
+                    return new ApiResponse("Error: Patient already has an active appointment.");
+                }
 
                 var appointment = _mapper.Map<Appointment>(request);
                 appointment.CreatedByUserId = accountId;
@@ -243,7 +248,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             <body style='font-family: Arial, sans-serif;'>
                 <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
                 <p>Dear {appointment.Patient.Account.FullName},</p>
-                <p>Your appointment has been <strong>successfully scheduled</strong>.</p>
+                <p>Your appointment with <strong>Doctor {appointment.Doctor.Account.FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
                 <p><strong>Date:</strong> {date}<br/>
                    <strong>Time:</strong> {time}</p>
                 <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
@@ -256,6 +261,22 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             await _appointmentRepository.UpdateAsync(appointment);
 
             return new ApiResponse("Appointment status updated to Scheduled");
+        }
+
+        public async Task<List<AppointmentResponse>> GetAppointmentsByTokenAsync()
+        {
+            var httpContext = _httpContextAccessor.HttpContext;
+            var accountIdClaim = _httpContextAccessor.HttpContext?.User?
+                .FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")?.Value;
+
+            if (accountIdClaim == null || !int.TryParse(accountIdClaim, out var accountId))
+            {
+                throw new UnauthorizedAccessException("AccountId not found or invalid in token.");
+            }
+
+            var appointments = await _appointmentRepository.GetAppointmentsByAccountIdAsync(accountId);
+            return _mapper.Map<List<AppointmentResponse>>(appointments);
+
         }
 
     }

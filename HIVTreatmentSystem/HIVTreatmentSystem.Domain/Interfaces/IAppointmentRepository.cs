@@ -29,6 +29,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 
         Task<List<Appointment>> GetAppointmentsByDoctorAsync(int doctorId, DateOnly date);
 
+        Task<bool> AnyAsync(Patient patient);
+
+        Task<List<Appointment>> GetAppointmentsByAccountIdAsync(int accountId);
 
 
     }

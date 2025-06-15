@@ -98,7 +98,13 @@ namespace HIVTreatmentSystem.API.Controllers
                 return BadRequest(result);
         }
 
+        [HttpGet("by-account")]
+        public async Task<IActionResult> GetAppointmentsByAccountId()
+        {
+            var appointments = await _appointmentService.GetAppointmentsByTokenAsync();
 
+            return Ok(new ApiResponse("Appointments retrieved successfully", appointments));
+        }
 
 
     }
