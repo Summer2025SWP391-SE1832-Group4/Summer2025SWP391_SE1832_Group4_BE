@@ -33,10 +33,11 @@ builder.Services.AddControllers(options =>
 {
     options.Filters.Add<ApiResponseWrapperAttribute>();
 });
-builder.Services.AddControllers()
+builder
+    .Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles; 
+        options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
@@ -124,7 +125,7 @@ builder.Services.AddSwaggerGen(c =>
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.Http,
             Scheme = "bearer",
-            BearerFormat = "JWT"
+            BearerFormat = "JWT",
         }
     );
 
@@ -178,7 +179,10 @@ builder.Services.AddScoped<IExperienceWorkingService, ExperienceWorkingService>(
 builder.Services.AddScoped<IBlogTagService, BlogTagService>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<IBlogService, BlogService>();
-builder.Services.AddScoped<IDoctorService, HIVTreatmentSystem.Application.Services.DoctorService.DoctorService>();
+builder.Services.AddScoped<
+    IDoctorService,
+    HIVTreatmentSystem.Application.Services.DoctorService.DoctorService
+>();
 
 builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
@@ -191,14 +195,11 @@ builder.Services.AddScoped<
 >();
 builder.Services.AddScoped<IAccountService, AccountService>();
 
-
 builder.Services.AddScoped<
     HIVTreatmentSystem.Domain.Interfaces.ISystemAuditLogRepository,
     HIVTreatmentSystem.Infrastructure.Repositories.SystemAuditLogRepository
 >();
-builder.Services.AddScoped<
-    ISystemAuditLogService, SystemAuditLogService
->();
+builder.Services.AddScoped<ISystemAuditLogService, SystemAuditLogService>();
 builder.Services.AddScoped<ICertificateService, CertificateService>();
 builder.Services.AddScoped<ICertificateRepository, CertificateRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
@@ -213,7 +214,7 @@ builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
 // Add TestResultService services
-builder.Services.AddScoped<ITestResultService, TestResultService>();
+//builder.Services.AddScoped<ITestResultService, TestResultService>();
 builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
 
 // Add SystemAuditLog services
