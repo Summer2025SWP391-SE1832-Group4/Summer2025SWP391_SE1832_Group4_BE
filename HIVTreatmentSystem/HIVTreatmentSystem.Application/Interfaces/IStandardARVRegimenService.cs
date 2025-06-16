@@ -3,39 +3,31 @@ using HIVTreatmentSystem.Application.Models.Responses;
 
 namespace HIVTreatmentSystem.Application.Interfaces
 {
-    /// <summary>
-    /// Service interface for Standard ARV Regimen operations
-    /// </summary>
     public interface IStandardARVRegimenService
     {
-        /// <summary>
-        /// Get all standard ARV regimens
-        /// </summary>
-        Task<IEnumerable<StandardARVRegimenResponse>> GetAllAsync();
+        Task<(IEnumerable<StandardARVRegimenResponse> Items, int TotalCount)> GetAllAsync(
+            string? regimenNameFilter,
+            string? targetPopulationFilter,
+            string? sortBy,
+            bool sortDesc,
+            int pageNumber,
+            int pageSize,
+            CancellationToken ct = default
+        );
 
-        /// <summary>
-        /// Get a standard ARV regimen by its ID
-        /// </summary>
-        /// <param name="id">The ID of the regimen to retrieve</param>
-        Task<StandardARVRegimenResponse?> GetByIdAsync(int id);
+        Task<StandardARVRegimenResponse> GetByIdAsync(int id, CancellationToken ct = default);
 
-        /// <summary>
-        /// Create a new standard ARV regimen
-        /// </summary>
-        /// <param name="request">The regimen data to create</param>
-        Task<StandardARVRegimenResponse> CreateAsync(StandardARVRegimenRequest request);
+        Task<StandardARVRegimenResponse> CreateAsync(
+            StandardARVRegimenRequest req,
+            CancellationToken ct = default
+        );
 
-        /// <summary>
-        /// Update an existing standard ARV regimen
-        /// </summary>
-        /// <param name="id">The ID of the regimen to update</param>
-        /// <param name="request">The updated regimen data</param>
-        Task<StandardARVRegimenResponse> UpdateAsync(int id, StandardARVRegimenRequest request);
+        Task<StandardARVRegimenResponse> UpdateAsync(
+            int id,
+            StandardARVRegimenRequest req,
+            CancellationToken ct = default
+        );
 
-        /// <summary>
-        /// Delete a standard ARV regimen
-        /// </summary>
-        /// <param name="id">The ID of the regimen to delete</param>
-        Task<bool> DeleteAsync(int id);
+        Task DeleteAsync(int id, CancellationToken ct = default);
     }
-} 
+}

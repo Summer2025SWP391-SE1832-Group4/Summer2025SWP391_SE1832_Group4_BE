@@ -5,56 +5,74 @@ using Microsoft.EntityFrameworkCore;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
-    /// <summary>
-    /// Repository implementation for Standard ARV Regimen operations
-    /// </summary>
-    public class StandardARVRegimenRepository : IStandardARVRegimenRepository
+    public class StandardARVRegimenRepository
+        : GenericRepository<StandardARVRegimen, int>,
+            IStandardARVRegimenRepository
     {
         private readonly HIVDbContext _context;
 
         public StandardARVRegimenRepository(HIVDbContext context)
+            : base(context)
         {
             _context = context;
         }
 
-        /// <inheritdoc/>
-        public async Task<IEnumerable<StandardARVRegimen>> GetAllAsync()
+        public async Task<(IEnumerable<StandardARVRegimen> Items, int TotalCount)> GetPagedAsync(
+            string? regimenNameFilter,
+            string? targetPopulationFilter,
+            string? sortBy,
+            bool sortDesc,
+            int pageNumber,
+            int pageSize
+        )
         {
-            return await _context.StandardARVRegimens
-                .Include(r => r.PatientTreatments)
-                .ToListAsync();
-        }
+            var query = _context.Set<StandardARVRegimen>().AsNoTracking();
 
-        /// <inheritdoc/>
-        public async Task<StandardARVRegimen?> GetByIdAsync(int id)
-        {
-            return await _context.StandardARVRegimens
-                .Include(r => r.PatientTreatments)
-                .FirstOrDefaultAsync(r => r.RegimenId == id);
-        }
+            if (!string.IsNullOrWhiteSpace(regimenNameFilter))
+            {
+                var rf = regimenNameFilter.Trim().ToLower();
+                query = query.Where(r => r.RegimenName.ToLower().Contains(rf));
+            }
 
-        /// <inheritdoc/>
-        public async Task<StandardARVRegimen> CreateAsync(StandardARVRegimen regimen)
-        {
-            _context.StandardARVRegimens.Add(regimen);
-            await _context.SaveChangesAsync();
-            return regimen;
-        }
+            if (!string.IsNullOrWhiteSpace(targetPopulationFilter))
+            {
+                var tf = targetPopulationFilter.Trim().ToLower();
+                query = query.Where(r =>
+                    r.TargetPopulation != null && r.TargetPopulation.ToLower().Contains(tf)
+                );
+            }
 
-        /// <inheritdoc/>
-        public async Task<bool> UpdateAsync(StandardARVRegimen regimen)
-        {
-            _context.StandardARVRegimens.Update(regimen);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+            var total = await query.CountAsync();
 
-        /// <inheritdoc/>
-        public async Task<bool> DeleteAsync(StandardARVRegimen regimen)
-        {
-            _context.StandardARVRegimens.Remove(regimen);
-            await _context.SaveChangesAsync();
-            return true;
+            if (!string.IsNullOrWhiteSpace(sortBy))
+            {
+                switch (sortBy.Trim().ToLower())
+                {
+                    case "regimenname":
+                        query = sortDesc
+                            ? query.OrderByDescending(r => r.RegimenName)
+                            : query.OrderBy(r => r.RegimenName);
+                        break;
+                    case "targetpopulation":
+                        query = sortDesc
+                            ? query.OrderByDescending(r => r.TargetPopulation)
+                            : query.OrderBy(r => r.TargetPopulation);
+                        break;
+                    default:
+                        query = sortDesc
+                            ? query.OrderByDescending(r => r.RegimenId)
+                            : query.OrderBy(r => r.RegimenId);
+                        break;
+                }
+            }
+            else
+            {
+                query = query.OrderBy(r => r.RegimenId);
+            }
+
+            var items = await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return (items, total);
         }
     }
-} 
+}
