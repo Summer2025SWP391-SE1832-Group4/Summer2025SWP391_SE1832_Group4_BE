@@ -39,7 +39,7 @@ namespace HIVTreatmentSystem.API.Controllers
                 new ApiResponse
                 {
                     Success = true,
-                    Message = "Danh sách regimen",
+                    Message = "List regimen",
                     Data = new { Items = items, TotalCount = total },
                 }
             );
@@ -66,7 +66,7 @@ namespace HIVTreatmentSystem.API.Controllers
                     new ApiResponse
                     {
                         Success = false,
-                        Message = "không tìm thấy regimen",
+                        Message = "Can't find regimen",
                         Data = null,
                     }
                 );
@@ -110,7 +110,7 @@ namespace HIVTreatmentSystem.API.Controllers
                     new ApiResponse
                     {
                         Success = false,
-                        Message = "không tìm thấy regimen",
+                        Message = "Can't find regimen",
                         Data = null,
                     }
                 );
@@ -138,7 +138,7 @@ namespace HIVTreatmentSystem.API.Controllers
                     new ApiResponse
                     {
                         Success = false,
-                        Message = "không tìm thấy regimen",
+                        Message = "Can't find regimen",
                         Data = null,
                     }
                 );
