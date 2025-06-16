@@ -5,18 +5,14 @@ using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.API.Mappers
 {
-    /// <summary>
-    /// AutoMapper profile for Standard ARV Regimen mappings
-    /// </summary>
     public class StandardARVRegimenMapper : Profile
     {
         public StandardARVRegimenMapper()
         {
-            // Map from Entity to Response
             CreateMap<StandardARVRegimen, StandardARVRegimenResponse>();
-
-            // Map from Request to Entity
-            CreateMap<StandardARVRegimenRequest, StandardARVRegimen>();
+            CreateMap<StandardARVRegimenRequest, StandardARVRegimen>()
+                .ForMember(dest => dest.RegimenId, opt => opt.Ignore())
+                .ForMember(dest => dest.PatientTreatments, opt => opt.Ignore());
         }
     }
-} 
+}

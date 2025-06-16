@@ -227,6 +227,7 @@ builder.Services.AddAutoMapper(typeof(DoctorMapper));
 builder.Services.AddAutoMapper(typeof(AccountMapper));
 builder.Services.AddAutoMapper(typeof(AppointmentMapper));
 builder.Services.AddAutoMapper(typeof(PatientMapper));
+builder.Services.AddAutoMapper(typeof(StandardARVRegimenMapper));
 builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
 builder.Services.AddHttpContextAccessor();
 

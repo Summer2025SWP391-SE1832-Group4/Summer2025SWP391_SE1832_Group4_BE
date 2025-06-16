@@ -1,4 +1,4 @@
-using HIVTreatmentSystem.Application.Common;
+﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
@@ -6,117 +6,143 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
-    /// <summary>
-    /// Controller for managing Standard ARV Regimens
-    /// </summary>
     [Route("api/standard-arv-regimens")]
     [ApiController]
-    // [Authorize]
-    public class StandardARVRegimenController : ControllerBase
+    public class StandardARVRegimensController : ControllerBase
     {
-        private readonly IStandardARVRegimenService _regimenService;
+        private readonly IStandardARVRegimenService _standardARVRegimenService;
 
-        public StandardARVRegimenController(IStandardARVRegimenService regimenService)
+        public StandardARVRegimensController(IStandardARVRegimenService standardARVRegimenService)
         {
-            _regimenService = regimenService;
+            _standardARVRegimenService = standardARVRegimenService;
         }
 
-        /// <summary>
-        /// Get all standard ARV regimens
-        /// </summary>
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? regimenName,
+            [FromQuery] string? targetPopulation,
+            [FromQuery] string? sortBy,
+            [FromQuery] bool sortDesc = false,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 20
+        )
         {
-            var regimens = await _regimenService.GetAllAsync();
-            return Ok(new ApiResponse("Success", regimens));
+            var (items, total) = await _standardARVRegimenService.GetAllAsync(
+                regimenName,
+                targetPopulation,
+                sortBy,
+                sortDesc,
+                pageNumber,
+                pageSize
+            );
+            return Ok(
+                new ApiResponse
+                {
+                    Success = true,
+                    Message = "Danh sách regimen",
+                    Data = new { Items = items, TotalCount = total },
+                }
+            );
         }
 
-        /// <summary>
-        /// Get a standard ARV regimen by ID
-        /// </summary>
-        /// <param name="id">The ID of the regimen to retrieve</param>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var regimen = await _regimenService.GetByIdAsync(id);
-            if (regimen == null)
-                return NotFound(new ApiResponse("Regimen not found."));
-
-            return Ok(new ApiResponse("Success", regimen));
-        }
-
-        /// <summary>
-        /// Create a new standard ARV regimen
-        /// </summary>
-        /// <param name="request">The regimen data to create</param>
-        [HttpPost]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create([FromBody] StandardARVRegimenRequest request)
-        {
             try
             {
-                var regimen = await _regimenService.CreateAsync(request);
-                return CreatedAtAction(
-                    nameof(GetById), 
-                    new { id = regimen.RegimenId }, 
-                    new ApiResponse("Regimen created successfully", regimen)
+                var dto = await _standardARVRegimenService.GetByIdAsync(id);
+                return Ok(
+                    new ApiResponse
+                    {
+                        Success = true,
+                        Message = "Regimen retrieved successfully",
+                        Data = dto,
+                    }
                 );
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException)
             {
-                return BadRequest(new ApiResponse(ex.Message));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse("An error occurred while creating the regimen."));
+                return NotFound(
+                    new ApiResponse
+                    {
+                        Success = false,
+                        Message = "không tìm thấy regimen",
+                        Data = null,
+                    }
+                );
             }
         }
 
-        /// <summary>
-        /// Update an existing standard ARV regimen
-        /// </summary>
-        /// <param name="id">The ID of the regimen to update</param>
-        /// <param name="request">The updated regimen data</param>
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] StandardARVRegimenRequest req)
+        {
+            var dto = await _standardARVRegimenService.CreateAsync(req);
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = dto.RegimenId },
+                new ApiResponse
+                {
+                    Success = true,
+                    Message = "Regimen created successfully",
+                    Data = dto,
+                }
+            );
+        }
+
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Update(int id, [FromBody] StandardARVRegimenRequest request)
+        public async Task<IActionResult> Update(int id, [FromBody] StandardARVRegimenRequest req)
         {
             try
             {
-                var regimen = await _regimenService.UpdateAsync(id, request);
-                return Ok(new ApiResponse("Regimen updated successfully", regimen));
+                var dto = await _standardARVRegimenService.UpdateAsync(id, req);
+                return Ok(
+                    new ApiResponse
+                    {
+                        Success = true,
+                        Message = "Regimen updated successfully",
+                        Data = dto,
+                    }
+                );
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException)
             {
-                return NotFound(new ApiResponse(ex.Message));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse("An error occurred while updating the regimen."));
+                return NotFound(
+                    new ApiResponse
+                    {
+                        Success = false,
+                        Message = "không tìm thấy regimen",
+                        Data = null,
+                    }
+                );
             }
         }
 
-        /// <summary>
-        /// Delete a standard ARV regimen
-        /// </summary>
-        /// <param name="id">The ID of the regimen to delete</param>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
             {
-                var result = await _regimenService.DeleteAsync(id);
-                return Ok(new ApiResponse("Regimen deleted successfully."));
+                await _standardARVRegimenService.DeleteAsync(id);
+                return Ok(
+                    new ApiResponse
+                    {
+                        Success = true,
+                        Message = "Regimen deleted successfully",
+                        Data = null,
+                    }
+                );
             }
-            catch (ArgumentException ex)
+            catch (KeyNotFoundException)
             {
-                return NotFound(new ApiResponse(ex.Message));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse("An error occurred while deleting the regimen."));
+                return NotFound(
+                    new ApiResponse
+                    {
+                        Success = false,
+                        Message = "không tìm thấy regimen",
+                        Data = null,
+                    }
+                );
             }
         }
     }
-} 
+}
