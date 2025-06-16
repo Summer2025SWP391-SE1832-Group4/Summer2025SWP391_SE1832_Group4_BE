@@ -25,5 +25,8 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string? AnonymousIdentifier { get; set; }
 
         public string? AdditionalNotes { get; set; }
+
+        public AccountResponse? Account { get; set; }
+
     }
 }

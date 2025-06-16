@@ -106,15 +106,17 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<string>("AppointmentNotes")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("AppointmentService")
-                        .HasColumnType("int");
+                    b.Property<string>("AppointmentService")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<TimeOnly>("AppointmentTime")
                         .HasColumnType("time");
 
-                    b.Property<int>("AppointmentType")
+                    b.Property<string>("AppointmentType")
+                        .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("int");
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
@@ -240,7 +242,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Doctor", b =>
                 {
                     b.Property<int>("DoctorId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DoctorId"));
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
@@ -260,6 +265,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("DoctorId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Doctors");
                 });
@@ -383,7 +391,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.ToTable("Feedbacks");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
                 {
                     b.Property<int>("MedicalRecordId")
                         .ValueGeneratedOnAdd()
@@ -437,7 +445,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>
                 {
                     b.Property<int>("PatientId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PatientId"));
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
@@ -470,6 +481,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("PatientId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.HasIndex("AnonymousIdentifier")
                         .IsUnique()
@@ -642,6 +656,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Staff", b =>
                 {
                     b.Property<int>("StaffId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StaffId"));
+
+                    b.Property<int>("AccountId")
                         .HasColumnType("int");
 
                     b.Property<string>("Position")
@@ -649,6 +669,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("StaffId");
+
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
                     b.ToTable("Staff");
                 });
@@ -774,7 +797,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.ToTable("SystemAuditLogs");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResultService", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResult", b =>
                 {
                     b.Property<int>("TestResultId")
                         .ValueGeneratedOnAdd()
@@ -900,7 +923,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "Account")
                         .WithOne("Doctor")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Doctor", "DoctorId")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Doctor", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -947,11 +970,11 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Patient");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Appointment", "Appointment")
-                        .WithOne("MedicalRecordService")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", "AppointmentId")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "AppointmentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -978,7 +1001,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "Account")
                         .WithOne("Patient")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Patient", "PatientId")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Patient", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1041,7 +1064,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "Account")
                         .WithOne("Staff")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Staff", "StaffId")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.Staff", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1058,9 +1081,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResultService", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.TestResult", b =>
                 {
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", "MedicalRecordService")
+                    b.HasOne("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "MedicalRecord")
                         .WithMany("TestResults")
                         .HasForeignKey("MedicalRecordId")
                         .OnDelete(DeleteBehavior.SetNull);
@@ -1071,7 +1094,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("MedicalRecordService");
+                    b.Navigation("MedicalRecord");
 
                     b.Navigation("Patient");
                 });
@@ -1093,7 +1116,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Appointment", b =>
                 {
-                    b.Navigation("MedicalRecordService");
+                    b.Navigation("MedicalRecord");
 
                     b.Navigation("Reminders");
                 });
@@ -1116,7 +1139,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("PrescribedTreatments");
                 });
 
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecordService", b =>
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
                 {
                     b.Navigation("TestResults");
                 });

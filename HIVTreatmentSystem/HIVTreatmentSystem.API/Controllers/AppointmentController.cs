@@ -78,6 +78,16 @@ namespace HIVTreatmentSystem.API.Controllers
             
         }
 
+        [HttpPut("{id}/schedule")]
+        public async Task<IActionResult> ScheduleAppointment(int id)
+        {
+            var result = await _appointmentService.SetStatusScheduledAsync(id);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {
@@ -88,7 +98,13 @@ namespace HIVTreatmentSystem.API.Controllers
                 return BadRequest(result);
         }
 
+        [HttpGet("by-account")]
+        public async Task<IActionResult> GetAppointmentsByAccountId()
+        {
+            var appointments = await _appointmentService.GetAppointmentsByTokenAsync();
 
+            return Ok(new ApiResponse("Appointments retrieved successfully", appointments));
+        }
 
 
     }

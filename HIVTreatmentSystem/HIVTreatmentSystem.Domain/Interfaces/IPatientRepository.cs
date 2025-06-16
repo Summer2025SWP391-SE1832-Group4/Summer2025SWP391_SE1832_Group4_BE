@@ -1,7 +1,8 @@
+using HIVTreatmentSystem.Domain.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
-using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
@@ -12,6 +13,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<IEnumerable<Patient>> GetPatientsByTreatmentTypeAsync(string treatmentType);
         Task<IEnumerable<Patient>> GetPatientsByHIVStatusAsync(string hivStatus);
         Task<Patient?> GetByAccountIdAsync(int accountId);
+
+        Task<bool> AnyAsync(string patientCode);
+
 
     }
 }

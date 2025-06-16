@@ -144,7 +144,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Patient)
-                    .HasForeignKey<Patient>(e => e.PatientId)
+                    .HasForeignKey<Patient>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
@@ -160,7 +160,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Doctor)
-                    .HasForeignKey<Doctor>(e => e.DoctorId)
+                    .HasForeignKey<Doctor>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
@@ -175,7 +175,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity
                     .HasOne(e => e.Account)
                     .WithOne(u => u.Staff)
-                    .HasForeignKey<Staff>(e => e.StaffId)
+                    .HasForeignKey<Staff>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
             });
         }
@@ -187,7 +187,11 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.AppointmentId);
                 entity.Property(e => e.AppointmentType).HasMaxLength(50);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+                entity.Property(e => e.AppointmentType)
+                        .HasConversion<string>();
 
+                entity.Property(e => e.AppointmentService)
+                        .HasConversion<string>();
                 entity
                     .HasOne(e => e.Patient)
                     .WithMany(p => p.Appointments)
@@ -205,6 +209,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(u => u.CreatedAppointments)
                     .HasForeignKey(e => e.CreatedByUserId)
                     .OnDelete(DeleteBehavior.SetNull);
+
             });
         }
 

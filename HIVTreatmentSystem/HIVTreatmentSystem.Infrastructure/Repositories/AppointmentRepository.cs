@@ -10,10 +10,13 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
-    public class AppointmentRepository : GenericRepository<Appointment, int>, IAppointmentRepository
+    public class AppointmentRepository : IAppointmentRepository
     {
-        public AppointmentRepository(HIVDbContext context) : base(context)
+        private readonly HIVDbContext _context;
+
+        public AppointmentRepository(HIVDbContext context)
         {
+            _context = context;
         }
 
         public async Task<Appointment?> GetAppointmentWithDetailsAsync(int appointmentId)
@@ -143,6 +146,24 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Appointments
                 .Where(a => a.DoctorId == doctorId && a.AppointmentDate == date)
+                .ToListAsync();
+        }
+
+        public async Task<bool> AnyAsync(Patient patient)
+        {
+            return await _context.Appointments.AnyAsync(a =>
+                a.PatientId == patient.PatientId &&
+                (a.Status == AppointmentStatus.Scheduled || a.Status == AppointmentStatus.PendingConfirmation));
+        }
+
+        public async Task<List<Appointment>> GetAppointmentsByAccountIdAsync(int accountId)
+        {
+            return await _context.Appointments
+                .Include(a => a.Doctor)
+                    .ThenInclude(d => d.Account)
+                .Include(a => a.Patient)
+                    .ThenInclude(p => p.Account)
+                .Where(a => a.Patient.AccountId == accountId)
                 .ToListAsync();
         }
 
