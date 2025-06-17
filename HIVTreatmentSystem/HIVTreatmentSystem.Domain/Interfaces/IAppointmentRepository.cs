@@ -38,5 +38,8 @@ namespace HIVTreatmentSystem.Domain.Interfaces
             DateOnly date,
             string? phoneNumber = null
         );
+
+        Task<List<int>> GetDoctorIdsByDateAndTimeAsync(DateOnly date, TimeOnly time);
+
     }
 }

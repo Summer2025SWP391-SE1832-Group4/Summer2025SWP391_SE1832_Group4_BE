@@ -1,7 +1,9 @@
 ﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Services.DoctorService;
 using HIVTreatmentSystem.Domain.Enums;
+using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +14,12 @@ namespace HIVTreatmentSystem.API.Controllers
     public class AppointmentController : ControllerBase
     {
         private readonly IAppointmentService _appointmentService;
+        private readonly IDoctorService _doctorService;
 
-        public AppointmentController(IAppointmentService appointmentService)
+        public AppointmentController(IAppointmentService appointmentService, IDoctorService doctorService)
         {
             _appointmentService = appointmentService;
+            _doctorService = doctorService;
         }
 
         [HttpGet]
@@ -114,6 +118,13 @@ namespace HIVTreatmentSystem.API.Controllers
         {
             var list = await _appointmentService.GetTodaysAppointmentsAsync(phoneNumber);
             return Ok(new ApiResponse("Today's appointments retrieved successfully", list));
+        }
+
+        [HttpGet("available")]
+        public async Task<IActionResult> GetAvailableDoctors([FromQuery] DateOnly date, [FromQuery] TimeOnly time)
+        {
+            var availableDoctors = await _doctorService.GetAvailableDoctorsAsync(date, time);
+            return Ok(availableDoctors);
         }
     }
 }

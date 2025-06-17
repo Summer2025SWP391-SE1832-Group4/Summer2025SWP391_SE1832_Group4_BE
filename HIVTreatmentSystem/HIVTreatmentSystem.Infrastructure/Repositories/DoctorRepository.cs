@@ -82,6 +82,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        
+        public async Task<List<Doctor>> GetDoctorsNotInIdsAsync(List<int> excludedDoctorIds)
+        {
+            return await _context.Doctors
+                .Include(d => d.Account)
+                .Where(d => !excludedDoctorIds.Contains(d.DoctorId))
+                .ToListAsync();
+        }
+
     }
 }

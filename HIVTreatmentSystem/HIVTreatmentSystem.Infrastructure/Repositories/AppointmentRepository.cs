@@ -195,5 +195,14 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
             return await query.OrderBy(a => a.AppointmentTime).ToListAsync();
         }
+
+        public async Task<List<int>> GetDoctorIdsByDateAndTimeAsync(DateOnly date, TimeOnly time)
+        {
+            return await _context.Appointments
+                .Where(a => a.AppointmentDate == date && a.AppointmentTime == time)
+                .Select(a => a.DoctorId)
+                .Distinct()
+                .ToListAsync();
+        }
     }
 }

@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
+using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,14 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
     public class DoctorService : IDoctorService
     {
         private readonly IDoctorRepository _doctorRepository;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IMapper _mapper;
 
-        public DoctorService(IDoctorRepository doctorRepository)
+        public DoctorService(IDoctorRepository doctorRepository, IAppointmentRepository appointmentRepository, IMapper mapper)
         {
             _doctorRepository = doctorRepository;
+            _appointmentRepository = appointmentRepository;
+            _mapper = mapper;
         }
 
         public async Task<List<DoctorDetailDto>> GetAllDoctorsWithDetailsAsync()
@@ -69,6 +75,15 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
                     IssuedBy = c.IssuedBy
                 }).ToList()
             };
+        }
+
+        public async Task<List<DoctorResponse>> GetAvailableDoctorsAsync(DateOnly date, TimeOnly time)
+        {
+            var appointmentDateTime = date.ToDateTime(time);
+
+            var busyDoctorIds = await _appointmentRepository.GetDoctorIdsByDateAndTimeAsync(date, time);
+            var availableDoctors = await _doctorRepository.GetDoctorsNotInIdsAsync(busyDoctorIds);
+            return _mapper.Map<List<DoctorResponse>>(availableDoctors);
         }
     }
 }

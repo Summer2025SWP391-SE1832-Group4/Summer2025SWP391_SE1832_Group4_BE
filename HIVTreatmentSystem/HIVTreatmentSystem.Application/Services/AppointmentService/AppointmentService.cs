@@ -142,11 +142,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 {
                     return new ApiResponse("Error: No patient found for this account.");
                 }
-                bool hasActiveAppointment = await _appointmentRepository.AnyAsync(patient);
-                if (hasActiveAppointment)
-                {
-                    return new ApiResponse("Error: Patient already has an active appointment.");
-                }
+                
 
                 var appointment = _mapper.Map<Appointment>(request);
                 appointment.CreatedByUserId = accountId;
