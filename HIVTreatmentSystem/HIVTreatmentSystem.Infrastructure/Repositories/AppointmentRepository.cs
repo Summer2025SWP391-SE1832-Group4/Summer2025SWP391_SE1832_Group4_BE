@@ -182,7 +182,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ThenInclude(p => p.Account)
                 .Include(a => a.Doctor)
                 .ThenInclude(d => d.Account)
-                .Where(a => a.AppointmentDate == date)
+                .Where(a => a.AppointmentDate == date && a.Status == AppointmentStatus.Scheduled)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(phoneNumber))
