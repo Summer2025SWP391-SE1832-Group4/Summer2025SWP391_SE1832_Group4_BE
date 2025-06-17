@@ -1,8 +1,8 @@
-using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
@@ -21,7 +21,8 @@ namespace HIVTreatmentSystem.Domain.Interfaces
             DateOnly? startDate,
             DateOnly? endDate,
             bool isDescending,
-            string? sortBy);
+            string? sortBy
+        );
         Task CreateAsync(Appointment appointment);
         Task UpdateAsync(Appointment appointment);
 
@@ -33,6 +34,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 
         Task<List<Appointment>> GetAppointmentsByAccountIdAsync(int accountId);
 
-
+        Task<List<Appointment>> GetAppointmentsByDateAsync(
+            DateOnly date,
+            string? phoneNumber = null
+        );
     }
-} 
+}

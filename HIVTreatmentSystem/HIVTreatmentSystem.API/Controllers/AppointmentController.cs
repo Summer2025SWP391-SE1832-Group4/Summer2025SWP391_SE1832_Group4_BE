@@ -10,9 +10,9 @@ namespace HIVTreatmentSystem.API.Controllers
     [Route("api/appointments")]
     [ApiController]
     public class AppointmentController : ControllerBase
-
     {
         private readonly IAppointmentService _appointmentService;
+
         public AppointmentController(IAppointmentService appointmentService)
         {
             _appointmentService = appointmentService;
@@ -20,17 +20,18 @@ namespace HIVTreatmentSystem.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllAppointmentsAsync(
-        [FromQuery] string? doctorName,
-        [FromQuery] string? patientName,
-        [FromQuery] AppointmentTypeEnum? appointmentType,
-        [FromQuery] AppointmentStatus? status,
-        [FromQuery] AppointmentServiceEnum? appointmentService,
-        [FromQuery] DateOnly? startDate,
-        [FromQuery] DateOnly? endDate,
-        [FromQuery] bool isDescending = false,
-        [FromQuery] string? sortBy = "",
-        [FromQuery] int pageIndex = 1,
-        [FromQuery] int pageSize = 10)
+            [FromQuery] string? doctorName,
+            [FromQuery] string? patientName,
+            [FromQuery] AppointmentTypeEnum? appointmentType,
+            [FromQuery] AppointmentStatus? status,
+            [FromQuery] AppointmentServiceEnum? appointmentService,
+            [FromQuery] DateOnly? startDate,
+            [FromQuery] DateOnly? endDate,
+            [FromQuery] bool isDescending = false,
+            [FromQuery] string? sortBy = "",
+            [FromQuery] int pageIndex = 1,
+            [FromQuery] int pageSize = 10
+        )
         {
             var result = await _appointmentService.GetAllAppointmentsAsync(
                 doctorName,
@@ -43,7 +44,8 @@ namespace HIVTreatmentSystem.API.Controllers
                 isDescending,
                 sortBy,
                 pageIndex,
-                pageSize);
+                pageSize
+            );
 
             return Ok(result);
         }
@@ -66,16 +68,17 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] AppointmentUpdateRequest request)
+        public async Task<IActionResult> UpdateAppointment(
+            int id,
+            [FromBody] AppointmentUpdateRequest request
+        )
         {
+            var result = await _appointmentService.UpdateAppointmentAsync(id, request);
 
-                var result = await _appointmentService.UpdateAppointmentAsync(id, request);
-
-                if (result.Success)
-                    return Ok(result);
-                else
-                    return BadRequest(result);
-            
+            if (result.Success)
+                return Ok(result);
+            else
+                return BadRequest(result);
         }
 
         [HttpPut("{id}/schedule")]
@@ -106,7 +109,11 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new ApiResponse("Appointments retrieved successfully", appointments));
         }
 
-
+        [HttpGet("today")]
+        public async Task<IActionResult> GetTodaysAppointments([FromQuery] string? phoneNumber)
+        {
+            var list = await _appointmentService.GetTodaysAppointmentsAsync(phoneNumber);
+            return Ok(new ApiResponse("Today's appointments retrieved successfully", list));
+        }
     }
-
 }
