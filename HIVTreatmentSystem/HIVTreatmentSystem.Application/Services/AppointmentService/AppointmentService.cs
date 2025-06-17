@@ -332,5 +332,45 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             );
             return _mapper.Map<List<AppointmentResponse>>(appointments);
         }
+
+        public async Task<ApiResponse> SetStatusCheckedInAsync(int appointmentId)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(appointmentId);
+            if (appointment == null)
+            {
+                return new ApiResponse("Error: Appointment not found");
+            }
+
+            if (appointment.Status == AppointmentStatus.CheckedIn)
+            {
+                return new ApiResponse("Appointment is already checked in");
+            }
+
+            appointment.Status = AppointmentStatus.CheckedIn;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+
+            return new ApiResponse("Checked in successfully", true);
+        }
+
+        public async Task<ApiResponse> SetStatusCompletedAsync(int appointmentId)
+        {
+            var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(appointmentId);
+            if (appointment == null)
+            {
+                return new ApiResponse("Error: Appointment not found");
+            }
+
+            if (appointment.Status == AppointmentStatus.Completed)
+            {
+                return new ApiResponse("Appointment is already marked as completed");
+            }
+
+            appointment.Status = AppointmentStatus.Completed;
+            await _appointmentRepository.UpdateAsync(appointment);
+
+            return new ApiResponse("Appointment marked as completed", true);
+        }
+
     }
 }

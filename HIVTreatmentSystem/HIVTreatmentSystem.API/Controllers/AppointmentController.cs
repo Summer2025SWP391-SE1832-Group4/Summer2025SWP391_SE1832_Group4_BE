@@ -95,6 +95,27 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(result);
         }
 
+        [HttpPut("{id}/checkin")]
+        public async Task<IActionResult> CheckInAppointment(int id)
+        {
+            var result = await _appointmentService.SetStatusCheckedInAsync(id);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+        [HttpPut("{id}/complete")]
+        public async Task<IActionResult> CompleteAppointment(int id)
+        {
+            var result = await _appointmentService.SetStatusCompletedAsync(id);
+            if (!result.Success)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+        }
+
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAppointment(int id)
         {

@@ -12,6 +12,7 @@ namespace HIVTreatmentSystem.Domain.Enums
         Completed,
         CancelledByPatient,
         CancelledByDoctor,
+        CheckedIn,
         NoShow,
         PendingConfirmation,
         InProgress,
