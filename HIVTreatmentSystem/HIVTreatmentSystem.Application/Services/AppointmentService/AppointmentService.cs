@@ -24,13 +24,15 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IPatientRepository _patientRepository;
         private readonly IEmailService _emailService;
+        private readonly IDoctorRepository _doctorRepository;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
             IMapper mapper,
             IHttpContextAccessor httpContextAccessor,
             IPatientRepository patientRepository,
-            IEmailService emailService
+            IEmailService emailService,
+            IDoctorRepository doctorRepository
         )
         {
             _appointmentRepository = appointmentRepository;
@@ -38,6 +40,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             _httpContextAccessor = httpContextAccessor;
             _patientRepository = patientRepository;
             _emailService = emailService;
+            _doctorRepository = doctorRepository;
         }
 
         public async Task<PageResult<AppointmentResponse>> GetAllAppointmentsAsync(
@@ -370,6 +373,68 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             await _appointmentRepository.UpdateAsync(appointment);
 
             return new ApiResponse("Appointment marked as completed", true);
+        }
+
+        public async Task<ApiResponse> CreateAppointmentForDoctorAsync(AppointmentRequest request)
+        {
+            try
+            {
+                var dayOfWeek = request.AppointmentDate.DayOfWeek;
+                if (dayOfWeek == DayOfWeek.Sunday)
+                {
+                    return new ApiResponse("Error: Can't create appointment on Sunday.");
+                }
+
+                var time = request.AppointmentTime;
+
+                bool isMorning = time >= new TimeOnly(8, 0) && time <= new TimeOnly(11, 30);
+                bool isAfternoon = time >= new TimeOnly(13, 0) && time <= new TimeOnly(16, 30);
+
+                if (!isMorning && !isAfternoon)
+                {
+                    return new ApiResponse("Error: Please create in range 8:00 - 11:30 & 13:00 - 16:30");
+                }
+
+                if (time.Minute != 0 && time.Minute != 30)
+                {
+                    return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
+                }
+
+                var existingAppointments = await _appointmentRepository.GetAppointmentsByDoctorAsync(
+                    request.DoctorId, request.AppointmentDate);
+
+                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
+                {
+                    return new ApiResponse("Error: The doctor is already scheduled at this time.");
+                }
+
+                var accountIdStr = _httpContextAccessor
+                    .HttpContext?.User?.FindFirst(
+                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
+                    ?.Value;
+
+                if (!int.TryParse(accountIdStr, out var accountId))
+                {
+                    return new ApiResponse("Error: Invalid AccountId from token.");
+                }
+
+                var doctor = await _doctorRepository.GetByIdAsync(accountId);
+                if (doctor == null)
+                {
+                    return new ApiResponse("Error: No doctor found for this account.");
+                }
+
+                var appointment = _mapper.Map<Appointment>(request);
+                appointment.CreatedByUserId = accountId;
+                appointment.DoctorId = doctor.DoctorId;
+
+                await _appointmentRepository.CreateAsync(appointment);
+                return new ApiResponse("Doctor appointment created successfully.");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse("Error: Failed to create appointment: " + ex.Message);
+            }
         }
 
     }
