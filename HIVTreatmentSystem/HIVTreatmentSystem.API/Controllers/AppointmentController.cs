@@ -72,7 +72,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpPost("doctor")]
-        public async Task<IActionResult> CreateAppointmentForDoctor([FromBody] AppointmentRequest request)
+        public async Task<IActionResult> CreateAppointmentForDoctor([FromBody] AppointmentByDoctorRequest request)
         {
             var response = await _appointmentService.CreateAppointmentForDoctorAsync(request);
             return response.Success ? Ok(response) : BadRequest(response);

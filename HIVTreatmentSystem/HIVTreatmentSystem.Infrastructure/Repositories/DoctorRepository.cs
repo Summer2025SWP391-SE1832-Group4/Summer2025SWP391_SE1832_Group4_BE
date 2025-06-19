@@ -33,9 +33,14 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.Doctors
                 .Include(d => d.Account)
-                .Include(d => d.ExperienceWorkings)
-                .Include(d => d.Certificates)
                 .FirstOrDefaultAsync(d => d.DoctorId == id);
+        }
+
+        public async Task<Doctor?> GetByAccountIdAsync(int accountId)
+        {
+            return await _context.Doctors
+                .Include(d => d.Account)
+                .FirstOrDefaultAsync(d => d.AccountId == accountId);
         }
 
         public async Task<IEnumerable<Doctor>> GetAllAsync()

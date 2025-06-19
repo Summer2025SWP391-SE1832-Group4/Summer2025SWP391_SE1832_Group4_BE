@@ -8,9 +8,7 @@ namespace HIVTreatmentSystem.Domain.Enums
 {
     public enum AppointmentTypeEnum
     {
-        Video,
-        Phone,
-        Chat,
-        InPerson
+        Consultation,
+        Testing
     }
 }

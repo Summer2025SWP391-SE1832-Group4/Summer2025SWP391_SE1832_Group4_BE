@@ -375,7 +375,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             return new ApiResponse("Appointment marked as completed", true);
         }
 
-        public async Task<ApiResponse> CreateAppointmentForDoctorAsync(AppointmentRequest request)
+        public async Task<ApiResponse> CreateAppointmentForDoctorAsync(AppointmentByDoctorRequest request)
         {
             try
             {
@@ -400,14 +400,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
                 }
 
-                var existingAppointments = await _appointmentRepository.GetAppointmentsByDoctorAsync(
-                    request.DoctorId, request.AppointmentDate);
-
-                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
-                {
-                    return new ApiResponse("Error: The doctor is already scheduled at this time.");
-                }
-
+                
                 var accountIdStr = _httpContextAccessor
                     .HttpContext?.User?.FindFirst(
                         "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
@@ -418,10 +411,18 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Invalid AccountId from token.");
                 }
 
-                var doctor = await _doctorRepository.GetByIdAsync(accountId);
+                var doctor = await _doctorRepository.GetByAccountIdAsync(accountId);
                 if (doctor == null)
                 {
                     return new ApiResponse("Error: No doctor found for this account.");
+                }
+
+                var existingAppointments = await _appointmentRepository.GetAppointmentsByDoctorAsync(
+                    doctor.DoctorId, request.AppointmentDate);
+
+                if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
+                {
+                    return new ApiResponse("Error: The doctor is already scheduled at this time.");
                 }
 
                 var appointment = _mapper.Map<Appointment>(request);
@@ -429,11 +430,11 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 appointment.DoctorId = doctor.DoctorId;
 
                 await _appointmentRepository.CreateAsync(appointment);
-                return new ApiResponse("Doctor appointment created successfully.");
+                return new ApiResponse("Appointment created successfully.");
             }
             catch (Exception ex)
             {
-                return new ApiResponse("Error: Failed to create appointment: " + ex.Message);
+                return new ApiResponse("Error: Failed to create appointment: " + ex.InnerException.Message);
             }
         }
 

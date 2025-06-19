@@ -8,8 +8,13 @@ namespace HIVTreatmentSystem.Domain.Enums
 {
     public enum AppointmentServiceEnum
     {
-        HIVTesting,
-        MentalHealth,
-        NewlyDiagnosedHIV
+        //Nếu chọn xét nghiệm
+        RapidTest,
+        PCR,
+        ELISA,
+
+        //Nếu chọn tư vấn
+        PreTestCounseling,
+        PostTestCounseling
     }
 }

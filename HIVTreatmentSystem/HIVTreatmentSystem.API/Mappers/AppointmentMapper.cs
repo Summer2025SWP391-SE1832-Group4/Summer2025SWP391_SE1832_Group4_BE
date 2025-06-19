@@ -15,6 +15,8 @@ namespace HIVTreatmentSystem.API.Mappers
                 .ForMember(dest => dest.PatientName,
                     opt => opt.MapFrom(src => src.Patient != null ? src.Patient.Account.FullName : null));
             CreateMap<AppointmentRequest, Appointment>();
+            CreateMap<AppointmentByDoctorRequest, Appointment>();
+
 
 
         }

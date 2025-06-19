@@ -36,6 +36,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ApiResponse> SetStatusCheckedInAsync(int appointmentId);
 
         Task<ApiResponse> SetStatusCompletedAsync(int appointmentId);
-        Task<ApiResponse> CreateAppointmentForDoctorAsync(AppointmentRequest request);
+        Task<ApiResponse> CreateAppointmentForDoctorAsync(AppointmentByDoctorRequest request);
     }
 }
