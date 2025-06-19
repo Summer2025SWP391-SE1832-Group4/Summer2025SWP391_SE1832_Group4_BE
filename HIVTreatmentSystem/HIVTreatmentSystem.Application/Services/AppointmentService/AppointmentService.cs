@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Pages;
@@ -14,6 +8,13 @@ using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HIVTreatmentSystem.Application.Services.AppointmentService
 {
@@ -385,10 +386,10 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Can't create appointment on Sunday.");
                 }
 
-                var time = request.AppointmentTime;
+                var appointmentTime = request.AppointmentTime;
 
-                bool isMorning = time >= new TimeOnly(8, 0) && time <= new TimeOnly(11, 30);
-                bool isAfternoon = time >= new TimeOnly(13, 0) && time <= new TimeOnly(16, 30);
+                bool isMorning = appointmentTime >= new TimeOnly(8, 0) && appointmentTime <= new TimeOnly(11, 30);
+                bool isAfternoon = appointmentTime >= new TimeOnly(13, 0) && appointmentTime <= new TimeOnly(16, 30);
 
                 if (!isMorning && !isAfternoon)
                 {
@@ -430,6 +431,25 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 appointment.DoctorId = doctor.DoctorId;
 
                 await _appointmentRepository.CreateAsync(appointment);
+                var email = appointment.Patient.Account.Email;
+                var date = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
+                var time = appointment.AppointmentTime.ToString(@"hh\:mm");
+                await _emailService.SendEmailAsync(
+                email,
+                "Your Appointment have been scheduled",
+                $@"<html>
+            <body style='font-family: Arial, sans-serif;'>
+                <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
+                <p>Dear {appointment.Patient.Account.FullName},</p>
+                <p>Your appointment with <strong>Doctor {appointment.Doctor.Account.FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
+                <p><strong>Date:</strong> {date}<br/>
+                   <strong>Time:</strong> {time}</p>
+                <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
+                <br/>
+                <p>Thank you,<br/>HIV Treatment Center</p>
+            </body>
+        </html>"
+            );
                 return new ApiResponse("Appointment created successfully.");
             }
             catch (Exception ex)
