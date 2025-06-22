@@ -396,7 +396,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Please create in range 8:00 - 11:30 & 13:00 - 16:30");
                 }
 
-                if (time.Minute != 0 && time.Minute != 30)
+                if (appointmentTime.Minute != 0 && appointmentTime.Minute != 30)
                 {
                     return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
                 }
