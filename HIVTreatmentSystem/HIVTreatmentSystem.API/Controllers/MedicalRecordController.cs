@@ -11,7 +11,7 @@ namespace HIVTreatmentSystem.API.Controllers
     /// </summary>
     [Route("api/medical-records")]
     [ApiController]
-    [Authorize(Roles = "Admin,Doctor")]
+    // [Authorize(Roles = "Admin,Doctor,Patient")]
     public class MedicalRecordController : ControllerBase
     {
         private readonly IMedicalRecordService _medicalRecordService;
@@ -72,7 +72,7 @@ namespace HIVTreatmentSystem.API.Controllers
         /// </summary>
         /// <param name="request">The medical record data to create</param>
         [HttpPost]
-        [Authorize(Roles = "Doctor")]
+        // [Authorize(Roles = "Doctor")]
         public async Task<IActionResult> Create([FromBody] MedicalRecordRequest request)
         {
             try
