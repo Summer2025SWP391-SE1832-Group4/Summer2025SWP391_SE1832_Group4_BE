@@ -214,7 +214,7 @@ builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
 // Add TestResultService services
-//builder.Services.AddScoped<ITestResultService, TestResultService>();
+builder.Services.AddScoped<ITestResultService, TestResultService>();
 builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
 
 // Add SystemAuditLog services
