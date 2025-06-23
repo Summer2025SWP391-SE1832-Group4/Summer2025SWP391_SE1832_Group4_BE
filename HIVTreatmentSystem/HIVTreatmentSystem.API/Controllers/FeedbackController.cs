@@ -1,6 +1,7 @@
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,10 +15,14 @@ namespace HIVTreatmentSystem.API.Controllers
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackService _feedbackService;
+        private readonly IAppointmentRepository _appointmentRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public FeedbackController(IFeedbackService feedbackService)
+        public FeedbackController(IFeedbackService feedbackService, IAppointmentRepository appointmentRepository, IHttpContextAccessor httpContextAccessor)
         {
             _feedbackService = feedbackService;
+            _appointmentRepository = appointmentRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         /// <summary>
@@ -82,12 +87,19 @@ namespace HIVTreatmentSystem.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> CreateAsync([FromBody] FeedbackRequest apiRequest)
+        public async Task<IActionResult> CreateAsync([FromBody] FeedbackCreateRequest apiRequest)
         {
+            // Lấy appointment để suy ra PatientId
+            var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(apiRequest.AppointmentId);
+            if (appointment == null)
+            {
+                return BadRequest(new { message = "Invalid AppointmentId" });
+            }
+
             var appRequest = new FeedbackRequest
             {
                 AppointmentId = apiRequest.AppointmentId,
-                PatientId = apiRequest.PatientId,
+                PatientId = appointment.PatientId,
                 Rating = apiRequest.Rating,
                 Comment = apiRequest.Comment
             };
