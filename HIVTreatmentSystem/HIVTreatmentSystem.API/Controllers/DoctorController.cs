@@ -50,5 +50,17 @@ namespace HIVTreatmentSystem.API.Controllers
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
             return Ok(new ApiResponse("Success", doctors));
         }
+
+        /// <summary>
+        /// Get a doctor by account ID with all their details
+        /// </summary>
+        [HttpGet("account/{accountId}")]
+        public async Task<IActionResult> GetDoctorByAccountId(int accountId)
+        {
+            var doctor = await _doctorService.GetDoctorByAccountIdWithDetailsAsync(accountId);
+            if (doctor == null)
+                return NotFound(new ApiResponse("Doctor not found"));
+            return Ok(new ApiResponse("Success", doctor));
+        }
     }
 } 

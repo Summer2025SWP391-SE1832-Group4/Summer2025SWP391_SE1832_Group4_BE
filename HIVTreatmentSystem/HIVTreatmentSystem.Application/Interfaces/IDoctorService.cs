@@ -12,6 +12,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<DoctorDetailDto?> GetDoctorByIdWithDetailsAsync(int doctorId);
         Task<List<DoctorDetailDto>> GetDoctorsBySpecialtyAsync(string specialty);
         Task<List<DoctorResponse>> GetAvailableDoctorsAsync(DateOnly date, TimeOnly time);
-
+        Task<DoctorDetailDto?> GetDoctorByAccountIdWithDetailsAsync(int accountId);
     }
 }

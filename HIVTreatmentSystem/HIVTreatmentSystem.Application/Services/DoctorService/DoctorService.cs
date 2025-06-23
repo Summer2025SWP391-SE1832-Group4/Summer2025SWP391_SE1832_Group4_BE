@@ -43,6 +43,13 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
             return doctors.Select(MapToDoctorDetails).ToList();
         }
 
+        public async Task<DoctorDetailDto?> GetDoctorByAccountIdWithDetailsAsync(int accountId)
+        {
+            var doctors = await _doctorRepository.FindAsync(d => d.AccountId == accountId);
+            var doctor = doctors.FirstOrDefault();
+            return doctor != null ? MapToDoctorDetails(doctor) : null;
+        }
+
         private DoctorDetailDto MapToDoctorDetails(Doctor doctor)
         {
             return new DoctorDetailDto
