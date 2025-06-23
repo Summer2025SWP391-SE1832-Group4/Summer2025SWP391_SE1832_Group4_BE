@@ -118,7 +118,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 {
                     DoctorId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Specialty = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
+                    Specialty = table.Column<int>(type: "nvarchar(max)", maxLength: 100, nullable: true),
                     Qualifications = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     YearsOfExperience = table.Column<int>(type: "int", nullable: true),
                     ShortDescription = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),

@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Enums
 {
-    public enum AppointmentTypeEnum
+    public enum DoctorSpecialtyEnum
     {
-        Consultation,
+        Consultant,
         Testing,
         Therapy
     }
+
 }

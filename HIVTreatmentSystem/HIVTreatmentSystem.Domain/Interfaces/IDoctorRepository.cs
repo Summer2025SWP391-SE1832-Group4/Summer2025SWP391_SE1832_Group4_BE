@@ -1,8 +1,9 @@
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {
@@ -12,10 +13,11 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<Doctor?> GetByIdAsync(int id);
         Task<IEnumerable<Doctor>> GetAllAsync();
         Task<Doctor?> GetDoctorWithDetailsAsync(int doctorId);
-        Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyAsync(string specialty);
+        Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyAsync(DoctorSpecialtyEnum specialty);
         Task<IEnumerable<Doctor>> GetDoctorsWithSchedulesAsync();
         Task<List<Doctor>> GetDoctorsNotInIdsAsync(List<int> excludedDoctorIds);
         Task<Doctor?> GetByAccountIdAsync(int accountId);
+        Task<List<Doctor>> GetAvailableDoctorsAsync(List<int> excludedDoctorIds, DoctorSpecialtyEnum specialty);
 
     }
 }

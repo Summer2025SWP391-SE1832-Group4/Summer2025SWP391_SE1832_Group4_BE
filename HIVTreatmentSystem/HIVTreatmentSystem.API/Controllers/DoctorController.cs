@@ -1,10 +1,11 @@
-using System.Threading.Tasks;
 using HIVTreatmentSystem.API.Controllers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
+using HIVTreatmentSystem.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -41,11 +42,11 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new ApiResponse("Success", doctor));
         }
 
-        /// <summary>
+        /// <summary>z
         /// Get doctors by specialty
         /// </summary>
         [HttpGet("specialty/{specialty}")]
-        public async Task<IActionResult> GetDoctorsBySpecialty(string specialty)
+        public async Task<IActionResult> GetDoctorsBySpecialty(DoctorSpecialtyEnum specialty)
         {
             var doctors = await _doctorService.GetDoctorsBySpecialtyAsync(specialty);
             return Ok(new ApiResponse("Success", doctors));

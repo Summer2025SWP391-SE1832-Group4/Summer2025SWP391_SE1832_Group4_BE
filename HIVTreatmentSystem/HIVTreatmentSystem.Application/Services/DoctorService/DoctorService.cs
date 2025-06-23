@@ -1,14 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Application.Services.DoctorService
 {
@@ -37,9 +38,9 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
             return doctor != null ? MapToDoctorDetails(doctor) : null;
         }
 
-        public async Task<List<DoctorDetailDto>> GetDoctorsBySpecialtyAsync(string specialty)
+        public async Task<List<DoctorDetailDto>> GetDoctorsBySpecialtyAsync(DoctorSpecialtyEnum specialty)
         {
-            var doctors = await _doctorRepository.FindAsync(d => d.Specialty == specialty);
+            var doctors = await _doctorRepository.FindAsync(d => d.Specialty == specialty.ToString());
             return doctors.Select(MapToDoctorDetails).ToList();
         }
 
@@ -84,12 +85,27 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
             };
         }
 
-        public async Task<List<DoctorResponse>> GetAvailableDoctorsAsync(DateOnly date, TimeOnly time)
+        public async Task<List<DoctorResponse>> GetAvailableDoctorsAsync(DateOnly date, TimeOnly time, AppointmentTypeEnum specialty)
         {
-            var appointmentDateTime = date.ToDateTime(time);
-
+            List<Doctor> availableDoctors;
             var busyDoctorIds = await _appointmentRepository.GetDoctorIdsByDateAndTimeAsync(date, time);
-            var availableDoctors = await _doctorRepository.GetDoctorsNotInIdsAsync(busyDoctorIds);
+            if (specialty == AppointmentTypeEnum.Consultation)
+            {
+                availableDoctors = await _doctorRepository.GetAvailableDoctorsAsync(busyDoctorIds, DoctorSpecialtyEnum.Consultant);
+            }
+
+            else if (specialty == AppointmentTypeEnum.Testing)
+            {
+                availableDoctors = await _doctorRepository.GetAvailableDoctorsAsync(busyDoctorIds, DoctorSpecialtyEnum.Testing);
+            }
+            else if (specialty == AppointmentTypeEnum.Therapy)
+            {
+                availableDoctors = await _doctorRepository.GetAvailableDoctorsAsync(busyDoctorIds, DoctorSpecialtyEnum.Therapy);
+            }
+            else
+            {
+                throw new ArgumentException("Invalid appointment type specified.");
+            }
             return _mapper.Map<List<DoctorResponse>>(availableDoctors);
         }
     }

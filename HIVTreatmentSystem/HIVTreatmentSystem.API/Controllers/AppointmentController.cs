@@ -150,9 +150,9 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpGet("available")]
-        public async Task<IActionResult> GetAvailableDoctors([FromQuery] DateOnly date, [FromQuery] TimeOnly time)
+        public async Task<IActionResult> GetAvailableDoctors([FromQuery] DateOnly date, [FromQuery] TimeOnly time, [FromQuery] AppointmentTypeEnum specialty)
         {
-            var availableDoctors = await _doctorService.GetAvailableDoctorsAsync(date, time);
+            var availableDoctors = await _doctorService.GetAvailableDoctorsAsync(date, time, specialty);
             return Ok(availableDoctors);
         }
     }

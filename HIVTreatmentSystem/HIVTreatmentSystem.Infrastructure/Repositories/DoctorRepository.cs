@@ -1,12 +1,13 @@
+using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
+using HIVTreatmentSystem.Domain.Interfaces;
+using HIVTreatmentSystem.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Interfaces;
-using HIVTreatmentSystem.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
@@ -61,13 +62,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .FirstOrDefaultAsync(d => d.DoctorId == doctorId);
         }
 
-        public async Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyAsync(string specialty)
+        public async Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyAsync(DoctorSpecialtyEnum specialty)
         {
             return await _context.Doctors
                 .Include(d => d.Account)
                 .Include(d => d.ExperienceWorkings)
                 .Include(d => d.Certificates)
-                .Where(d => d.Specialty == specialty)
+                .Where(d => d.Specialty == specialty.ToString())
                 .ToListAsync();
         }
 
@@ -92,6 +93,14 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.Doctors
                 .Include(d => d.Account)
                 .Where(d => !excludedDoctorIds.Contains(d.DoctorId))
+                .ToListAsync();
+        }
+
+        public async Task<List<Doctor>> GetAvailableDoctorsAsync(List<int> excludedDoctorIds, DoctorSpecialtyEnum specialty)
+        {
+            return await _context.Doctors
+                .Include(d => d.Account)
+                .Where(d => !excludedDoctorIds.Contains(d.DoctorId) && d.Specialty == specialty.ToString())
                 .ToListAsync();
         }
 
