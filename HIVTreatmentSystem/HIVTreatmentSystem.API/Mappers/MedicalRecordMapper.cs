@@ -17,6 +17,10 @@ namespace HIVTreatmentSystem.API.Mappers
 
             // Map from Request to Entity
             CreateMap<MedicalRecordRequest, MedicalRecord>();
+
+            // Map create-request to Request & Entity (giúp controller dùng AutoMapper)
+            CreateMap<MedicalRecordCreateRequest, MedicalRecordRequest>();
+            CreateMap<MedicalRecordCreateRequest, MedicalRecord>();
         }
     }
 } 

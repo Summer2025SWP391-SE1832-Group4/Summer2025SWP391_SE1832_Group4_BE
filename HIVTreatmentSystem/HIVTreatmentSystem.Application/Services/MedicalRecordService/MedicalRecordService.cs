@@ -13,11 +13,15 @@ namespace HIVTreatmentSystem.Application.Services
     public class MedicalRecordService : IMedicalRecordService
     {
         private readonly IMedicalRecordRepository _medicalRecordRepository;
+        private readonly IAppointmentRepository _appointmentRepository;
         private readonly IMapper _mapper;
 
-        public MedicalRecordService(IMedicalRecordRepository medicalRecordRepository, IMapper mapper)
+        public MedicalRecordService(IMedicalRecordRepository medicalRecordRepository,
+            IAppointmentRepository appointmentRepository,
+            IMapper mapper)
         {
             _medicalRecordRepository = medicalRecordRepository;
+            _appointmentRepository = appointmentRepository;
             _mapper = mapper;
         }
 
@@ -52,7 +56,14 @@ namespace HIVTreatmentSystem.Application.Services
         /// <inheritdoc/>
         public async Task<MedicalRecordResponse> CreateAsync(MedicalRecordRequest request)
         {
+            // Resolve PatientId & DoctorId from Appointment if not provided
+            var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId);
+            if (appointment == null)
+                throw new ArgumentException($"Appointment with ID {request.AppointmentId} not found.");
+
             var medicalRecord = _mapper.Map<MedicalRecord>(request);
+            medicalRecord.PatientId = appointment.PatientId;
+            medicalRecord.DoctorId = appointment.DoctorId;
             var createdMedicalRecord = await _medicalRecordRepository.CreateAsync(medicalRecord);
             return _mapper.Map<MedicalRecordResponse>(createdMedicalRecord);
         }
@@ -65,6 +76,15 @@ namespace HIVTreatmentSystem.Application.Services
                 throw new ArgumentException($"Medical record with ID {id} not found.");
 
             _mapper.Map(request, existingMedicalRecord);
+            // Ensure PatientId / DoctorId remain in sync with original appointment (immutable)
+            // Only update other fields
+            // (If PatientId/DoctorId were provided in request, they are ignored.)
+            var existingAppointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(existingMedicalRecord.AppointmentId);
+            if (existingAppointment != null)
+            {
+                existingMedicalRecord.PatientId = existingAppointment.PatientId;
+                existingMedicalRecord.DoctorId = existingAppointment.DoctorId;
+            }
             await _medicalRecordRepository.UpdateAsync(existingMedicalRecord);
             return _mapper.Map<MedicalRecordResponse>(existingMedicalRecord);
         }

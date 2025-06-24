@@ -3,6 +3,7 @@ using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -15,10 +16,12 @@ namespace HIVTreatmentSystem.API.Controllers
     public class MedicalRecordController : ControllerBase
     {
         private readonly IMedicalRecordService _medicalRecordService;
+        private readonly IMapper _mapper;
 
-        public MedicalRecordController(IMedicalRecordService medicalRecordService)
+        public MedicalRecordController(IMedicalRecordService medicalRecordService, IMapper mapper)
         {
             _medicalRecordService = medicalRecordService;
+            _mapper = mapper;
         }
 
         /// <summary>
@@ -73,11 +76,12 @@ namespace HIVTreatmentSystem.API.Controllers
         /// <param name="request">The medical record data to create</param>
         [HttpPost]
         // [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> Create([FromBody] MedicalRecordRequest request)
+        public async Task<IActionResult> Create([FromBody] MedicalRecordCreateRequest request)
         {
             try
             {
-                var medicalRecord = await _medicalRecordService.CreateAsync(request);
+                var mappedRequest = _mapper.Map<MedicalRecordRequest>(request);
+                var medicalRecord = await _medicalRecordService.CreateAsync(mappedRequest);
                 return CreatedAtAction(
                     nameof(GetById), 
                     new { id = medicalRecord.MedicalRecordId }, 

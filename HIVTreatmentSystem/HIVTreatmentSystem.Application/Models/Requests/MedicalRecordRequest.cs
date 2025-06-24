@@ -14,18 +14,6 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         public int AppointmentId { get; set; }
 
         /// <summary>
-        /// ID of the patient
-        /// </summary>
-        [Required(ErrorMessage = "Patient ID is required")]
-        public int PatientId { get; set; }
-
-        /// <summary>
-        /// ID of the doctor
-        /// </summary>
-        [Required(ErrorMessage = "Doctor ID is required")]
-        public int DoctorId { get; set; }
-
-        /// <summary>
         /// Date of the consultation
         /// </summary>
         [Required(ErrorMessage = "Consultation date is required")]

@@ -216,8 +216,12 @@ builder.Services.AddScoped<IMedicalRecordService, MedicalRecordService>();
 builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
 // Add TestResultService services
-//builder.Services.AddScoped<ITestResultService, TestResultService>();
+builder.Services.AddScoped<ITestResultService, TestResultService>();
 builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
+
+// Add Feedback services
+builder.Services.AddScoped<IFeedbackService, HIVTreatmentSystem.Application.Services.FeedbackService>();
+builder.Services.AddScoped<IFeedbackRepository, HIVTreatmentSystem.Infrastructure.Repositories.FeedbackRepository>();
 
 // Add SystemAuditLog services
 builder.Services.AddScoped<ISystemAuditLogService, SystemAuditLogService>();
