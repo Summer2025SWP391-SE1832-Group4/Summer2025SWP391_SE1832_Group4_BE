@@ -10,6 +10,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
 {
     public class AppointmentByDoctorRequest
     {
+        public int DoctorId { get; set; }
         public int PatientId { get; set; }
         public DateOnly AppointmentDate { get; set; }
         public TimeOnly AppointmentTime { get; set; }

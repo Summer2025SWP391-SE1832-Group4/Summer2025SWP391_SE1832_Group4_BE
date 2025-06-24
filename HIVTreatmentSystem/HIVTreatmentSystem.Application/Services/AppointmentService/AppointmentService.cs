@@ -401,34 +401,18 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
                 }
 
-                
-                var accountIdStr = _httpContextAccessor
-                    .HttpContext?.User?.FindFirst(
-                        "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier")
-                    ?.Value;
-
-                if (!int.TryParse(accountIdStr, out var accountId))
-                {
-                    return new ApiResponse("Error: Invalid AccountId from token.");
-                }
-
-                var doctor = await _doctorRepository.GetByAccountIdAsync(accountId);
-                if (doctor == null)
-                {
-                    return new ApiResponse("Error: No doctor found for this account.");
-                }
 
                 var existingAppointments = await _appointmentRepository.GetAppointmentsByDoctorAsync(
-                    doctor.DoctorId, request.AppointmentDate);
+                    request.DoctorId, request.AppointmentDate);
 
                 if (existingAppointments.Any(a => a.AppointmentTime == request.AppointmentTime))
                 {
                     return new ApiResponse("Error: The doctor is already scheduled at this time.");
                 }
+                var doctor = await _doctorRepository.GetByIdAsync(request.DoctorId);
 
                 var appointment = _mapper.Map<Appointment>(request);
-                appointment.CreatedByUserId = accountId;
-                appointment.DoctorId = doctor.DoctorId;
+                appointment.CreatedByUserId = doctor.AccountId;
 
                 await _appointmentRepository.CreateAsync(appointment);
                 var email = appointment.Patient.Account.Email;
