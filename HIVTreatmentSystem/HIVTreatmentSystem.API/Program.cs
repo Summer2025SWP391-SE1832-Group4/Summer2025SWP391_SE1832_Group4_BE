@@ -16,6 +16,7 @@ using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Services.BlogService;
 using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
+using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using HIVTreatmentSystem.Infrastructure.Repositories;
@@ -169,6 +170,7 @@ builder.Services.AddDbContext<HIVDbContext>(options =>
 );
 builder.Services.AddScoped<IBlogTagRepository, BlogTagRepository>();
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
+builder.Services.AddScoped<IPatientService, PatientService>();
 builder.Services.AddScoped<IDoctorRepository, DoctorRepository>();
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
