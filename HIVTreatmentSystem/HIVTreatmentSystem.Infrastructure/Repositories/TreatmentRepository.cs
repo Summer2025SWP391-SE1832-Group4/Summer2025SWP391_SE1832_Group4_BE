@@ -50,5 +50,28 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Where(t => t.Status.ToString() == status)
                 .ToListAsync();
         }
+
+        public async Task<PatientTreatment> AddAsync(PatientTreatment treatment)
+        {
+            _context.PatientTreatments.Add(treatment);
+            await _context.SaveChangesAsync();
+            return treatment;
+        }
+
+        public async Task<PatientTreatment> UpdateAsync(PatientTreatment treatment)
+        {
+            _context.Entry(treatment).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return treatment;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var treatment = await _context.PatientTreatments.FindAsync(id);
+            if (treatment == null) return false;
+            _context.PatientTreatments.Remove(treatment);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

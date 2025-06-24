@@ -16,6 +16,7 @@ using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Services.BlogService;
 using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
+using HIVTreatmentSystem.Application.Services.PatientTreatmentService;
 using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
@@ -227,6 +228,11 @@ builder.Services.AddScoped<IFeedbackRepository, HIVTreatmentSystem.Infrastructur
 builder.Services.AddScoped<ISystemAuditLogService, SystemAuditLogService>();
 builder.Services.AddScoped<ISystemAuditLogRepository, SystemAuditLogRepository>();
 
+// Add PatientTreatmentService
+builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
+// Đăng ký service PatientTreatment
+builder.Services.AddScoped<IPatientTreatmentService, PatientTreatmentService>();
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
@@ -235,6 +241,7 @@ builder.Services.AddAutoMapper(typeof(AppointmentMapper));
 builder.Services.AddAutoMapper(typeof(PatientMapper));
 builder.Services.AddAutoMapper(typeof(StandardARVRegimenMapper));
 builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
+builder.Services.AddAutoMapper(typeof(HIVTreatmentSystem.Application.Mappings.PatientTreatmentProfile));
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
