@@ -96,6 +96,15 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 profileImageUrl = account.ProfileImageUrl,
                 Role = account.Role.RoleName,
             };
+
+            if (account.Role.RoleName == "Doctor")
+            {
+                var doctor = await _doctorRepository.GetByAccountIdAsync(account.AccountId);
+                if (doctor != null)
+                {
+                    loginResponse.DoctorSpecialty = doctor.Specialty;
+                }
+            }
             return new ApiResponse("Login successful", loginResponse);
         }
 

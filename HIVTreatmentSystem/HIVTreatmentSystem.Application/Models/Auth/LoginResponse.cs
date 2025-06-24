@@ -1,3 +1,4 @@
+using HIVTreatmentSystem.Domain.Enums;
 using System;
 
 namespace HIVTreatmentSystem.Application.Models.Auth
@@ -14,5 +15,6 @@ namespace HIVTreatmentSystem.Application.Models.Auth
         public string Phone { get; set; } = string.Empty;
         public string profileImageUrl { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;
+        public string? DoctorSpecialty { get; set; } = null;
     }
 } 
