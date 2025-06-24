@@ -35,6 +35,13 @@ namespace HIVTreatmentSystem.Application.Repositories
         Task<IEnumerable<TestResult>> GetByMedicalRecordIdAsync(int medicalRecordId);
 
         /// <summary>
+        /// Get test results by appointment ID
+        /// </summary>
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>Collection of test results for the appointment</returns>
+        Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId);
+
+        /// <summary>
         /// Add a new test result
         /// </summary>
         /// <param name="testResult">Test result to add</param>

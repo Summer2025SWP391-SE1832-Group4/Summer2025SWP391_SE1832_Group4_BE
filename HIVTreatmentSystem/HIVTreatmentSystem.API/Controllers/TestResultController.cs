@@ -56,28 +56,16 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get test results by patient ID
+        /// Get test results by appointment ID
         /// </summary>
-        /// <param name="patientId">Patient ID</param>
-        /// <returns>List of test results for the patient</returns>
-        [HttpGet("patient/{patientId}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByPatientId(int patientId)
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>List of test results for the appointment</returns>
+        [HttpGet("appointment/{appointmentId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByAppointmentId(int appointmentId)
         {
-            var testResults = await _testResultService.GetByPatientIdAsync(patientId);
-            return Ok(new ApiResponse("Success", testResults));
-        }
-
-        /// <summary>
-        /// Get test results by medical record ID
-        /// </summary>
-        /// <param name="medicalRecordId">Medical record ID</param>
-        /// <returns>List of test results for the medical record</returns>
-        [HttpGet("medical-record/{medicalRecordId}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByMedicalRecordId(int medicalRecordId)
-        {
-            var testResults = await _testResultService.GetByMedicalRecordIdAsync(medicalRecordId);
+            var testResults = await _testResultService.GetByAppointmentIdAsync(appointmentId);
             if (testResults == null || !testResults.Any())
-                return NotFound(new ApiResponse("No test results found for the specified medical record."));
+                return NotFound(new ApiResponse("No test results found for the specified appointment."));
             return Ok(new ApiResponse("Success", testResults));
         }
 

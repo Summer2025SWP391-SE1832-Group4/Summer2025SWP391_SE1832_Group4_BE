@@ -12,6 +12,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<IEnumerable<PatientTreatment>> GetTreatmentsByDoctorAsync(int doctorId);
         Task<IEnumerable<PatientTreatment>> GetActiveTreatmentsAsync();
         Task<IEnumerable<PatientTreatment>> GetTreatmentsByStatusAsync(string status);
+        Task<PatientTreatment> AddAsync(PatientTreatment treatment);
+        Task<PatientTreatment> UpdateAsync(PatientTreatment treatment);
+        Task<bool> DeleteAsync(int id);
     }
 }
 

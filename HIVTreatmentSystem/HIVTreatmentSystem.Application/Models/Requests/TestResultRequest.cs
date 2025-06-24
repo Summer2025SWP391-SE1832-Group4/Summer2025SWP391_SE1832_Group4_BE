@@ -8,19 +8,10 @@ namespace HIVTreatmentSystem.Application.Models.Requests
     public class TestResultRequest
     {
         /// <summary>
-        /// ID of the patient (optional – auto-resolved from Appointment/MedicalRecord)
+        /// ID của cuộc hẹn liên quan (bắt buộc)
         /// </summary>
-        public int? PatientId { get; set; }
-
-        /// <summary>
-        /// ID of the associated appointment (optional). If provided, PatientId will be resolved automatically.
-        /// </summary>
-        public int? AppointmentId { get; set; }
-
-        /// <summary>
-        /// ID of the associated medical record (optional)
-        /// </summary>
-        public int? MedicalRecordId { get; set; }
+        [Required]
+        public int AppointmentId { get; set; }
 
         /// <summary>
         /// Date when the test was performed
