@@ -1,19 +1,14 @@
 ﻿using HIVTreatmentSystem.Domain.Enums;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HIVTreatmentSystem.Application.Models.Responses
+namespace HIVTreatmentSystem.Application.Models.Requests
 {
-    public class PatientResponse
+    public class UpdatePatientRequest
     {
-        public int PatientId { get; set; } 
-
-        public string? PatientCodeAtFacility { get; set; }
-
         public DateTime? DateOfBirth { get; set; }
 
         public Gender? Gender { get; set; }
@@ -24,11 +19,6 @@ namespace HIVTreatmentSystem.Application.Models.Responses
 
         public string? ConsentInformation { get; set; }
 
-        public string? AnonymousIdentifier { get; set; }
-
         public string? AdditionalNotes { get; set; }
-
-        public AccountResponse? Account { get; set; }
-
     }
 }

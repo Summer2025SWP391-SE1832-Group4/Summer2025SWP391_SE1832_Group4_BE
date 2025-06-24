@@ -16,6 +16,9 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 
         Task<bool> AnyAsync(string patientCode);
 
+        Task<Patient?> GetByIdAsync(int id);
+        Task UpdateAsync(Patient patient);
+
 
     }
 }
