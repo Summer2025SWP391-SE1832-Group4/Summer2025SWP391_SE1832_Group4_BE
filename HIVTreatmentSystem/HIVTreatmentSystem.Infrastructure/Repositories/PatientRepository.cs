@@ -58,7 +58,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
         public async Task<Patient?> GetByIdAsync(int id)
         {
-            return await _context.Patients.FindAsync(id);
+            return await _context.Patients
+                .Include(p => p.Account)
+                .FirstOrDefaultAsync(p => p.PatientId == id);
         }
 
         public async Task UpdateAsync(Patient patient)

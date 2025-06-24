@@ -415,7 +415,9 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 appointment.CreatedByUserId = doctor.AccountId;
 
                 await _appointmentRepository.CreateAsync(appointment);
-                var email = appointment.Patient.Account.Email;
+                var patient = await _patientRepository.GetByIdAsync(request.PatientId);
+
+                var email = patient.Account.Email;
                 var date = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
                 var time = appointment.AppointmentTime.ToString(@"hh\:mm");
                 await _emailService.SendEmailAsync(
