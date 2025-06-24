@@ -52,6 +52,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             AppointmentServiceEnum? appointmentService,
             DateOnly? startDate,
             DateOnly? endDate,
+            int? accountId,
             bool isDescending,
             string? sortBy,
             int pageIndex,
@@ -66,6 +67,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 appointmentService,
                 startDate,
                 endDate,
+                accountId,
                 isDescending,
                 sortBy
             );

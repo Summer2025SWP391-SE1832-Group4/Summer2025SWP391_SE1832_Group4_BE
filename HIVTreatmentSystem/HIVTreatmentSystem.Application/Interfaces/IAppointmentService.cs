@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HIVTreatmentSystem.Application.Common;
+﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Models.Pages;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Enums;
+using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Application.Interfaces
 {
@@ -21,6 +22,7 @@ namespace HIVTreatmentSystem.Application.Interfaces
             AppointmentServiceEnum? appointmentService,
             DateOnly? startDate,
             DateOnly? endDate,
+            int? accountId,
             bool isDescending,
             string? sortBy,
             int pageIndex,

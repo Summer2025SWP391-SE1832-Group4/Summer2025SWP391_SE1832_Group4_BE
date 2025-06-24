@@ -20,6 +20,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
             AppointmentServiceEnum? appointmentService,
             DateOnly? startDate,
             DateOnly? endDate,
+            int? accountId,
             bool isDescending,
             string? sortBy
         );

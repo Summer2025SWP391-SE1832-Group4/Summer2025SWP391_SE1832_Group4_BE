@@ -24,13 +24,14 @@ namespace HIVTreatmentSystem.API.Controllers
 
         [HttpGet]
         public async Task<IActionResult> GetAllAppointmentsAsync(
+            [FromQuery] int? accountId,
             [FromQuery] string? doctorName,
             [FromQuery] string? patientName,
             [FromQuery] AppointmentTypeEnum? appointmentType,
             [FromQuery] AppointmentStatus? status,
             [FromQuery] AppointmentServiceEnum? appointmentService,
             [FromQuery] DateOnly? startDate,
-            [FromQuery] DateOnly? endDate,
+            [FromQuery] DateOnly? endDate,   
             [FromQuery] bool isDescending = false,
             [FromQuery] string? sortBy = "",
             [FromQuery] int pageIndex = 1,
@@ -45,6 +46,7 @@ namespace HIVTreatmentSystem.API.Controllers
                 appointmentService,
                 startDate,
                 endDate,
+                accountId,
                 isDescending,
                 sortBy,
                 pageIndex,

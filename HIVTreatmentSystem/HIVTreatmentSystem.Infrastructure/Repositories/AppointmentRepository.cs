@@ -1,12 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using HIVTreatmentSystem.Domain.Entities;
+﻿using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
@@ -54,12 +55,14 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             AppointmentServiceEnum? appointmentServiceEnum,
             DateOnly? startDate,
             DateOnly? endDate,
+            int? accountId,
             bool isDescending,
             string? sortBy
         )
         {
             var query = _context
-                .Appointments.Include(a => a.Doctor)
+                .Appointments
+                .Include(a => a.Doctor)
                 .ThenInclude(d => d.Account)
                 .Include(a => a.Patient)
                 .ThenInclude(p => p.Account)
@@ -81,6 +84,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
             if (status.HasValue)
                 query = query.Where(a => a.Status == status.Value);
+
+            if (accountId.HasValue)
+                query = query.Where(a => a.Doctor.AccountId == accountId.Value || a.Patient.AccountId == accountId.Value);
+
 
             if (startDate.HasValue)
             {
