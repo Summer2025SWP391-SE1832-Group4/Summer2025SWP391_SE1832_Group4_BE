@@ -2,6 +2,7 @@ using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
@@ -56,6 +57,16 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(t => t.Patient)
                 .Include(t => t.MedicalRecord)
                 .Where(t => t.MedicalRecordId == medicalRecordId)
+                .ToListAsync();
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId)
+        {
+            return await _context.TestResults
+                .Include(t => t.Patient)
+                .Include(t => t.MedicalRecord)
+                .Where(t => t.MedicalRecord != null && t.MedicalRecord.AppointmentId == appointmentId)
                 .ToListAsync();
         }
 
