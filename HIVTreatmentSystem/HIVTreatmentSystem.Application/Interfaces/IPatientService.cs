@@ -32,5 +32,7 @@ namespace HIVTreatmentSystem.Application.Interfaces
 
         Task<ApiResponse> DeletePatientAsync(int id);
 
+        Task<PatientResponse> GetPatientByIdAsync(int id);
+
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Azure;
+using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Pages;
 using HIVTreatmentSystem.Application.Models.Requests;
@@ -47,6 +48,14 @@ namespace HIVTreatmentSystem.API.Controllers
 
             return Ok(result);
 
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPatientById(int id)
+        {
+            var result = await _patientService.GetPatientByIdAsync(id);
+            if (result == null) return NotFound(new ApiResponse("Patient not exist"));
+            return Ok(result);
         }
 
         [HttpPost]

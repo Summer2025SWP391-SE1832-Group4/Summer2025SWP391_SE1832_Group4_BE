@@ -85,7 +85,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePatient(int id, [FromBody] UpdateDoctorRequest? dto, [FromQuery] DoctorSpecialtyEnum? specialty)
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] UpdateDoctorRequest dto, [FromQuery] DoctorSpecialtyEnum? specialty)
         {
             var result = await _doctorService.UpdateDoctorAsync(id, dto, specialty);
             if (!result) return NotFound();

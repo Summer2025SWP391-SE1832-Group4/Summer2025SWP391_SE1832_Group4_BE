@@ -155,5 +155,14 @@ namespace HIVTreatmentSystem.Application.Services.PatientService
                 return new ApiResponse($"Error deleting patient: {ex.InnerException.Message}");
             }
         }
+
+        public async Task<PatientResponse> GetPatientByIdAsync(int id)
+        {       
+            var patient = await _patientRepository.GetByIdAsync(id);
+            var response = _mapper.Map<PatientResponse>(patient);
+            return response;
+        }
+
     }
 }
+

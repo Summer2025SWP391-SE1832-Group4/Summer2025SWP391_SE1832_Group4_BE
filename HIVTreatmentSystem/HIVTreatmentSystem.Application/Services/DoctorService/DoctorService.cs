@@ -150,7 +150,7 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
             }
         }
 
-        public async Task<bool> UpdateDoctorAsync(int doctorId, UpdateDoctorRequest? request, DoctorSpecialtyEnum? specialty)
+        public async Task<bool> UpdateDoctorAsync(int doctorId, UpdateDoctorRequest request, DoctorSpecialtyEnum? specialty)
         {
             var doctor = await _doctorRepository.GetByIdAsync(doctorId);
             if (doctor == null)
