@@ -478,6 +478,10 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 var staff = new Staff
                 {
+                    StaffId = account.AccountId
+                };
+                await _staffRepository.AddAsync(staff);
+            }
                     AccountId = account.AccountId
                 };
                 await _staffRepository.AddAsync(staff);
@@ -492,6 +496,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 await _patientRepository.AddAsync(patient);
 
             }
+
 
             var setPasswordUrl = $"";
             var subject = "Create your password for the HIV Treatment System";
