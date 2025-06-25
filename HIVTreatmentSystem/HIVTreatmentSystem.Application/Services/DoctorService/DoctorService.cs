@@ -182,6 +182,7 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
                 doctor.Specialty = specialty.Value.ToString();
             }
 
+            await _doctorRepository.UpdateAsync(doctor);
             return true;
         }
     }
