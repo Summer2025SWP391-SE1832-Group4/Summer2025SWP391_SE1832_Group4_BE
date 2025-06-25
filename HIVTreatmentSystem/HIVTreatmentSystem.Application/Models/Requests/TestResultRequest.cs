@@ -58,9 +58,8 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         /// <summary>
         /// URL to the attached test result file
         /// </summary>
-        [MaxLength(255)]
-        public string? AttachedFileUrl { get; set; }
-
+        // [MaxLength(255)]
+        // public string? AttachedFileUrl { get; set; }
         /// <summary>
         /// Comments from the doctor about the test results
         /// </summary>
