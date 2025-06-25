@@ -103,6 +103,35 @@ namespace HIVTreatmentSystem.API.Controllers
                 return StatusCode(400, new ApiResponse(ex.Message));
             }
         }
+        
+        /// <summary>
+        /// Register a new account by admin.
+        /// </summary>
+        /// <param name="request">Registration information by admin.</param>
+        /// <returns>Registration result.</returns>
+        [HttpPost("register-by-admin")]
+        public async Task<ActionResult<ApiResponse>> RegisterByAdmin(RegisterByAdminRequest request)
+        {
+            try
+            {
+                var result = await _authService.RegisterByAdminAsync(request);
+                // Check for duplicate data errors first
+                if (result.Message.Contains("already exists") || result.Message.Contains("already in use"))
+                {
+                    return StatusCode(400, new ApiResponse(result.Message));
+                }
+                // Then check for other errors
+                if (!result.Success)
+                {
+                    return BadRequest(result);
+                }
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(400, new ApiResponse(ex.Message));
+            }
+        }
 
         /// <summary>
         /// Set a new password using the token sent via email after registration.

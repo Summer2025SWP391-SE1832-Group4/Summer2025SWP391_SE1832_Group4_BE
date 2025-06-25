@@ -16,6 +16,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using HIVTreatmentSystem.Application.Models.Requests;
 
 namespace HIVTreatmentSystem.Application.Services.Auth
 {
@@ -420,6 +421,93 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             return new ApiResponse("Password has been reset successfully.");
         }
+
+        public async Task<ApiResponse> RegisterByAdminAsync(RegisterByAdminRequest request)
+        {
+            if (
+                string.IsNullOrWhiteSpace(request.Username)
+                || string.IsNullOrWhiteSpace(request.Email)
+                || string.IsNullOrWhiteSpace(request.FullName)
+            )
+            {
+                
+                return new ApiResponse("Please provide all required information.");
+            }
+
+            if (await _accountRepository.UsernameExistsAsync(request.Username))
+            {
+                return new ApiResponse("Username already exists.");
+            }
+            if (await _accountRepository.EmailExistsAsync(request.Email))
+            {
+                return new ApiResponse("Email is already in use.");
+            }
+
+            // var token = Guid.NewGuid().ToString();
+            // var expiry = DateTime.UtcNow.AddMinutes(30);
+
+            var account = new Domain.Entities.Account
+            {
+                Username = request.Username,
+                PasswordHash = request.Email,
+                Email = request.Email,
+                FullName = request.FullName,
+                PhoneNumber = request.PhoneNumber,
+                RoleId = request.RoleId,
+                CreatedAt = DateTime.UtcNow,
+                AccountStatus = AccountStatus.Active,
+                // PasswordResetToken = null,
+                // PasswordResetTokenExpiry = expiry,
+            };
+
+            await _accountRepository.AddAsync(account);
+            await _accountRepository.SaveChangesAsync();
+
+            // Tạo Doctor/Staff nếu cần (chỉ tạo bản ghi rỗng, không có thông tin chuyên biệt)
+            if (request.RoleId == 3) // Doctor
+            {
+                var doctor = new Doctor
+                {
+                    AccountId = account.AccountId
+                };
+                await _doctorRepository.AddAsync(doctor);
+                
+                //Thêm ID của doctor vào trong Expriment working
+            }
+            else if (request.RoleId == 4) // Staff
+            {
+                var staff = new Staff
+                {
+                    StaffId = account.AccountId
+                };
+                await _staffRepository.AddAsync(staff);
+            }
+
+            var setPasswordUrl = $"";
+            var subject = "Create your password for the HIV Treatment System";
+            var body =
+                $"<p>Hello {account.FullName},</p>"
+                + $"<p>Thank you for registering with the HIV Treatment System.</p>"
+                + $"<p>Your login details are:</p>"
+                + $"<ul>"
+                + $"<li><strong>Account for login:</strong> {account.Email}</li>"
+                + $"<li><strong>Temporary Password:</strong> {account.Email}</li>"
+                + $"</ul>"
+                + $"<p>Please log in using the above credentials and change your password.</p>";
+            await _emailService.SendEmailAsync(account.Email, subject, body);
+            return new ApiResponse(
+                "Registration successful!",
+                new
+                {
+                    account.AccountId,
+                    account.Username,
+                    account.Email,
+                    account.FullName,
+                    account.RoleId,
+                }
+            );
+        }
+
 
 
     }
