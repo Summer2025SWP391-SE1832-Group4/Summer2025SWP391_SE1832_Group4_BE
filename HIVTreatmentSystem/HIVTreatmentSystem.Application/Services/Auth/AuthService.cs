@@ -31,6 +31,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         private readonly IDoctorRepository _doctorRepository;
         private readonly IExperienceWorkingRepository _experienceWorkingRepository;
         private readonly IPatientRepository _patientRepository;
+
         public AuthService(
             IAccountRepository accountRepository,
             IOptions<JwtSettings> jwtSettings,
@@ -106,6 +107,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     loginResponse.DoctorSpecialty = doctor.Specialty;
                 }
             }
+
             return new ApiResponse("Login successful", loginResponse);
         }
 
@@ -117,7 +119,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 || string.IsNullOrWhiteSpace(request.FullName)
             )
             {
-                
+
                 return new ApiResponse("Please provide all required information.");
             }
 
@@ -125,6 +127,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 return new ApiResponse("Username already exists.");
             }
+
             if (await _accountRepository.EmailExistsAsync(request.Email))
             {
                 return new ApiResponse("Email is already in use.");
@@ -158,7 +161,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     AccountId = account.AccountId
                 };
                 await _doctorRepository.AddAsync(doctor);
-                
+
                 //Thêm ID của doctor vào trong Expriment working
             }
             else if (request.RoleId == 4) // Staff
@@ -210,6 +213,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 return new ApiResponse("Invalid or expired token.");
             }
+
             if (
                 !account.PasswordResetTokenExpiry.HasValue
                 || account.PasswordResetTokenExpiry < DateTime.UtcNow
@@ -248,8 +252,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 code = "PT" + random.Next(1, 100000).ToString("D5");
                 exists = await _patientRepository.AnyAsync(code);
-            }
-            while (exists);
+            } while (exists);
 
             return code;
         }
@@ -343,10 +346,12 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     return new ChangePasswordResponse { Success = false, Message = "Error: Account not found." };
                 bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
                 if (!checkPassword)
-                    return new ChangePasswordResponse { Success = false, Message = "Error: Old password is incorrect." };
+                    return new ChangePasswordResponse
+                        { Success = false, Message = "Error: Old password is incorrect." };
                 bool isSamePassword = _passwordHasher.VerifyPassword(newPassword, account.PasswordHash);
                 if (isSamePassword)
-                    return new ChangePasswordResponse { Success = false, Message = "Error: New password must be different from the old password." };
+                    return new ChangePasswordResponse
+                        { Success = false, Message = "Error: New password must be different from the old password." };
                 account.PasswordHash = _passwordHasher.HashPassword(newPassword);
                 _accountRepository.Update(account);
                 return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
@@ -354,7 +359,8 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             }
             catch (Exception ex)
             {
-                return new ChangePasswordResponse { Success = false, Message = "An error occurred while changing the password." };
+                return new ChangePasswordResponse
+                    { Success = false, Message = "An error occurred while changing the password." };
             }
         }
 
@@ -375,9 +381,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             string resetLink = $"http://localhost:5173/resetPassword-page?token={token}";
             await _emailService.SendEmailAsync(
-    email,
-    "Reset Your Password",
-    $@"
+                email,
+                "Reset Your Password",
+                $@"
     <div style='font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9;'>
         <h2 style='color: #333;'>Reset Your Password</h2>
         <p style='font-size: 16px; color: #555;'>
@@ -399,7 +405,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             &copy; {DateTime.Now.Year} Modern State. All rights reserved.
         </p>
     </div>"
-);
+            );
 
 
 
@@ -421,7 +427,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             return new ApiResponse("Password has been reset successfully.");
         }
-
+        
         public async Task<ApiResponse> RegisterByAdminAsync(RegisterByAdminRequest request)
         {
             if (
@@ -430,7 +436,6 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 || string.IsNullOrWhiteSpace(request.FullName)
             )
             {
-                
                 return new ApiResponse("Please provide all required information.");
             }
 
@@ -438,32 +443,28 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 return new ApiResponse("Username already exists.");
             }
+
             if (await _accountRepository.EmailExistsAsync(request.Email))
             {
                 return new ApiResponse("Email is already in use.");
             }
 
-            // var token = Guid.NewGuid().ToString();
-            // var expiry = DateTime.UtcNow.AddMinutes(30);
-
             var account = new Domain.Entities.Account
             {
                 Username = request.Username,
-                PasswordHash = request.Email,
+                PasswordHash = request.Email, // Consider hashing or generating a temp password
                 Email = request.Email,
                 FullName = request.FullName,
                 PhoneNumber = request.PhoneNumber,
                 RoleId = request.RoleId,
                 CreatedAt = DateTime.UtcNow,
                 AccountStatus = AccountStatus.Active,
-                // PasswordResetToken = null,
-                // PasswordResetTokenExpiry = expiry,
             };
 
             await _accountRepository.AddAsync(account);
             await _accountRepository.SaveChangesAsync();
 
-            // Tạo Doctor/Staff nếu cần (chỉ tạo bản ghi rỗng, không có thông tin chuyên biệt)
+            // Create Doctor/Staff/Patient if needed
             if (request.RoleId == 3) // Doctor
             {
                 var doctor = new Doctor
@@ -471,22 +472,16 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     AccountId = account.AccountId
                 };
                 await _doctorRepository.AddAsync(doctor);
-                
-                //Thêm ID của doctor vào trong Expriment working
             }
             else if (request.RoleId == 4) // Staff
             {
                 var staff = new Staff
                 {
-                    StaffId = account.AccountId
-                };
-                await _staffRepository.AddAsync(staff);
-            }
                     AccountId = account.AccountId
                 };
                 await _staffRepository.AddAsync(staff);
             }
-            else if (account.RoleId == 5)
+            else if (request.RoleId == 5) // Patient
             {
                 var patient = new Patient
                 {
@@ -494,11 +489,8 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                     PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
                 };
                 await _patientRepository.AddAsync(patient);
-
             }
 
-
-            var setPasswordUrl = $"";
             var subject = "Create your password for the HIV Treatment System";
             var body =
                 $"<p>Hello {account.FullName},</p>"
@@ -510,6 +502,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 + $"</ul>"
                 + $"<p>Please log in using the above credentials and change your password.</p>";
             await _emailService.SendEmailAsync(account.Email, subject, body);
+
             return new ApiResponse(
                 "Registration successful!",
                 new
@@ -524,6 +517,8 @@ namespace HIVTreatmentSystem.Application.Services.Auth
         }
 
 
-
     }
+    
+
+
 }
