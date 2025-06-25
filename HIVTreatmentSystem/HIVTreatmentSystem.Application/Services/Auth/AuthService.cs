@@ -478,7 +478,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 var staff = new Staff
                 {
-                    StaffId = account.AccountId
+                    AccountId = account.AccountId
                 };
                 await _staffRepository.AddAsync(staff);
             }
