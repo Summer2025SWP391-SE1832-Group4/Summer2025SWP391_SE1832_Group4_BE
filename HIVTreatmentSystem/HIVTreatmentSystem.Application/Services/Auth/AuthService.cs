@@ -165,7 +165,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 var staff = new Staff
                 {
-                    StaffId = account.AccountId
+                    AccountId = account.AccountId
                 };
                 await _staffRepository.AddAsync(staff);
             }
@@ -482,6 +482,21 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 };
                 await _staffRepository.AddAsync(staff);
             }
+                    AccountId = account.AccountId
+                };
+                await _staffRepository.AddAsync(staff);
+            }
+            else if (account.RoleId == 5)
+            {
+                var patient = new Patient
+                {
+                    AccountId = account.AccountId,
+                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
+                };
+                await _patientRepository.AddAsync(patient);
+
+            }
+
 
             var setPasswordUrl = $"";
             var subject = "Create your password for the HIV Treatment System";
