@@ -11,6 +11,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Channels;
 using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Application.Services.PatientService
@@ -65,13 +66,38 @@ namespace HIVTreatmentSystem.Application.Services.PatientService
             var patient = await _patientRepository.GetByIdAsync(patientId);
             if (patient == null) return false;
 
-            patient.DateOfBirth = dto.DateOfBirth;
-            patient.Gender = dto.Gender;
-            patient.Address = dto.Address;
-            patient.HivDiagnosisDate = dto.HivDiagnosisDate;
-            patient.ConsentInformation = dto.ConsentInformation;
-            patient.AdditionalNotes = dto.AdditionalNotes;
+            if (dto.DateOfBirth != patient.DateOfBirth)
+            {
+                patient.DateOfBirth = dto.DateOfBirth;
+            }
 
+            if (dto.Gender != patient.Gender)
+            {
+                patient.Gender = dto.Gender;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.Address) &&
+                dto.Address != patient.Address)
+            {
+                patient.Address = dto.Address;
+            }
+
+            if (dto.HivDiagnosisDate != patient.HivDiagnosisDate)
+            {
+                patient.HivDiagnosisDate = dto.HivDiagnosisDate;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.ConsentInformation) &&
+                dto.ConsentInformation != patient.ConsentInformation)
+            {
+                patient.ConsentInformation = dto.ConsentInformation;
+            }
+
+            if (!string.IsNullOrWhiteSpace(dto.AdditionalNotes) &&
+                dto.AdditionalNotes != patient.AdditionalNotes)
+            {
+                patient.AdditionalNotes = dto.AdditionalNotes;
+            }
             await _patientRepository.UpdateAsync(patient);
             return true;
         }
