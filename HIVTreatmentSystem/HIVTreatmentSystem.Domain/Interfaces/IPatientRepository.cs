@@ -30,7 +30,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
             bool isDescending = false,
             string? sortBy = "");
 
-
+        Task DeleteAsync(Patient patient); 
     }
 }
 

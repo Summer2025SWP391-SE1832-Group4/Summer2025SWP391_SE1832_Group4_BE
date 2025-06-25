@@ -68,5 +68,11 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok("Update successful");
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeletePatient(int id)
+        {
+            var result = await _patientService.DeletePatientAsync(id);
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
     }
 }

@@ -89,7 +89,8 @@ namespace HIVTreatmentSystem.Application.Services.PatientService
                 await _patientRepository.AddAsync(patient);
                 patient.PatientCodeAtFacility = await GenerateUniquePatientCodeAsync();
                 return new ApiResponse("Patient created successfully");
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return new ApiResponse($"Error creating patient: {ex.InnerException.Message}");
             }
@@ -109,6 +110,24 @@ namespace HIVTreatmentSystem.Application.Services.PatientService
             while (exists);
 
             return code;
+        }
+
+        public async Task<ApiResponse> DeletePatientAsync(int id)
+        {
+            try
+            {
+                var patient = await _patientRepository.GetByIdAsync(id);
+                if (patient == null)
+                {
+                    return new ApiResponse("Error: Patient not found");
+                }
+                await _patientRepository.DeleteAsync(patient);
+                return new ApiResponse("Patient deleted successfully", true);
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse($"Error deleting patient: {ex.InnerException.Message}");
+            }
         }
     }
 }

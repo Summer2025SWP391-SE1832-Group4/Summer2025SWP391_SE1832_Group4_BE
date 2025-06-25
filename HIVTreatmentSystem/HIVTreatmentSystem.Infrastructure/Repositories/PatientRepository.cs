@@ -22,7 +22,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(p => p.Appointments)
                 .FirstOrDefaultAsync(p => p.PatientId == patientId);
         }
-        
+
         public async Task<IEnumerable<Patient>> GetPatientsByDoctorAsync(int doctorId)
         {
             return await _context.Appointments
@@ -31,7 +31,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Distinct()
                 .ToListAsync();
         }
-        
+
         public async Task<IEnumerable<Patient>> GetPatientsByTreatmentTypeAsync(string treatmentType)
         {
             return await _context.PatientTreatments
@@ -40,7 +40,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Distinct()
                 .ToListAsync();
         }
-        
+
         public async Task<IEnumerable<Patient>> GetPatientsByHIVStatusAsync(string hivStatus)
         {
             return null;
@@ -84,9 +84,9 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(p => p.Account)
                 .AsQueryable();
 
-            if (accountId.HasValue) 
-                query = query .Where(p => p.AccountId == accountId.Value);
-            
+            if (accountId.HasValue)
+                query = query.Where(p => p.AccountId == accountId.Value);
+
             if (dateOfBirth.HasValue)
                 query = query.Where(p => p.DateOfBirth == dateOfBirth.Value);
 
@@ -118,6 +118,12 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
             return await query.ToListAsync();
 
+        }
+
+        public async Task DeleteAsync(Patient patient)
+        {
+            _context.Patients.Remove(patient);
+            await _context.SaveChangesAsync();
         }
     }
 }
