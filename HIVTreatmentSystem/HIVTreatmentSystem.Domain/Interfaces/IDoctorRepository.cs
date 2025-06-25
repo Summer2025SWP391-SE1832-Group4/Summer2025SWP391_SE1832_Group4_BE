@@ -21,6 +21,8 @@ namespace HIVTreatmentSystem.Domain.Interfaces
 
         Task DeleteAsync(Doctor doctor);
 
+        Task UpdateAsync(Doctor doctor);
+
     }
 }
 

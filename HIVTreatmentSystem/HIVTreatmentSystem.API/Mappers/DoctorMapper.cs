@@ -16,6 +16,10 @@ namespace HIVTreatmentSystem.API.Mappers
                 .ForMember(dest => dest.ShortDescription, opt => opt.MapFrom(src => src.ShortDescription));
 
             CreateMap<CreateDoctorRequest, Doctor>();
+            CreateMap<UpdateDoctorRequest, Doctor>()
+                .ForMember(dest => dest.Specialty, opt => opt.Ignore())
+                .ForMember(dest => dest.AccountId, opt => opt.Ignore())
+                .ForMember(dest => dest.DoctorId, opt => opt.Ignore());
         }
     }
 }

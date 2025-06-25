@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
@@ -148,6 +148,41 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
             {
                 return new ApiResponse($"Error deleting doctor: {ex.InnerException.Message}");
             }
+        }
+
+        public async Task<bool> UpdateDoctorAsync(int doctorId, UpdateDoctorRequest? request, DoctorSpecialtyEnum? specialty)
+        {
+            var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+            if (doctor == null)
+            {
+                return false;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request?.Qualifications) &&
+                request.Qualifications != doctor.Qualifications)
+            {
+                doctor.Qualifications = request.Qualifications;
+            }
+
+            if (request?.YearsOfExperience.HasValue == true &&
+                request.YearsOfExperience.Value != doctor.YearsOfExperience)
+            {
+                doctor.YearsOfExperience = request.YearsOfExperience.Value;
+            }
+
+            if (!string.IsNullOrWhiteSpace(request?.ShortDescription) &&
+                request.ShortDescription != doctor.ShortDescription)
+            {
+                doctor.ShortDescription = request.ShortDescription;
+            }
+
+            if (specialty.HasValue &&
+                doctor.Specialty != specialty.Value.ToString())
+            {
+                doctor.Specialty = specialty.Value.ToString();
+            }
+
+            return true;
         }
     }
 }

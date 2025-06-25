@@ -110,5 +110,11 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
 
         }
+
+        public async Task UpdateAsync(Doctor doctor)
+        {
+            _context.Doctors.Update(doctor);
+            await _context.SaveChangesAsync();
+        }
     }
 }

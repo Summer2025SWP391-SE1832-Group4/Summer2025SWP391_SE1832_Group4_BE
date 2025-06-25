@@ -83,5 +83,14 @@ namespace HIVTreatmentSystem.API.Controllers
             return result.Success ? Ok(result) : BadRequest(result);
 
         }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePatient(int id, [FromBody] UpdateDoctorRequest? dto, [FromQuery] DoctorSpecialtyEnum? specialty)
+        {
+            var result = await _doctorService.UpdateDoctorAsync(id, dto, specialty);
+            if (!result) return NotFound();
+
+            return Ok("Update successful");
+        }
     }
 } 

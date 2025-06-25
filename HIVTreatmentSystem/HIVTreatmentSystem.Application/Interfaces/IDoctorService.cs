@@ -20,5 +20,7 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<ApiResponse> CreateDoctorAsync(CreateDoctorRequest request, DoctorSpecialtyEnum? doctorSpecialty);
 
         Task<ApiResponse> DeleteDoctorAsync(int doctorId);
+
+        Task<bool> UpdateDoctorAsync(int doctorId, UpdateDoctorRequest? request, DoctorSpecialtyEnum? specialty);
     }
 }
