@@ -1,12 +1,14 @@
+using Azure.Core;
 using HIVTreatmentSystem.API.Controllers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
+using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Domain.Enums;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
-
 namespace HIVTreatmentSystem.API.Controllers
 {
     [ApiController]
@@ -42,7 +44,7 @@ namespace HIVTreatmentSystem.API.Controllers
             return Ok(new ApiResponse("Success", doctor));
         }
 
-        /// <summary>z
+        /// <summary>
         /// Get doctors by specialty
         /// </summary>
         [HttpGet("specialty/{specialty}")]
@@ -62,6 +64,24 @@ namespace HIVTreatmentSystem.API.Controllers
             if (doctor == null)
                 return NotFound(new ApiResponse("Doctor not found"));
             return Ok(new ApiResponse("Success", doctor));
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateDoctor([FromBody] CreateDoctorRequest request, [FromQuery] DoctorSpecialtyEnum? specialty)
+        {
+            if (request == null) return BadRequest();
+
+            var result = await _doctorService.CreateDoctorAsync(request, specialty);
+
+            return result.Success ? Ok(result) : BadRequest(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteDoctor(int id)
+        {
+
+            var result = await _doctorService.DeleteDoctorAsync(id);
+            return result.Success ? Ok(result) : BadRequest(result);
+
         }
     }
 } 

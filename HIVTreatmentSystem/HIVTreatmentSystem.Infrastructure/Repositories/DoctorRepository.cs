@@ -104,5 +104,11 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .ToListAsync();
         }
 
+        public async Task DeleteAsync(Doctor doctor)
+        {
+            _context.Doctors.Remove(doctor);
+            await _context.SaveChangesAsync();
+
+        }
     }
 }

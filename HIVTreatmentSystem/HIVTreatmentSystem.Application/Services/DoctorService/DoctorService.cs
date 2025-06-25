@@ -1,6 +1,8 @@
 using AutoMapper;
+using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Doctor;
+using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
@@ -63,7 +65,7 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
                 Qualifications = doctor.Qualifications,
                 YearsOfExperience = doctor.YearsOfExperience,
                 ShortDescription = doctor.ShortDescription,
-                
+
                 ExperienceWorkings = doctor.ExperienceWorkings.Select(e => new ExperienceWorkingDto
                 {
                     ExperienceId = e.Id,
@@ -107,6 +109,45 @@ namespace HIVTreatmentSystem.Application.Services.DoctorService
                 throw new ArgumentException("Invalid appointment type specified.");
             }
             return _mapper.Map<List<DoctorResponse>>(availableDoctors);
+        }
+
+        public async Task<ApiResponse> CreateDoctorAsync(CreateDoctorRequest request, DoctorSpecialtyEnum? specialty)
+        {
+            try
+            {
+                var existingDoctor = await _doctorRepository.GetByAccountIdAsync(request.AccountId);
+                if (existingDoctor != null)
+                {
+                    return new ApiResponse("Error: Doctor with this account already exists");
+                }
+
+                var doctor = _mapper.Map<Doctor>(request);
+                doctor.Specialty = specialty?.ToString();
+                await _doctorRepository.AddAsync(doctor);
+                return new ApiResponse("Doctor created successfully");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse($"Error creating doctor: {ex.Message}");
+            }
+        }
+
+        public async Task<ApiResponse> DeleteDoctorAsync(int doctorId)
+        {
+            try
+            {
+                var doctor = await _doctorRepository.GetByIdAsync(doctorId);
+                if (doctor == null)
+                {
+                    return new ApiResponse("Error: Doctor not found");
+                }
+                await _doctorRepository.DeleteAsync(doctor);
+                return new ApiResponse("Doctor deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                return new ApiResponse($"Error deleting doctor: {ex.InnerException.Message}");
+            }
         }
     }
 }

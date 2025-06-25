@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
 
@@ -13,6 +14,8 @@ namespace HIVTreatmentSystem.API.Mappers
                 .ForMember(dest => dest.Qualifications, opt => opt.MapFrom(src => src.Qualifications))
                 .ForMember(dest => dest.YearsOfExperience, opt => opt.MapFrom(src => src.YearsOfExperience))
                 .ForMember(dest => dest.ShortDescription, opt => opt.MapFrom(src => src.ShortDescription));
+
+            CreateMap<CreateDoctorRequest, Doctor>();
         }
     }
 }
