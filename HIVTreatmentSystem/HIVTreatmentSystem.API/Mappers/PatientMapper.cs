@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Domain.Entities;
 
@@ -9,7 +10,7 @@ namespace HIVTreatmentSystem.API.Mappers
         public PatientMapper()
         {
             CreateMap<Patient, PatientResponse>();
-
+            CreateMap<CreatePatientRequest, Patient>();
         }
     }
 }

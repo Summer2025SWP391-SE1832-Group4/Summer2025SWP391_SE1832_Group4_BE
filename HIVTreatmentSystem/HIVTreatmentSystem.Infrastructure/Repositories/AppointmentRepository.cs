@@ -69,9 +69,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(doctorName))
-                query = query.Where(a =>
-                    a.Doctor != null && a.Doctor.Account.FullName.Contains(doctorName)
-                );
+                query = query.Where(a => a.Doctor.Account.FullName.Contains(doctorName));
 
             if (!string.IsNullOrWhiteSpace(patientName))
                 query = query.Where(a => a.Patient.Account.FullName.Contains(patientName));
