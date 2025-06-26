@@ -4,7 +4,6 @@ using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -12,11 +11,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250618041705_InitialCreate")]
-    partial class InitialCreate
+    partial class HIVDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -808,29 +805,12 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TestResultId"));
 
-                    b.Property<string>("AttachedFileUrl")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<int?>("CD4Count")
                         .HasColumnType("int");
 
-                    b.Property<string>("CD4Unit")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("cells/mm³");
-
                     b.Property<string>("DoctorComments")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("HivViralLoadUnit")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)")
-                        .HasDefaultValue("copies/mL");
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("HivViralLoadValue")
                         .HasMaxLength(50)
@@ -848,6 +828,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Property<DateTime>("TestDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("TestResults")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<string>("TestType")
                         .IsRequired()

@@ -246,14 +246,10 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             {
                 entity.HasKey(e => e.TestResultId);
                 entity.Property(e => e.TestType).IsRequired().HasMaxLength(100);
-                entity.Property(e => e.CD4Unit).HasMaxLength(20).HasDefaultValue("cells/mm³");
                 entity.Property(e => e.HivViralLoadValue).HasMaxLength(50);
-                entity
-                    .Property(e => e.HivViralLoadUnit)
-                    .HasMaxLength(20)
-                    .HasDefaultValue("copies/mL");
+                
                 entity.Property(e => e.LabName).HasMaxLength(100);
-                entity.Property(e => e.AttachedFileUrl).HasMaxLength(255);
+                entity.Property(e => e.TestResults).HasMaxLength(255);
 
                 entity
                     .HasOne(e => e.Patient)
