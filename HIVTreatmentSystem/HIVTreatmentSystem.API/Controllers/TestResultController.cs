@@ -57,16 +57,16 @@ namespace HIVTreatmentSystem.API.Controllers
 
         /// <summary>
         /// Get test results by appointment ID
-        /// Only returns test results for patients in appointments with CheckedIn status
+        /// Returns all test results for patients in appointments with CheckedIn status
         /// </summary>
         /// <param name="appointmentId">Appointment ID</param>
-        /// <returns>List of test results for the patient in the CheckedIn appointment</returns>
+        /// <returns>Test results object containing all test results for the appointment</returns>
         [HttpGet("appointment/{appointmentId}")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByAppointmentId(int appointmentId)
+        public async Task<ActionResult<ApiResponse<TestResultListResponse>>> GetByAppointmentId(int appointmentId)
         {
             var testResults = await _testResultService.GetByAppointmentIdAsync(appointmentId);
-            if (testResults == null || !testResults.Any())
-                return Ok(new ApiResponse("No test results found for the specified appointment.", new List<TestResultResponse>()));
+            if (testResults.TotalCount == 0)
+                return NotFound(new ApiResponse("No test results found for the specified appointment."));
             return Ok(new ApiResponse("Success", testResults));
         }
 

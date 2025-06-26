@@ -64,15 +64,17 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId)
         {
-            // TestResult không có AppointmentId trực tiếp
-            // Cần join với Appointment qua PatientId và kiểm tra Status = CheckedIn
-            // Logic: Lấy test results của patient trong appointment có status CheckedIn
-            return await _context.TestResults
-                .Include(t => t.Patient)
-                .Where(t => _context.Appointments
-                    .Any(a => a.AppointmentId == appointmentId && 
-                             a.PatientId == t.PatientId && (a.AppointmentService == AppointmentServiceEnum.ELISA  || a.AppointmentService == AppointmentServiceEnum.PCR || a.AppointmentService == AppointmentServiceEnum.RapidTest || a.AppointmentService == AppointmentServiceEnum.PostTestCounseling || a.AppointmentService == AppointmentServiceEnum.PreTestCounseling)  ))
-                .ToListAsync();
+            return await (from t in _context.TestResults
+                    .Include(t => t.Patient)
+                    .Include(t => t.MedicalRecord)
+                join a in _context.Appointments on t.PatientId equals a.PatientId
+                where a.AppointmentId == appointmentId &&
+                      (a.AppointmentService == AppointmentServiceEnum.ELISA ||
+                       a.AppointmentService == AppointmentServiceEnum.PCR ||
+                       a.AppointmentService == AppointmentServiceEnum.RapidTest ||
+                       a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
+                       a.AppointmentService == AppointmentServiceEnum.PreTestCounseling) && a.AppointmentType == AppointmentTypeEnum.Testing
+                select t).ToListAsync();
         }
 
         /// <inheritdoc/>

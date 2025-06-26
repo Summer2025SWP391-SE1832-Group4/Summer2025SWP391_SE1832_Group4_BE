@@ -61,10 +61,17 @@ namespace HIVTreatmentSystem.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<TestResultResponse>> GetByAppointmentIdAsync(int appointmentId)
+        public async Task<TestResultListResponse> GetByAppointmentIdAsync(int appointmentId)
         {
             var testResults = await _repository.GetByAppointmentIdAsync(appointmentId);
-            return _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
+            var mappedResults = _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
+            
+            return new TestResultListResponse
+            {
+                TestResults = mappedResults,
+                TotalCount = mappedResults.Count(),
+                AppointmentId = appointmentId
+            };
         }
         /// <inheritdoc/>
         public async Task<TestResultResponse> CreateAsync(TestResultRequest request)
