@@ -38,7 +38,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         /// <summary>
         /// Unit for CD4 count measurement
         /// </summary>
-        public string CD4Unit { get; set; } = "cells/mm³";
+        // public string CD4Unit { get; set; } = "cells/mm³";
 
         /// <summary>
         /// HIV viral load value (if applicable)
@@ -48,7 +48,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         /// <summary>
         /// Unit for HIV viral load measurement
         /// </summary>
-        public string HivViralLoadUnit { get; set; } = "copies/mL";
+        // public string HivViralLoadUnit { get; set; } = "copies/mL";
 
         /// <summary>
         /// Name of the laboratory where the test was performed
