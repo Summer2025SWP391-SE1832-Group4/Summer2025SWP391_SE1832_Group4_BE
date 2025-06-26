@@ -71,8 +71,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(t => t.Patient)
                 .Where(t => _context.Appointments
                     .Any(a => a.AppointmentId == appointmentId && 
-                             a.PatientId == t.PatientId && 
-                             a.Status == AppointmentStatus.Completed))
+                             a.PatientId == t.PatientId && (a.AppointmentService == AppointmentServiceEnum.ELISA  || a.AppointmentService == AppointmentServiceEnum.PCR || a.AppointmentService == AppointmentServiceEnum.RapidTest || a.AppointmentService == AppointmentServiceEnum.PostTestCounseling || a.AppointmentService == AppointmentServiceEnum.PreTestCounseling)  ))
                 .ToListAsync();
         }
 
