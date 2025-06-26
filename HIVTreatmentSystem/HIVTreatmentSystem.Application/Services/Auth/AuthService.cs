@@ -452,7 +452,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             var account = new Domain.Entities.Account
             {
                 Username = request.Username,
-                PasswordHash = request.Email, // Consider hashing or generating a temp password
+                PasswordHash = _passwordHasher.HashPassword(request.Email), // Consider hashing or generating a temp password
                 Email = request.Email,
                 FullName = request.FullName,
                 PhoneNumber = request.PhoneNumber,
