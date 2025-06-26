@@ -23,22 +23,23 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public int? CD4Count { get; set; }
 
-        [MaxLength(20)]
-        public string CD4Unit { get; set; } = "cells/mm³";
+        // [MaxLength(20)]
+        // public string CD4Unit { get; set; } = "cells/mm³";
 
         [MaxLength(50)]
         public string? HivViralLoadValue { get; set; }
 
-        [MaxLength(20)]
-        public string HivViralLoadUnit { get; set; } = "copies/mL";
+        // [MaxLength(20)]
+        // public string HivViralLoadUnit { get; set; } = "copies/mL";
 
         [MaxLength(100)]
         public string? LabName { get; set; }
 
         [MaxLength(255)]
-        public string? AttachedFileUrl { get; set; }
+        // public string? AttachedFileUrl { get; set; }
 
-        public string? DoctorComments { get; set; }
+        public string? DoctorComments { get; set; }//Final result
+        public string? TestResults { get; set; }
 
         // Navigation properties
         public virtual Patient Patient { get; set; } = null!;

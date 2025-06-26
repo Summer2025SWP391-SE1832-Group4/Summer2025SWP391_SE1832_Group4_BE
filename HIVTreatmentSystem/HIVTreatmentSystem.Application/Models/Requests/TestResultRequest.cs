@@ -64,5 +64,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         /// Comments from the doctor about the test results
         /// </summary>
         public string? DoctorComments { get; set; }
+        public string? TestResults { get; set; }
+
     }
 } 
