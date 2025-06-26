@@ -13,11 +13,11 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         [Required]
         public int AppointmentId { get; set; }
 
-        /// <summary>
-        /// Date when the test was performed
-        /// </summary>
-        [Required]
-        public DateTime TestDate { get; set; }
+        // /// <summary>
+        // /// Date when the test was performed
+        // /// </summary>
+        // [Required]
+        // public DateTime TestDate { get; set; }
 
         /// <summary>
         /// Type of test performed

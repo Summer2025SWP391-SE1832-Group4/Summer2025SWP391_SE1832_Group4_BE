@@ -73,18 +73,18 @@ namespace HIVTreatmentSystem.Application.Services
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            if (request.TestDate > DateTime.UtcNow)
-                throw new ArgumentException("Test date cannot be in the future");
+            // if (request.TestDate > DateTime.UtcNow)
+            //     throw new ArgumentException("Test date cannot be in the future");
 
             // Appointment is required (validated by DTO)
             var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId);
             if (appointment == null)
                 throw new ArgumentException($"Appointment with ID {request.AppointmentId} not found");
-
+            
             // Map request to entity
             var testResult = _mapper.Map<TestResult>(request);
             testResult.PatientId = appointment.PatientId;
-
+            testResult.TestDate = DateTime.Now;
             // Add to repository
             var createdTestResult = await _repository.AddAsync(testResult);
 
@@ -98,13 +98,13 @@ namespace HIVTreatmentSystem.Application.Services
             if (request == null)
                 throw new ArgumentNullException(nameof(request));
 
-            if (request.TestDate > DateTime.UtcNow)
-                throw new ArgumentException("Test date cannot be in the future");
+            // if (request.TestDate > DateTime.UtcNow)
+            //     throw new ArgumentException("Test date cannot be in the future");
 
             var existingTestResult = await _repository.GetByIdAsync(id);
             if (existingTestResult == null)
                 throw new KeyNotFoundException($"Test result with ID {id} not found");
-
+            existingTestResult.TestDate = DateTime.Now;
             // Resolve patient via appointment
             var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId);
             if (appointment == null)
