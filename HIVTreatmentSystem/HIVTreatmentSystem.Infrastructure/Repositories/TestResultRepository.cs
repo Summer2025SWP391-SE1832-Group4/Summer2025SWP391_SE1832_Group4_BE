@@ -1,5 +1,6 @@
 using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
@@ -63,10 +64,15 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId)
         {
+            // TestResult không có AppointmentId trực tiếp
+            // Cần join với Appointment qua PatientId và kiểm tra Status = CheckedIn
+            // Logic: Lấy test results của patient trong appointment có status CheckedIn
             return await _context.TestResults
                 .Include(t => t.Patient)
-                .Include(t => t.MedicalRecord)
-                .Where(t => t.MedicalRecord != null && t.MedicalRecord.AppointmentId == appointmentId)
+                .Where(t => _context.Appointments
+                    .Any(a => a.AppointmentId == appointmentId && 
+                             a.PatientId == t.PatientId && 
+                             a.Status == AppointmentStatus.Completed))
                 .ToListAsync();
         }
 

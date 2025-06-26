@@ -66,7 +66,6 @@ namespace HIVTreatmentSystem.Application.Services
             var testResults = await _repository.GetByAppointmentIdAsync(appointmentId);
             return _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
         }
-
         /// <inheritdoc/>
         public async Task<TestResultResponse> CreateAsync(TestResultRequest request)
         {

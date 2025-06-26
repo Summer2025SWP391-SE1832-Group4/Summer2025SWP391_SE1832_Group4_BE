@@ -36,9 +36,10 @@ namespace HIVTreatmentSystem.Application.Repositories
 
         /// <summary>
         /// Get test results by appointment ID
+        /// Only returns test results for patients in appointments with CheckedIn status
         /// </summary>
         /// <param name="appointmentId">Appointment ID</param>
-        /// <returns>Collection of test results for the appointment</returns>
+        /// <returns>Collection of test results for the patient in the CheckedIn appointment</returns>
         Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId);
 
         /// <summary>
