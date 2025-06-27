@@ -58,7 +58,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         /// <summary>
         /// URL to the attached test result file
         /// </summary>
-        public string? AttachedFileUrl { get; set; }
+        // public string? AttachedFileUrl { get; set; }
 
         /// <summary>
         /// Comments from the doctor about the test results
