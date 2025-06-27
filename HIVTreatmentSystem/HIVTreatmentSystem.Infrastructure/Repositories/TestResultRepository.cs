@@ -83,8 +83,22 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<TestResult> AddAsync(TestResult testResult)
         {
-            _context.TestResults.Add(testResult);
+            // Find the related Appointment by PatientId and AppointmentId
+            var appointment = await _context.Appointments
+                .FirstOrDefaultAsync(a =>
+                    a.PatientId == testResult.PatientId &&
+                    a.AppointmentType == AppointmentTypeEnum.Testing
+                );
+
+            if (appointment.AppointmentType != AppointmentTypeEnum.Testing)
+            {
+                throw new InvalidOperationException("The registered appointment does not have a Testing type, so creating test results is not allowed.");
+            }
+
+            // If valid, mark the entity as Modified and save
+            _context.Entry(testResult).State = EntityState.Modified;
             await _context.SaveChangesAsync();
+
             return testResult;
         }
 
@@ -92,6 +106,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<TestResult> UpdateAsync(TestResult testResult)
         {
             _context.Entry(testResult).State = EntityState.Modified;
+            
             await _context.SaveChangesAsync();
             return testResult;
         }
