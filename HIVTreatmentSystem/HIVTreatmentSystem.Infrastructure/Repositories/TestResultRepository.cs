@@ -73,7 +73,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                        a.AppointmentService == AppointmentServiceEnum.PCR ||
                        a.AppointmentService == AppointmentServiceEnum.RapidTest ||
                        a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
-                       a.AppointmentService == AppointmentServiceEnum.PreTestCounseling) && a.AppointmentType == AppointmentTypeEnum.Testing
+                       a.AppointmentService == AppointmentServiceEnum.PreTestCounseling) && a.AppointmentType == AppointmentTypeEnum.Testing && a.AppointmentDate.Day.Equals(DateTime.Today)
                 select t).ToListAsync();
         }
 
