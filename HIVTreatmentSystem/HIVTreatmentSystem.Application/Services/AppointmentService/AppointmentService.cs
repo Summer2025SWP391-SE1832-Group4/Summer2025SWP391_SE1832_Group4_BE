@@ -8,13 +8,7 @@ using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
+
 
 namespace HIVTreatmentSystem.Application.Services.AppointmentService
 {
@@ -26,6 +20,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         private readonly IPatientRepository _patientRepository;
         private readonly IEmailService _emailService;
         private readonly IDoctorRepository _doctorRepository;
+        private readonly IMedicalRecordService _medicalRecordService;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
@@ -33,7 +28,8 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             IHttpContextAccessor httpContextAccessor,
             IPatientRepository patientRepository,
             IEmailService emailService,
-            IDoctorRepository doctorRepository
+            IDoctorRepository doctorRepository,
+            IMedicalRecordService medicalRecordService
         )
         {
             _appointmentRepository = appointmentRepository;
@@ -42,6 +38,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             _patientRepository = patientRepository;
             _emailService = emailService;
             _doctorRepository = doctorRepository;
+            _medicalRecordService = medicalRecordService;
         }
 
         public async Task<PageResult<AppointmentResponse>> GetAllAppointmentsAsync(
@@ -103,6 +100,17 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 {
                     return new ApiResponse("Error: Can't create appointment on Sunday.");
                 }
+                var vnTz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                var vnNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTz);
+
+                var today = DateOnly.FromDateTime(vnNow);
+
+                var minDate = today.AddDays(2);
+                if (request.AppointmentDate < minDate)
+                {
+                    return new ApiResponse(
+                        $"Error: Please book at least 2 days in advance (first available day: {minDate:yyyy-MM-dd}).");
+                }
 
                 var time = request.AppointmentTime;
 
@@ -149,6 +157,15 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: No patient found for this account.");
                 }
                 
+                if (request.AppointmentType == AppointmentTypeEnum.Therapy)
+                {
+                    var medicalRecord = await _medicalRecordService.GetByPatientIdAsync(patient.PatientId);
+                    if (medicalRecord == null || !medicalRecord.Any())
+                    {
+                        return new ApiResponse(
+                            "Error: A medical record is required before you can book a therapy appointment.");
+                    }
+                }
 
                 var appointment = _mapper.Map<Appointment>(request);
                 appointment.CreatedByUserId = accountId;
@@ -352,10 +369,20 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 return new ApiResponse("Appointment is already checked in");
             }
 
+
+            var start = appointment.AppointmentDate.ToDateTime(appointment.AppointmentTime);
+            var vnTz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTz);
+            if (Math.Abs((now - start).TotalMinutes) > 5)
+            {
+                return new ApiResponse(
+                    $"Error: Check-in allowed only from 5 minutes before to 5 minutes after "
+                  + $"the scheduled start ({start:yyyy-MM-dd HH:mm}).");
+            }
+
+
             appointment.Status = AppointmentStatus.CheckedIn;
             await _appointmentRepository.UpdateAsync(appointment);
-
-
             return new ApiResponse("Checked in successfully", true);
         }
 
