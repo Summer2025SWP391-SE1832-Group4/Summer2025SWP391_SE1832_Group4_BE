@@ -247,7 +247,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.TestResultId);
                 entity.Property(e => e.TestType).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.HivViralLoadValue).HasMaxLength(50);
-                
                 entity.Property(e => e.LabName).HasMaxLength(100);
                 entity.Property(e => e.TestResults).HasMaxLength(255);
 
@@ -261,6 +260,12 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .HasOne(e => e.MedicalRecord)
                     .WithMany(m => m.TestResults)
                     .HasForeignKey(e => e.MedicalRecordId)
+                    .OnDelete(DeleteBehavior.SetNull);
+
+                entity
+                    .HasOne(e => e.Appointment)
+                    .WithMany(a => a.TestResults)
+                    .HasForeignKey(e => e.AppointmentId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
         }

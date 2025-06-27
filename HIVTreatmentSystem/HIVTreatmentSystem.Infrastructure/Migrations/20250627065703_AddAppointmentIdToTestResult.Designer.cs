@@ -4,6 +4,7 @@ using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    partial class HIVDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250627065703_AddAppointmentIdToTestResult")]
+    partial class AddAppointmentIdToTestResult
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -807,6 +810,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Property<int?>("AppointmentId")
                         .HasColumnType("int");
+
+                    b.Property<string>("AttachedFileUrl")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.Property<int?>("CD4Count")
                         .HasColumnType("int");

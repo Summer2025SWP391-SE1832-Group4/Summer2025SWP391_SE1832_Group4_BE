@@ -21,6 +21,11 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public int? MedicalRecordId { get; set; }
 
         /// <summary>
+        /// ID of the associated appointment (if any)
+        /// </summary>
+        public int? AppointmentId { get; set; }
+
+        /// <summary>
         /// Date when the test was performed
         /// </summary>
         public DateTime TestDate { get; set; }

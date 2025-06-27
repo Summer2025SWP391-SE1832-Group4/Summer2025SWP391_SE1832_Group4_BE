@@ -30,6 +30,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.TestResults
                 .Include(t => t.Patient)
                 .Include(t => t.MedicalRecord)
+                .Include(t => t.Appointment)
                 .ToListAsync();
         }
 
@@ -39,6 +40,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.TestResults
                 .Include(t => t.Patient)
                 .Include(t => t.MedicalRecord)
+                .Include(t => t.Appointment)
                 .FirstOrDefaultAsync(t => t.TestResultId == id);
         }
 
@@ -48,6 +50,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.TestResults
                 .Include(t => t.Patient)
                 .Include(t => t.MedicalRecord)
+                .Include(t => t.Appointment)
                 .Where(t => t.PatientId == patientId)
                 .ToListAsync();
         }
@@ -58,6 +61,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.TestResults
                 .Include(t => t.Patient)
                 .Include(t => t.MedicalRecord)
+                .Include(t => t.Appointment)
                 .Where(t => t.MedicalRecordId == medicalRecordId)
                 .ToListAsync();
         }
@@ -65,40 +69,38 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         /// <inheritdoc/>
         public async Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId)
         {
-            return await (from t in _context.TestResults
-                join a in _context.Appointments
-                    on t.PatientId equals a.PatientId
-                where a.AppointmentId == appointmentId &&
-                      (
-                          a.AppointmentService == AppointmentServiceEnum.ELISA ||
-                          a.AppointmentService == AppointmentServiceEnum.PCR ||
-                          a.AppointmentService == AppointmentServiceEnum.RapidTest ||
-                          a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
-                          a.AppointmentService == AppointmentServiceEnum.PreTestCounseling
-                      ) && a.AppointmentType == AppointmentTypeEnum.Testing
-                select t).ToListAsync();
+            return await _context.TestResults
+                .Include(t => t.Patient)
+                .Include(t => t.MedicalRecord)
+                .Include(t => t.Appointment)
+                .Where(t => t.AppointmentId == appointmentId)
+                .ToListAsync();
         }
 
 
         /// <inheritdoc/>
         public async Task<TestResult> AddAsync(TestResult testResult)
         {
-            // Find the related Appointment by PatientId and AppointmentId
-            var appointment = await _context.Appointments
-                .FirstOrDefaultAsync(a =>
-                    a.PatientId == testResult.PatientId &&
-                    a.AppointmentType == AppointmentTypeEnum.Testing
-                );
-
-            if (appointment.AppointmentType != AppointmentTypeEnum.Testing)
+            // Validate appointment if AppointmentId is provided
+            if (testResult.AppointmentId.HasValue)
             {
-                throw new InvalidOperationException("The registered appointment does not have a Testing type, so creating test results is not allowed.");
+                var appointment = await _context.Appointments
+                    .FirstOrDefaultAsync(a => a.AppointmentId == testResult.AppointmentId.Value);
+
+                if (appointment == null)
+                {
+                    throw new InvalidOperationException($"Appointment with ID {testResult.AppointmentId} not found.");
+                }
+
+                // Ensure PatientId matches appointment
+                if (appointment.PatientId != testResult.PatientId)
+                {
+                    throw new InvalidOperationException("Patient ID in test result does not match the appointment.");
+                }
             }
 
-            // If valid, mark the entity as Modified and save
-            _context.Entry(testResult).State = EntityState.Modified;
+            _context.TestResults.Add(testResult);
             await _context.SaveChangesAsync();
-
             return testResult;
         }
 
@@ -106,7 +108,6 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<TestResult> UpdateAsync(TestResult testResult)
         {
             _context.Entry(testResult).State = EntityState.Modified;
-            
             await _context.SaveChangesAsync();
             return testResult;
         }

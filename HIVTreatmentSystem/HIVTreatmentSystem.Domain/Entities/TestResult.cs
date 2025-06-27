@@ -15,6 +15,11 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public int? MedicalRecordId { get; set; }
 
+        /// <summary>
+        /// ID của appointment liên quan đến test result này (nullable vì có thể có test không liên quan đến appointment cụ thể)
+        /// </summary>
+        public int? AppointmentId { get; set; }
+
         public DateTime TestDate { get; set; }
 
         [Required]
@@ -35,14 +40,12 @@ namespace HIVTreatmentSystem.Domain.Entities
         [MaxLength(100)]
         public string? LabName { get; set; }
 
-        [MaxLength(255)]
-        // public string? AttachedFileUrl { get; set; }
-
         public string? DoctorComments { get; set; }//Final result
         public string? TestResults { get; set; }
 
         // Navigation properties
         public virtual Patient Patient { get; set; } = null!;
         public virtual MedicalRecord? MedicalRecord { get; set; }
+        public virtual Appointment? Appointment { get; set; }
     }
 }

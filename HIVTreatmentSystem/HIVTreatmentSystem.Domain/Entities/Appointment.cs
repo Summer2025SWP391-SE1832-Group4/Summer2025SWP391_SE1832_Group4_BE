@@ -39,5 +39,6 @@ namespace HIVTreatmentSystem.Domain.Entities
         public virtual Account? CreatedByUser { get; set; }
         public virtual MedicalRecord? MedicalRecord { get; set; }
         public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
+        public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
     }
 }
