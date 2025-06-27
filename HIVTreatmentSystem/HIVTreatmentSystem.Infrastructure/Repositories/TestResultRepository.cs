@@ -75,7 +75,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                           a.AppointmentService == AppointmentServiceEnum.RapidTest ||
                           a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
                           a.AppointmentService == AppointmentServiceEnum.PreTestCounseling
-                      )
+                      ) && a.AppointmentType == AppointmentTypeEnum.Testing
                 select t).ToListAsync();
         }
 
