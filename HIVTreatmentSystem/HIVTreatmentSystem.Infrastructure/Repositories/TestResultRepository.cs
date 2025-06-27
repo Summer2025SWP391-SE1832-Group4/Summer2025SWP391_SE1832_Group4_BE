@@ -3,6 +3,7 @@ using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
+
 using System.Linq;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
@@ -65,17 +66,19 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<IEnumerable<TestResult>> GetByAppointmentIdAsync(int appointmentId)
         {
             return await (from t in _context.TestResults
-                    .Include(t => t.Patient)
-                    .Include(t => t.MedicalRecord)
-                join a in _context.Appointments on t.PatientId equals a.PatientId
+                join a in _context.Appointments
+                    on t.PatientId equals a.PatientId
                 where a.AppointmentId == appointmentId &&
-                      (a.AppointmentService == AppointmentServiceEnum.ELISA ||
-                       a.AppointmentService == AppointmentServiceEnum.PCR ||
-                       a.AppointmentService == AppointmentServiceEnum.RapidTest ||
-                       a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
-                       a.AppointmentService == AppointmentServiceEnum.PreTestCounseling) && a.AppointmentType == AppointmentTypeEnum.Testing && a.AppointmentDate.Day.Equals(DateTime.Today)
+                      (
+                          a.AppointmentService == AppointmentServiceEnum.ELISA ||
+                          a.AppointmentService == AppointmentServiceEnum.PCR ||
+                          a.AppointmentService == AppointmentServiceEnum.RapidTest ||
+                          a.AppointmentService == AppointmentServiceEnum.PostTestCounseling ||
+                          a.AppointmentService == AppointmentServiceEnum.PreTestCounseling
+                      )
                 select t).ToListAsync();
         }
+
 
         /// <inheritdoc/>
         public async Task<TestResult> AddAsync(TestResult testResult)

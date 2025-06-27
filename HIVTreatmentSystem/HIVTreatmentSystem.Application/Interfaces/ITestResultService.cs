@@ -46,6 +46,14 @@ namespace HIVTreatmentSystem.Application.Services
         Task<TestResultListResponse> GetByAppointmentIdAsync(int appointmentId);
 
         /// <summary>
+        /// Get single test result by appointment ID
+        /// Returns the first test result for the appointment, or null if none found
+        /// </summary>
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>Single test result for the appointment, or null if not found</returns>
+        Task<TestResultResponse?> GetSingleByAppointmentIdAsync(int appointmentId);
+
+        /// <summary>
         /// Create a new test result
         /// </summary>
         /// <param name="request">Test result creation request</param>

@@ -56,13 +56,28 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get test results by appointment ID
-        /// Returns all test results for patients in appointments with CheckedIn status
+        /// Get test result by appointment ID
+        /// Returns a single test result for the appointment
         /// </summary>
         /// <param name="appointmentId">Appointment ID</param>
-        /// <returns>Test results object containing all test results for the appointment</returns>
+        /// <returns>Single test result for the appointment</returns>
         [HttpGet("appointment/{appointmentId}")]
-        public async Task<ActionResult<ApiResponse<TestResultListResponse>>> GetByAppointmentId(int appointmentId)
+        public async Task<ActionResult<ApiResponse<TestResultResponse>>> GetByAppointmentId(int appointmentId)
+        {
+            var testResult = await _testResultService.GetSingleByAppointmentIdAsync(appointmentId);
+            if (testResult == null)
+                return NotFound(new ApiResponse("No test result found for the specified appointment."));
+            return Ok(new ApiResponse("Success", testResult));
+        }
+
+        /// <summary>
+        /// Get all test results by appointment ID
+        /// Returns all test results for the appointment as a list
+        /// </summary>
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>List of test results for the appointment</returns>
+        [HttpGet("appointment/{appointmentId}/list")]
+        public async Task<ActionResult<ApiResponse<TestResultListResponse>>> GetAllByAppointmentId(int appointmentId)
         {
             var testResults = await _testResultService.GetByAppointmentIdAsync(appointmentId);
             if (testResults.TotalCount == 0)

@@ -39,6 +39,17 @@ namespace HIVTreatmentSystem.Application.Services
             return _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
         }
 
+        /// <summary>
+        /// Get all test results filtered by today's date
+        /// </summary>
+        /// <returns>Collection of test results from today</returns>
+        public async Task<IEnumerable<TestResultResponse>> GetAllTodayAsync()
+        {
+            var testResults = await _repository.GetAllAsync();
+            var todayResults = testResults.Where(tr => tr.TestDate.Date == DateTime.Today);
+            return _mapper.Map<IEnumerable<TestResultResponse>>(todayResults);
+        }
+
         /// <inheritdoc/>
         public async Task<TestResultResponse?> GetByIdAsync(int id)
         {
@@ -53,11 +64,35 @@ namespace HIVTreatmentSystem.Application.Services
             return _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
         }
 
+        /// <summary>
+        /// Get test results by patient ID filtered by today's date
+        /// </summary>
+        /// <param name="patientId">Patient ID</param>
+        /// <returns>Collection of test results for the patient from today</returns>
+        public async Task<IEnumerable<TestResultResponse>> GetByPatientIdTodayAsync(int patientId)
+        {
+            var testResults = await _repository.GetByPatientIdAsync(patientId);
+            var todayResults = testResults.Where(tr => tr.TestDate.Date == DateTime.Today);
+            return _mapper.Map<IEnumerable<TestResultResponse>>(todayResults);
+        }
+
         /// <inheritdoc/>
         public async Task<IEnumerable<TestResultResponse>> GetByMedicalRecordIdAsync(int medicalRecordId)
         {
             var testResults = await _repository.GetByMedicalRecordIdAsync(medicalRecordId);
             return _mapper.Map<IEnumerable<TestResultResponse>>(testResults);
+        }
+
+        /// <summary>
+        /// Get test results by medical record ID filtered by today's date
+        /// </summary>
+        /// <param name="medicalRecordId">Medical record ID</param>
+        /// <returns>Collection of test results for the medical record from today</returns>
+        public async Task<IEnumerable<TestResultResponse>> GetByMedicalRecordIdTodayAsync(int medicalRecordId)
+        {
+            var testResults = await _repository.GetByMedicalRecordIdAsync(medicalRecordId);
+            var todayResults = testResults.Where(tr => tr.TestDate.Date == DateTime.Today);
+            return _mapper.Map<IEnumerable<TestResultResponse>>(todayResults);
         }
 
         /// <inheritdoc/>
@@ -73,6 +108,39 @@ namespace HIVTreatmentSystem.Application.Services
                 AppointmentId = appointmentId
             };
         }
+
+        /// <summary>
+        /// Get single test result by appointment ID
+        /// Returns the first test result for the appointment, or null if none found
+        /// </summary>
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>Single test result for the appointment, or null if not found</returns>
+        public async Task<TestResultResponse?> GetSingleByAppointmentIdAsync(int appointmentId)
+        {
+            var testResults = await _repository.GetByAppointmentIdAsync(appointmentId);
+            var firstResult = testResults.FirstOrDefault();
+            return firstResult != null ? _mapper.Map<TestResultResponse>(firstResult) : null;
+        }
+
+        /// <summary>
+        /// Get test results by appointment ID filtered by today's date
+        /// </summary>
+        /// <param name="appointmentId">Appointment ID</param>
+        /// <returns>Test result list response for the appointment from today</returns>
+        public async Task<TestResultListResponse> GetByAppointmentIdTodayAsync(int appointmentId)
+        {
+            var testResults = await _repository.GetByAppointmentIdAsync(appointmentId);
+            var todayResults = testResults.Where(tr => tr.TestDate.Date == DateTime.Today);
+            var mappedResults = _mapper.Map<IEnumerable<TestResultResponse>>(todayResults);
+            
+            return new TestResultListResponse
+            {
+                TestResults = mappedResults,
+                TotalCount = mappedResults.Count(),
+                AppointmentId = appointmentId
+            };
+        }
+
         /// <inheritdoc/>
         public async Task<TestResultResponse> CreateAsync(TestResultRequest request)
         {
