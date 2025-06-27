@@ -86,6 +86,21 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
+        /// Get all test results by patient ID
+        /// Returns all test results for the specified patient
+        /// </summary>
+        /// <param name="patientId">Patient ID</param>
+        /// <returns>List of test results for the patient</returns>
+        [HttpGet("patient/{patientId}")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<TestResultResponse>>>> GetByPatientId(int patientId)
+        {
+            var testResults = await _testResultService.GetByPatientIdAsync(patientId);
+            if (testResults == null || !testResults.Any())
+                return NotFound(new ApiResponse("No test results found for the specified patient."));
+            return Ok(new ApiResponse("Success", testResults));
+        }
+
+        /// <summary>
         /// Create a new test result
         /// </summary>
         /// <param name="request">Test result creation request</param>
