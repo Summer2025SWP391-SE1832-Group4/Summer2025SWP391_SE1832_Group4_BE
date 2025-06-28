@@ -371,15 +371,15 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             }
 
 
-            var start = appointment.AppointmentDate.ToDateTime(appointment.AppointmentTime);
-            var vnTz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
-            var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTz);
-            if (Math.Abs((now - start).TotalMinutes) > 5)
-            {
-                return new ApiResponse(
-                    $"Error: Check-in allowed only from 5 minutes before to 5 minutes after "
-                  + $"the scheduled start ({start:yyyy-MM-dd HH:mm}).");
-            }
+            //var start = appointment.AppointmentDate.ToDateTime(appointment.AppointmentTime);
+            //var vnTz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+            //var now = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTz);
+            //if (Math.Abs((now - start).TotalMinutes) > 5)
+            //{
+            //    return new ApiResponse(
+            //        $"Error: Check-in allowed only from 5 minutes before to 5 minutes after "
+            //      + $"the scheduled start ({start:yyyy-MM-dd HH:mm}).");
+            //}
 
 
             appointment.Status = AppointmentStatus.CheckedIn;
