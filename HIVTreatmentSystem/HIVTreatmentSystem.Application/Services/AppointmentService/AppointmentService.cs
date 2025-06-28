@@ -105,12 +105,12 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
 
                 var today = DateOnly.FromDateTime(vnNow);
 
-                var minDate = today.AddDays(2);
-                if (request.AppointmentDate < minDate)
-                {
-                    return new ApiResponse(
-                        $"Error: Please book at least 2 days in advance (first available day: {minDate:yyyy-MM-dd}).");
-                }
+                //var minDate = today.AddDays(2);
+                //if (request.AppointmentDate < minDate)
+                //{
+                //    return new ApiResponse(
+                //        $"Error: Please book at least 2 days in advance (first available day: {minDate:yyyy-MM-dd}).");
+                //}
 
                 var time = request.AppointmentTime;
 
