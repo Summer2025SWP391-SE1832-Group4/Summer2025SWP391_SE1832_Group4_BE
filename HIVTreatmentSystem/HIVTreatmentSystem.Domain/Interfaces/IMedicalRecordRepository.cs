@@ -47,5 +47,17 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         /// </summary>
         /// <param name="medicalRecord">The medical record to delete</param>
         Task<bool> DeleteAsync(MedicalRecord medicalRecord);
+
+        /// <summary>
+        /// Check if patient already has a medical record
+        /// </summary>
+        /// <param name="patientId">The ID of the patient</param>
+        Task<bool> HasMedicalRecordAsync(int patientId);
+
+        /// <summary>
+        /// Get the unique medical record for a patient (1-to-1 relationship)
+        /// </summary>
+        /// <param name="patientId">The ID of the patient</param>
+        Task<MedicalRecord?> GetByPatientIdUniqueAsync(int patientId);
     }
 } 

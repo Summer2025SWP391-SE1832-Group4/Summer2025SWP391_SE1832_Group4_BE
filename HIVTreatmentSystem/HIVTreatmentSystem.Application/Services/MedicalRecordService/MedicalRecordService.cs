@@ -61,6 +61,11 @@ namespace HIVTreatmentSystem.Application.Services
             if (appointment == null)
                 throw new ArgumentException($"Appointment with ID {request.AppointmentId} not found.");
 
+            // Check if patient already has a medical record (1-to-1 constraint)
+            var existingRecord = await _medicalRecordRepository.HasMedicalRecordAsync(appointment.PatientId);
+            if (existingRecord)
+                throw new InvalidOperationException($"Patient with ID {appointment.PatientId} already has a medical record. Use update instead.");
+
             var medicalRecord = _mapper.Map<MedicalRecord>(request);
             medicalRecord.PatientId = appointment.PatientId;
             medicalRecord.DoctorId = appointment.DoctorId;
@@ -97,6 +102,59 @@ namespace HIVTreatmentSystem.Application.Services
                 throw new ArgumentException($"Medical record with ID {id} not found.");
 
             return await _medicalRecordRepository.DeleteAsync(medicalRecord);
+        }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecordResponse?> GetUniqueByPatientIdAsync(int patientId)
+        {
+            var medicalRecord = await _medicalRecordRepository.GetByPatientIdUniqueAsync(patientId);
+            return medicalRecord == null ? null : _mapper.Map<MedicalRecordResponse>(medicalRecord);
+        }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecordResponse> CreateOrUpdateByPatientIdAsync(int patientId, MedicalRecordRequest request)
+        {
+            // Check if patient already has a medical record
+            var existingRecord = await _medicalRecordRepository.GetByPatientIdUniqueAsync(patientId);
+
+            if (existingRecord != null)
+            {
+                // Update existing record
+                _mapper.Map(request, existingRecord);
+                
+                // Ensure PatientId / DoctorId remain in sync with original appointment
+                var existingAppointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(existingRecord.AppointmentId);
+                if (existingAppointment != null)
+                {
+                    existingRecord.PatientId = existingAppointment.PatientId;
+                    existingRecord.DoctorId = existingAppointment.DoctorId;
+                }
+                
+                await _medicalRecordRepository.UpdateAsync(existingRecord);
+                return _mapper.Map<MedicalRecordResponse>(existingRecord);
+            }
+            else
+            {
+                // Create new record
+                var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId);
+                if (appointment == null)
+                    throw new ArgumentException($"Appointment with ID {request.AppointmentId} not found.");
+
+                if (appointment.PatientId != patientId)
+                    throw new ArgumentException($"Appointment does not belong to patient with ID {patientId}.");
+
+                var medicalRecord = _mapper.Map<MedicalRecord>(request);
+                medicalRecord.PatientId = patientId;
+                medicalRecord.DoctorId = appointment.DoctorId;
+                var createdMedicalRecord = await _medicalRecordRepository.CreateAsync(medicalRecord);
+                return _mapper.Map<MedicalRecordResponse>(createdMedicalRecord);
+            }
+        }
+
+        /// <inheritdoc/>
+        public async Task<bool> PatientHasMedicalRecordAsync(int patientId)
+        {
+            return await _medicalRecordRepository.HasMedicalRecordAsync(patientId);
         }
     }
 } 

@@ -86,5 +86,23 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <inheritdoc/>
+        public async Task<bool> HasMedicalRecordAsync(int patientId)
+        {
+            return await _context.MedicalRecords
+                .AnyAsync(m => m.PatientId == patientId);
+        }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecord?> GetByPatientIdUniqueAsync(int patientId)
+        {
+            return await _context.MedicalRecords
+                .Include(m => m.Appointment)
+                .Include(m => m.Patient)
+                .Include(m => m.Doctor)
+                .Include(m => m.TestResults)
+                .FirstOrDefaultAsync(m => m.PatientId == patientId);
+        }
     }
 } 
