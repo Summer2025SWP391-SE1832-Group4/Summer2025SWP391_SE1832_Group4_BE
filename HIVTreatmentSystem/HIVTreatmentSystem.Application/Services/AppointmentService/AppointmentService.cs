@@ -430,6 +430,17 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     return new ApiResponse("Error: Please choose 8:00, 8:30, 9:00...");
                 }
 
+                //var vnTz = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                //var vnNow = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTz);
+
+                //var today = DateOnly.FromDateTime(vnNow);
+
+                //var minDate = today.AddDays(2);
+                //if (request.AppointmentDate < minDate)
+                //{
+                //    return new ApiResponse(
+                //        $"Error: Please book at least 2 days in advance (first available day: {minDate:yyyy-MM-dd}).");
+                //}
 
                 var existingAppointments = await _appointmentRepository.GetAppointmentsByDoctorAsync(
                     request.DoctorId, request.AppointmentDate);

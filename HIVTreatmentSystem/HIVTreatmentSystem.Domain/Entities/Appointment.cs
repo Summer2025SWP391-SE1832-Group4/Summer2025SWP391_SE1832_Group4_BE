@@ -24,7 +24,7 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public AppointmentStatus Status { get; set; } = AppointmentStatus.PendingConfirmation;
 
-        public AppointmentServiceEnum AppointmentService { get; set; }
+        public AppointmentServiceEnum? AppointmentService { get; set; }
 
         public string? AppointmentNotes { get; set; }
 
