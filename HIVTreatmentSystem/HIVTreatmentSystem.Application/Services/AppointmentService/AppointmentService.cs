@@ -4,6 +4,7 @@ using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Pages;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
+using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
@@ -20,7 +21,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
         private readonly IPatientRepository _patientRepository;
         private readonly IEmailService _emailService;
         private readonly IDoctorRepository _doctorRepository;
-        private readonly IMedicalRecordService _medicalRecordService;
+        private readonly ITestResultRepository _testResultRepository;
 
         public AppointmentService(
             IAppointmentRepository appointmentRepository,
@@ -29,7 +30,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             IPatientRepository patientRepository,
             IEmailService emailService,
             IDoctorRepository doctorRepository,
-            IMedicalRecordService medicalRecordService
+            ITestResultRepository testResultRepository
         )
         {
             _appointmentRepository = appointmentRepository;
@@ -38,7 +39,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
             _patientRepository = patientRepository;
             _emailService = emailService;
             _doctorRepository = doctorRepository;
-            _medicalRecordService = medicalRecordService;
+            _testResultRepository = testResultRepository;
         }
 
         public async Task<PageResult<AppointmentResponse>> GetAllAppointmentsAsync(
@@ -159,11 +160,11 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 
                 if (request.AppointmentType == AppointmentTypeEnum.Therapy)
                 {
-                    var medicalRecord = await _medicalRecordService.GetByPatientIdAsync(patient.PatientId);
-                    if (medicalRecord == null || !medicalRecord.Any())
+                    var testResults = await _testResultRepository.GetByPatientIdAsync(patient.PatientId);
+                    if (testResults == null || !testResults.Any())
                     {
                         return new ApiResponse(
-                            "Error: A medical record is required before you can book a therapy appointment.");
+                            "Error: A test result is required before you can book a therapy appointment.");
                     }
                 }
 

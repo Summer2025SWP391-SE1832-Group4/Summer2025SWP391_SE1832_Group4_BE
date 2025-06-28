@@ -32,6 +32,9 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public string? AdditionalNotes { get; set; }
 
+        public virtual MedicalRecord MedicalRecord { get; set; }
+
+
         // Navigation properties
         public int AccountId { get; set; }
 
@@ -39,8 +42,6 @@ namespace HIVTreatmentSystem.Domain.Entities
         public virtual Account Account { get; set; } = null!;
         public virtual ICollection<Appointment> Appointments { get; set; } =
             new List<Appointment>();
-        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } =
-            new List<MedicalRecord>();
         public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
         public virtual ICollection<PatientTreatment> Treatments { get; set; } =
             new List<PatientTreatment>();

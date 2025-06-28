@@ -51,6 +51,15 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
             modelBuilder.Entity<Reminder>().Property(e => e.ReminderType).HasConversion<string>();
 
+            modelBuilder.Entity<Appointment>().Property(e => e.AppointmentType).HasConversion<string>();
+
+            modelBuilder.Entity<Appointment>().Property(e => e.AppointmentService).HasConversion<string>();
+
+            modelBuilder.Entity<Appointment>().Property(e => e.Status).HasConversion<string>();
+
+
+
+
             modelBuilder
                 .Entity<ExperienceWorking>()
                 .HasOne(e => e.Doctor)
@@ -146,6 +155,13 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithOne(u => u.Patient)
                     .HasForeignKey<Patient>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
+
+                entity
+                    .HasOne(e => e.MedicalRecord)
+                    .WithOne(m => m.Patient)
+                    .HasForeignKey<MedicalRecord>(m => m.PatientId) // FK nằm ở MedicalRecord
+                    .IsRequired()
+                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
 
@@ -228,8 +244,8 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
                 entity
                     .HasOne(e => e.Patient)
-                    .WithMany(p => p.MedicalRecords)
-                    .HasForeignKey(e => e.PatientId)
+                    .WithOne(p => p.MedicalRecord)
+                    .HasForeignKey<MedicalRecord>(e => e.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity
