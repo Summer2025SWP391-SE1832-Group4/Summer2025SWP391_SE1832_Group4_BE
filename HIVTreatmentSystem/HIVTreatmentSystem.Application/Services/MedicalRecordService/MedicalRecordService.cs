@@ -156,5 +156,46 @@ namespace HIVTreatmentSystem.Application.Services
         {
             return await _medicalRecordRepository.HasMedicalRecordAsync(patientId);
         }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecordResponse> CreateByPatientIdAsync(MedicalRecordByPatientRequest request)
+        {
+            // Check if patient already has a medical record (1-to-1 constraint)
+            var existingRecord = await _medicalRecordRepository.HasMedicalRecordAsync(request.PatientId);
+            if (existingRecord)
+                throw new InvalidOperationException($"Patient with ID {request.PatientId} already has a medical record. Use update instead.");
+
+            // If AppointmentId is provided, validate it belongs to the patient
+            if (request.AppointmentId.HasValue)
+            {
+                var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId.Value);
+                if (appointment == null)
+                    throw new ArgumentException($"Appointment with ID {request.AppointmentId} not found.");
+                
+                if (appointment.PatientId != request.PatientId)
+                    throw new ArgumentException($"Appointment with ID {request.AppointmentId} does not belong to patient with ID {request.PatientId}.");
+                
+                if (appointment.DoctorId != request.DoctorId)
+                    throw new ArgumentException($"Appointment with ID {request.AppointmentId} is not assigned to doctor with ID {request.DoctorId}.");
+            }
+
+            // Create medical record
+            var medicalRecord = new MedicalRecord
+            {
+                PatientId = request.PatientId,
+                DoctorId = request.DoctorId,
+                AppointmentId = request.AppointmentId ?? 0, // Use 0 if no specific appointment
+                ConsultationDate = request.ConsultationDate,
+                Symptoms = request.Symptoms,
+                Diagnosis = request.Diagnosis,
+                DoctorNotes = request.DoctorNotes,
+                NextSteps = request.NextSteps,
+                CoinfectionDiseases = request.CoinfectionDiseases,
+                DrugAllergyHistory = request.DrugAllergyHistory
+            };
+
+            var createdMedicalRecord = await _medicalRecordRepository.CreateAsync(medicalRecord);
+            return _mapper.Map<MedicalRecordResponse>(createdMedicalRecord);
+        }
     }
 } 

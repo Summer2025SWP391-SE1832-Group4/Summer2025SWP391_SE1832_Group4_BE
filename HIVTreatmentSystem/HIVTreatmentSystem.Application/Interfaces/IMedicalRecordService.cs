@@ -68,5 +68,11 @@ namespace HIVTreatmentSystem.Application.Interfaces
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         Task<bool> PatientHasMedicalRecordAsync(int patientId);
+
+        /// <summary>
+        /// Create a new medical record based on patient ID
+        /// </summary>
+        /// <param name="request">The medical record data with patient ID</param>
+        Task<MedicalRecordResponse> CreateByPatientIdAsync(MedicalRecordByPatientRequest request);
     }
 } 

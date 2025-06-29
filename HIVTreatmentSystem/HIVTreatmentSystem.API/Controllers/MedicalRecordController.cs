@@ -103,6 +103,37 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
+        /// Create a new medical record based on patient ID
+        /// </summary>
+        /// <param name="request">The medical record data with patient ID and doctor ID</param>
+        [HttpPost("by-patient")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> CreateByPatientId([FromBody] MedicalRecordByPatientRequest request)
+        {
+            try
+            {
+                var medicalRecord = await _medicalRecordService.CreateByPatientIdAsync(request);
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = medicalRecord.MedicalRecordId }, 
+                    new ApiResponse("Medical record created successfully", medicalRecord)
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record."));
+            }
+        }
+
+        /// <summary>
         /// Update an existing medical record
         /// </summary>
         /// <param name="id">The ID of the medical record to update</param>
@@ -114,6 +145,56 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var medicalRecord = await _medicalRecordService.UpdateAsync(id, request);
+                return Ok(new ApiResponse("Medical record updated successfully", medicalRecord));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while updating the medical record."));
+            }
+        }
+
+        /// <summary>
+        /// Update an existing medical record for a patient
+        /// </summary>
+        /// <param name="patientId">The ID of the patient</param>
+        /// <param name="request">The updated medical record data</param>
+        [HttpPut("by-patient/{patientId}")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> UpdateByPatientId(int patientId, [FromBody] MedicalRecordByPatientRequest request)
+        {
+            try
+            {
+                // Ensure the patientId in URL matches the request
+                if (request.PatientId != patientId)
+                {
+                    return BadRequest(new ApiResponse("Patient ID in URL does not match Patient ID in request body."));
+                }
+
+                // Get existing medical record
+                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
+                if (existingRecord == null)
+                {
+                    return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
+                }
+
+                // Create a MedicalRecordRequest with AppointmentId from existing record
+                var mappedRequest = new MedicalRecordRequest
+                {
+                    AppointmentId = existingRecord.AppointmentId,
+                    ConsultationDate = request.ConsultationDate,
+                    Symptoms = request.Symptoms,
+                    Diagnosis = request.Diagnosis,
+                    DoctorNotes = request.DoctorNotes,
+                    NextSteps = request.NextSteps,
+                    CoinfectionDiseases = request.CoinfectionDiseases,
+                    DrugAllergyHistory = request.DrugAllergyHistory
+                };
+
+                var medicalRecord = await _medicalRecordService.UpdateAsync(existingRecord.MedicalRecordId, mappedRequest);
                 return Ok(new ApiResponse("Medical record updated successfully", medicalRecord));
             }
             catch (ArgumentException ex)
