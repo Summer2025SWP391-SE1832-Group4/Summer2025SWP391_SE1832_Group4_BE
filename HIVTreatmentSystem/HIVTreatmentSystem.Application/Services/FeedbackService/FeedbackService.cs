@@ -70,5 +70,36 @@ namespace HIVTreatmentSystem.Application.Services
             if (!success)
                 throw new KeyNotFoundException("không tìm thấy feedback");
         }
+
+        public async Task<DoctorRatingStatisticsResponse> GetDoctorRatingStatisticsAsync(int doctorId)
+        {
+            var (averageRating, totalFeedbacks, oneStarCount, twoStarCount, threeStarCount, fourStarCount, fiveStarCount) 
+                = await _repository.GetDoctorRatingStatisticsAsync(doctorId);
+
+            var response = new DoctorRatingStatisticsResponse
+            {
+                DoctorId = doctorId,
+                AverageRating = Math.Round(averageRating, 2),
+                TotalFeedbacks = totalFeedbacks,
+                OneStarCount = oneStarCount,
+                TwoStarCount = twoStarCount,
+                ThreeStarCount = threeStarCount,
+                FourStarCount = fourStarCount,
+                FiveStarCount = fiveStarCount,
+                RatingDistribution = new RatingDistributionResponse()
+            };
+
+            // Calculate percentages if there are feedbacks
+            if (totalFeedbacks > 0)
+            {
+                response.RatingDistribution.OneStarPercentage = Math.Round((double)oneStarCount / totalFeedbacks * 100, 2);
+                response.RatingDistribution.TwoStarPercentage = Math.Round((double)twoStarCount / totalFeedbacks * 100, 2);
+                response.RatingDistribution.ThreeStarPercentage = Math.Round((double)threeStarCount / totalFeedbacks * 100, 2);
+                response.RatingDistribution.FourStarPercentage = Math.Round((double)fourStarCount / totalFeedbacks * 100, 2);
+                response.RatingDistribution.FiveStarPercentage = Math.Round((double)fiveStarCount / totalFeedbacks * 100, 2);
+            }
+
+            return response;
+        }
     }
 } 

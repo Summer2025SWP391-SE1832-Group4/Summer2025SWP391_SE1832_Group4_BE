@@ -78,5 +78,32 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             await _context.SaveChangesAsync();
             return true;
         }
+
+        /// <inheritdoc />
+        public async Task<(double AverageRating, int TotalFeedbacks, int OneStarCount, int TwoStarCount, int ThreeStarCount, int FourStarCount, int FiveStarCount)> GetDoctorRatingStatisticsAsync(int doctorId)
+        {
+            var feedbacksQuery = _context.Feedbacks
+                .Include(f => f.Appointment)
+                .Where(f => f.Appointment.DoctorId == doctorId)
+                .AsNoTracking();
+
+            var feedbacks = await feedbacksQuery.ToListAsync();
+
+            if (!feedbacks.Any())
+            {
+                return (0, 0, 0, 0, 0, 0, 0);
+            }
+
+            var totalFeedbacks = feedbacks.Count;
+            var averageRating = feedbacks.Average(f => f.Rating);
+            
+            var oneStarCount = feedbacks.Count(f => f.Rating == 1);
+            var twoStarCount = feedbacks.Count(f => f.Rating == 2);
+            var threeStarCount = feedbacks.Count(f => f.Rating == 3);
+            var fourStarCount = feedbacks.Count(f => f.Rating == 4);
+            var fiveStarCount = feedbacks.Count(f => f.Rating == 5);
+
+            return (averageRating, totalFeedbacks, oneStarCount, twoStarCount, threeStarCount, fourStarCount, fiveStarCount);
+        }
     }
 } 

@@ -172,5 +172,21 @@ namespace HIVTreatmentSystem.API.Controllers
             await _feedbackService.DeleteAsync(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Get rating statistics for a specific doctor
+        /// </summary>
+        /// <param name="doctorId">The ID of the doctor</param>
+        /// <returns>Rating statistics including average rating and count distribution</returns>
+        /// <response code="200">Returns the doctor's rating statistics</response>
+        /// <response code="404">If the doctor is not found or has no feedbacks</response>
+        [HttpGet("rating-statistics/doctor/{doctorId}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetDoctorRatingStatisticsAsync(int doctorId)
+        {
+            var statistics = await _feedbackService.GetDoctorRatingStatisticsAsync(doctorId);
+            return Ok(statistics);
+        }
     }
 } 

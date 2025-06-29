@@ -44,5 +44,12 @@ namespace HIVTreatmentSystem.Application.Repositories
         /// Delete feedback by id
         /// </summary>
         Task<bool> DeleteAsync(int id);
+
+        /// <summary>
+        /// Get rating statistics for a specific doctor
+        /// </summary>
+        /// <param name="doctorId">The doctor id to get statistics for</param>
+        /// <returns>Rating statistics including average and count for each rating level</returns>
+        Task<(double AverageRating, int TotalFeedbacks, int OneStarCount, int TwoStarCount, int ThreeStarCount, int FourStarCount, int FiveStarCount)> GetDoctorRatingStatisticsAsync(int doctorId);
     }
 } 

@@ -10,5 +10,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<FeedbackResponse> CreateAsync(FeedbackRequest request);
         Task<FeedbackResponse> UpdateAsync(int id, FeedbackRequest request);
         Task DeleteAsync(int id);
+        Task<DoctorRatingStatisticsResponse> GetDoctorRatingStatisticsAsync(int doctorId);
     }
 } 
