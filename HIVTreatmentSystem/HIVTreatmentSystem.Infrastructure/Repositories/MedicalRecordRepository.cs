@@ -21,10 +21,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<IEnumerable<MedicalRecord>> GetAllAsync()
         {
             return await _context.MedicalRecords
-                .Include(m => m.Appointment)
+                .Include(m => m.TestResult)
                 .Include(m => m.Patient)
                 .Include(m => m.Doctor)
-                .Include(m => m.TestResults)
+                .Include(m => m.AdditionalTestResults)
                 .ToListAsync();
         }
 
@@ -32,10 +32,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<MedicalRecord?> GetByIdAsync(int id)
         {
             return await _context.MedicalRecords
-                .Include(m => m.Appointment)
+                .Include(m => m.TestResult)
                 .Include(m => m.Patient)
                 .Include(m => m.Doctor)
-                .Include(m => m.TestResults)
+                .Include(m => m.AdditionalTestResults)
                 .FirstOrDefaultAsync(m => m.MedicalRecordId == id);
         }
 
@@ -43,10 +43,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<IEnumerable<MedicalRecord>> GetByPatientIdAsync(int patientId)
         {
             return await _context.MedicalRecords
-                .Include(m => m.Appointment)
+                .Include(m => m.TestResult)
                 .Include(m => m.Patient)
                 .Include(m => m.Doctor)
-                .Include(m => m.TestResults)
+                .Include(m => m.AdditionalTestResults)
                 .Where(m => m.PatientId == patientId)
                 .ToListAsync();
         }
@@ -55,10 +55,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<IEnumerable<MedicalRecord>> GetByDoctorIdAsync(int doctorId)
         {
             return await _context.MedicalRecords
-                .Include(m => m.Appointment)
+                .Include(m => m.TestResult)
                 .Include(m => m.Patient)
                 .Include(m => m.Doctor)
-                .Include(m => m.TestResults)
+                .Include(m => m.AdditionalTestResults)
                 .Where(m => m.DoctorId == doctorId)
                 .ToListAsync();
         }
@@ -98,10 +98,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<MedicalRecord?> GetByPatientIdUniqueAsync(int patientId)
         {
             return await _context.MedicalRecords
-                .Include(m => m.Appointment)
+                .Include(m => m.TestResult)
                 .Include(m => m.Patient)
                 .Include(m => m.Doctor)
-                .Include(m => m.TestResults)
+                .Include(m => m.AdditionalTestResults)
                 .FirstOrDefaultAsync(m => m.PatientId == patientId);
         }
     }

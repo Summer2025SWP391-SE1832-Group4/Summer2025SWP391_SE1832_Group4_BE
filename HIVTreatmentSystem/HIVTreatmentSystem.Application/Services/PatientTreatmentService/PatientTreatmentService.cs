@@ -125,9 +125,14 @@ namespace HIVTreatmentSystem.Application.Services.PatientTreatmentService
 
         private async Task UpdateMedicalRecordNextStepsAsync(int appointmentId, string note)
         {
-            // Find medical record by appointmentId
+            // Since MedicalRecord no longer has direct AppointmentId, 
+            // we need to find it through TestResult that might be related to the appointment
             var allRecords = await _medicalRecordRepository.GetAllAsync();
-            var record = allRecords.FirstOrDefault(r => r.AppointmentId == appointmentId);
+            
+            // Find medical record where TestResult's AppointmentId matches
+            var record = allRecords.FirstOrDefault(r => 
+                r.TestResult != null && r.TestResult.AppointmentId == appointmentId);
+            
             if (record != null)
             {
                 record.NextSteps = note;

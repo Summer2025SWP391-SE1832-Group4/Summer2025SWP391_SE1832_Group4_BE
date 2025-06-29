@@ -74,5 +74,12 @@ namespace HIVTreatmentSystem.Application.Interfaces
         /// </summary>
         /// <param name="request">The medical record data with patient ID</param>
         Task<MedicalRecordResponse> CreateByPatientIdAsync(MedicalRecordByPatientRequest request);
+
+        /// <summary>
+        /// Create a new medical record based on test result
+        /// Bác sĩ chỉ cần nhập các thông tin cơ bản, test data đã có trong TestResult
+        /// </summary>
+        /// <param name="request">The medical record data with test result ID</param>
+        Task<MedicalRecordResponse> CreateFromTestResultAsync(MedicalRecordFromTestResultRequest request);
     }
 } 

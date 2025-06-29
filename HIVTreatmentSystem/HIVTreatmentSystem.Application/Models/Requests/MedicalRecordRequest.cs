@@ -3,15 +3,21 @@ using System.ComponentModel.DataAnnotations;
 namespace HIVTreatmentSystem.Application.Models.Requests
 {
     /// <summary>
-    /// Request model for creating or updating a Medical Record
+    /// Request model for creating or updating a Medical Record (based on TestResult)
     /// </summary>
     public class MedicalRecordRequest
     {
         /// <summary>
-        /// ID of the associated appointment
+        /// ID of the associated test result
         /// </summary>
-        [Required(ErrorMessage = "Appointment ID is required")]
-        public int AppointmentId { get; set; }
+        [Required(ErrorMessage = "Test Result ID is required")]
+        public int TestResultId { get; set; }
+
+        /// <summary>
+        /// ID of the doctor creating/updating the medical record
+        /// </summary>
+        [Required(ErrorMessage = "Doctor ID is required")]
+        public int DoctorId { get; set; }
 
         /// <summary>
         /// Date of the consultation

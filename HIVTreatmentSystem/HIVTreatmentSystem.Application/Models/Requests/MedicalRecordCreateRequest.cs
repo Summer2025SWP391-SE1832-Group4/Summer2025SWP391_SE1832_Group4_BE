@@ -3,12 +3,15 @@ using System.ComponentModel.DataAnnotations;
 namespace HIVTreatmentSystem.Application.Models.Requests
 {
     /// <summary>
-    /// Request model used ONLY for creating a Medical Record (PatientId & DoctorId được tự động lấy từ Appointment)
+    /// Request model used for creating a Medical Record based on TestResult (PatientId được tự động lấy từ TestResult)
     /// </summary>
     public class MedicalRecordCreateRequest
     {
-        [Required(ErrorMessage = "Appointment ID is required")]
-        public int AppointmentId { get; set; }
+        [Required(ErrorMessage = "Test Result ID is required")]
+        public int TestResultId { get; set; }
+
+        [Required(ErrorMessage = "Doctor ID is required")]
+        public int DoctorId { get; set; }
 
         [Required(ErrorMessage = "Consultation date is required")]
         public DateTime ConsultationDate { get; set; }
