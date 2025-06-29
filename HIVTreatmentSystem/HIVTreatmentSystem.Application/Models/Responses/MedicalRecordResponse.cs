@@ -14,9 +14,9 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public int MedicalRecordId { get; set; }
 
         /// <summary>
-        /// ID of the associated appointment
+        /// ID của test result chính mà medical record này dựa vào
         /// </summary>
-        public int AppointmentId { get; set; }
+        public int TestResultId { get; set; }
 
         /// <summary>
         /// ID of the patient
@@ -64,9 +64,9 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string? DrugAllergyHistory { get; set; }
 
         /// <summary>
-        /// Associated appointment details
+        /// Test result chính mà medical record này dựa vào
         /// </summary>
-        public AppointmentResponse? Appointment { get; set; }
+        public TestResultResponse? TestResult { get; set; }
 
         /// <summary>
         /// Patient details
@@ -79,8 +79,8 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public DoctorResponse? Doctor { get; set; }
 
         /// <summary>
-        /// Associated test results
+        /// Các test results bổ sung khác (ngoài test result chính)
         /// </summary>
-        public ICollection<TestResultResponse>? TestResults { get; set; }
+        public ICollection<TestResultResponse>? AdditionalTestResults { get; set; }
     }
 } 

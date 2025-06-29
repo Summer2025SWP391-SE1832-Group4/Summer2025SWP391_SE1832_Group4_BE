@@ -237,10 +237,11 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.MedicalRecordId);
                 entity.Property(e => e.CoinfectionDiseases).HasMaxLength(255);
 
+                // Primary relationship with TestResult
                 entity
-                    .HasOne(e => e.Appointment)
-                    .WithOne(a => a.MedicalRecord)
-                    .HasForeignKey<MedicalRecord>(e => e.AppointmentId)
+                    .HasOne(e => e.TestResult)
+                    .WithOne()
+                    .HasForeignKey<MedicalRecord>(e => e.TestResultId)
                     .OnDelete(DeleteBehavior.Restrict);
 
                 entity
@@ -275,7 +276,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
                 entity
                     .HasOne(e => e.MedicalRecord)
-                    .WithMany(m => m.TestResults)
+                    .WithMany(m => m.AdditionalTestResults)
                     .HasForeignKey(e => e.MedicalRecordId)
                     .OnDelete(DeleteBehavior.SetNull);
 
