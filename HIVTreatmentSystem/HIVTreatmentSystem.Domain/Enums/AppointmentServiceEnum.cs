@@ -15,6 +15,11 @@ namespace HIVTreatmentSystem.Domain.Enums
 
         //Nếu chọn tư vấn
         PreTestCounseling,
-        PostTestCounseling
+        PostTestCounseling,
+
+        // Nếu chọn điều trị
+        FirstTreatmentVisit,
+        FollowUpTreatment
+
     }
 }

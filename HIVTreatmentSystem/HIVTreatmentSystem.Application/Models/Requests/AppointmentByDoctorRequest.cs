@@ -17,7 +17,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         [EnumDataType(typeof(AppointmentTypeEnum))]
         public AppointmentTypeEnum AppointmentType { get; set; }
         [EnumDataType(typeof(AppointmentServiceEnum))]
-        public AppointmentServiceEnum AppointmentService { get; set; }
+        public AppointmentServiceEnum? AppointmentService { get; set; }
         public string AppointmentNotes { get; set; }
     }
 }

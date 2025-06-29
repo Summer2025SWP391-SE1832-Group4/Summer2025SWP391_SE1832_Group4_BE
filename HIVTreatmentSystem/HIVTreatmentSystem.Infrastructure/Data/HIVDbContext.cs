@@ -207,7 +207,8 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                         .HasConversion<string>();
 
                 entity.Property(e => e.AppointmentService)
-                        .HasConversion<string>();
+                        .HasConversion<string>()
+                        .IsRequired(false);
                 entity
                     .HasOne(e => e.Patient)
                     .WithMany(p => p.Appointments)
