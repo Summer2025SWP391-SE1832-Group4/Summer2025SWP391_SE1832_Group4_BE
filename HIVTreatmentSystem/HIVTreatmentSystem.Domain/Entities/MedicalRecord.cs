@@ -12,16 +12,14 @@ namespace HIVTreatmentSystem.Domain.Entities
         public int MedicalRecordId { get; set; }
 
         /// <summary>
-        /// TestResult chính mà MedicalRecord này dựa vào (bắt buộc)
+        /// Mỗi Patient chỉ có một MedicalRecord duy nhất (1-to-1 relationship)
         /// </summary>
-        public int TestResultId { get; set; }
-
         public int PatientId { get; set; }
 
         public int DoctorId { get; set; }
 
         /// <summary>
-        /// Ngày tạo hồ sơ bệnh án (có thể khác với ngày test)
+        /// Ngày tạo hồ sơ bệnh án
         /// </summary>
         public DateTime ConsultationDate { get; set; }
 
@@ -58,16 +56,19 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         // Navigation properties
         /// <summary>
-        /// TestResult chính mà hồ sơ này dựa vào
+        /// Patient có 1-to-1 relationship với MedicalRecord
         /// </summary>
-        public virtual TestResult TestResult { get; set; } = null!;
-        
         public virtual Patient Patient { get; set; } = null!;
+        
+        /// <summary>
+        /// Bác sĩ đã tạo/cập nhật hồ sơ này
+        /// </summary>
         public virtual Doctor Doctor { get; set; } = null!;
         
         /// <summary>
-        /// Các test result bổ sung khác (ngoài test result chính)
+        /// Tất cả các test result thuộc về Patient này
+        /// (TestResult sẽ link tới MedicalRecord thông qua MedicalRecordId)
         /// </summary>
-        public virtual ICollection<TestResult> AdditionalTestResults { get; set; } = new List<TestResult>();
+        public virtual ICollection<TestResult> TestResults { get; set; } = new List<TestResult>();
     }
 }

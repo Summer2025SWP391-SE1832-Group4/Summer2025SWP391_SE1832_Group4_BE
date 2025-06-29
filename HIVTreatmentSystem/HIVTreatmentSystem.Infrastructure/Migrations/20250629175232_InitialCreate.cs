@@ -283,6 +283,39 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "MedicalRecords",
+                columns: table => new
+                {
+                    MedicalRecordId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PatientId = table.Column<int>(type: "int", nullable: false),
+                    DoctorId = table.Column<int>(type: "int", nullable: false),
+                    ConsultationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Symptoms = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Diagnosis = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DoctorNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    NextSteps = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CoinfectionDiseases = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    DrugAllergyHistory = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_MedicalRecords", x => x.MedicalRecordId);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecords_Doctors_DoctorId",
+                        column: x => x.DoctorId,
+                        principalTable: "Doctors",
+                        principalColumn: "DoctorId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_MedicalRecords_Patients_PatientId",
+                        column: x => x.PatientId,
+                        principalTable: "Patients",
+                        principalColumn: "PatientId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PatientTreatments",
                 columns: table => new
                 {
@@ -355,6 +388,11 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         principalColumn: "DoctorId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
+                        name: "FK_Appointments_MedicalRecords_MedicalRecordId",
+                        column: x => x.MedicalRecordId,
+                        principalTable: "MedicalRecords",
+                        principalColumn: "MedicalRecordId");
+                    table.ForeignKey(
                         name: "FK_Appointments_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
@@ -425,40 +463,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
                         name: "FK_Reminders_Patients_PatientId",
-                        column: x => x.PatientId,
-                        principalTable: "Patients",
-                        principalColumn: "PatientId",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MedicalRecords",
-                columns: table => new
-                {
-                    MedicalRecordId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TestResultId = table.Column<int>(type: "int", nullable: false),
-                    PatientId = table.Column<int>(type: "int", nullable: false),
-                    DoctorId = table.Column<int>(type: "int", nullable: false),
-                    ConsultationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Symptoms = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Diagnosis = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    DoctorNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    NextSteps = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CoinfectionDiseases = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
-                    DrugAllergyHistory = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MedicalRecords", x => x.MedicalRecordId);
-                    table.ForeignKey(
-                        name: "FK_MedicalRecords_Doctors_DoctorId",
-                        column: x => x.DoctorId,
-                        principalTable: "Doctors",
-                        principalColumn: "DoctorId",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_MedicalRecords_Patients_PatientId",
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "PatientId",
@@ -612,12 +616,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_MedicalRecords_TestResultId",
-                table: "MedicalRecords",
-                column: "TestResultId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Patients_AccountId",
                 table: "Patients",
                 column: "AccountId",
@@ -704,58 +702,11 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "IX_TestResults_PatientId",
                 table: "TestResults",
                 column: "PatientId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_Appointments_MedicalRecords_MedicalRecordId",
-                table: "Appointments",
-                column: "MedicalRecordId",
-                principalTable: "MedicalRecords",
-                principalColumn: "MedicalRecordId");
-
-            migrationBuilder.AddForeignKey(
-                name: "FK_MedicalRecords_TestResults_TestResultId",
-                table: "MedicalRecords",
-                column: "TestResultId",
-                principalTable: "TestResults",
-                principalColumn: "TestResultId",
-                onDelete: ReferentialAction.Restrict);
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropForeignKey(
-                name: "FK_Accounts_Roles_RoleId",
-                table: "Accounts");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Appointments_Accounts_CreatedByUserId",
-                table: "Appointments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Doctors_Accounts_AccountId",
-                table: "Doctors");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Patients_Accounts_AccountId",
-                table: "Patients");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Appointments_Doctors_DoctorId",
-                table: "Appointments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_MedicalRecords_Doctors_DoctorId",
-                table: "MedicalRecords");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_Appointments_MedicalRecords_MedicalRecordId",
-                table: "Appointments");
-
-            migrationBuilder.DropForeignKey(
-                name: "FK_TestResults_MedicalRecords_MedicalRecordId",
-                table: "TestResults");
-
             migrationBuilder.DropTable(
                 name: "Blogs");
 
@@ -781,34 +732,34 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "SystemAuditLogs");
 
             migrationBuilder.DropTable(
+                name: "TestResults");
+
+            migrationBuilder.DropTable(
                 name: "BlogTags");
 
             migrationBuilder.DropTable(
                 name: "PatientTreatments");
 
             migrationBuilder.DropTable(
+                name: "Appointments");
+
+            migrationBuilder.DropTable(
                 name: "StandardARVRegimens");
-
-            migrationBuilder.DropTable(
-                name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "Accounts");
-
-            migrationBuilder.DropTable(
-                name: "Doctors");
 
             migrationBuilder.DropTable(
                 name: "MedicalRecords");
 
             migrationBuilder.DropTable(
-                name: "TestResults");
-
-            migrationBuilder.DropTable(
-                name: "Appointments");
+                name: "Doctors");
 
             migrationBuilder.DropTable(
                 name: "Patients");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
         }
     }
 }

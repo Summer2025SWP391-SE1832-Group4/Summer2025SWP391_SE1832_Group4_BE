@@ -3,15 +3,16 @@ using System.ComponentModel.DataAnnotations;
 namespace HIVTreatmentSystem.Application.Models.Requests
 {
     /// <summary>
-    /// Request model for creating or updating a Medical Record (based on TestResult)
+    /// Request model for creating or updating a Medical Record
+    /// Mỗi Patient chỉ có một MedicalRecord duy nhất (1-to-1 relationship)
     /// </summary>
     public class MedicalRecordRequest
     {
         /// <summary>
-        /// ID of the associated test result
+        /// ID of the patient (required for 1-to-1 relationship)
         /// </summary>
-        [Required(ErrorMessage = "Test Result ID is required")]
-        public int TestResultId { get; set; }
+        [Required(ErrorMessage = "Patient ID is required")]
+        public int PatientId { get; set; }
 
         /// <summary>
         /// ID of the doctor creating/updating the medical record

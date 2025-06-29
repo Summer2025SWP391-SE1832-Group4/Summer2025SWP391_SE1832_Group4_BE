@@ -35,15 +35,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
-        
-        // Medical Billing System DbSets
-        public DbSet<Medicine> Medicines { get; set; }
-        public DbSet<MedicinePrice> MedicinePrices { get; set; }
-        public DbSet<TestService> TestServices { get; set; }
-        public DbSet<TestServicePrice> TestServicePrices { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<InvoiceItem> InvoiceItems { get; set; }
-        public DbSet<Payment> Payments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -66,11 +57,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
             modelBuilder.Entity<Appointment>().Property(e => e.Status).HasConversion<string>();
 
-            // Medical Billing System enum conversions
-            modelBuilder.Entity<Invoice>().Property(e => e.InvoiceStatus).HasConversion<string>();
-            modelBuilder.Entity<InvoiceItem>().Property(e => e.ItemType).HasConversion<string>();
-            modelBuilder.Entity<Payment>().Property(e => e.PaymentMethod).HasConversion<string>();
-            modelBuilder.Entity<Payment>().Property(e => e.PaymentStatus).HasConversion<string>();
+
 
 
             modelBuilder
@@ -111,15 +98,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             ConfigureReminderEntity(modelBuilder);
             ConfigureEducationalMaterialEntity(modelBuilder);
             ConfigureSystemAuditLogEntity(modelBuilder);
-            
-            // Medical Billing System configurations
-            ConfigureMedicineEntity(modelBuilder);
-            ConfigureMedicinePriceEntity(modelBuilder);
-            ConfigureTestServiceEntity(modelBuilder);
-            ConfigureTestServicePriceEntity(modelBuilder);
-            ConfigureInvoiceEntity(modelBuilder);
-            ConfigureInvoiceItemEntity(modelBuilder);
-            ConfigurePaymentEntity(modelBuilder);
 
             // Seed initial data
             SeedData(modelBuilder);
@@ -259,24 +237,22 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.MedicalRecordId);
                 entity.Property(e => e.CoinfectionDiseases).HasMaxLength(255);
 
-                // Primary relationship with TestResult
-                entity
-                    .HasOne(e => e.TestResult)
-                    .WithOne()
-                    .HasForeignKey<MedicalRecord>(e => e.TestResultId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
+                // 1-to-1 relationship with Patient
                 entity
                     .HasOne(e => e.Patient)
                     .WithOne(p => p.MedicalRecord)
                     .HasForeignKey<MedicalRecord>(e => e.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
 
+                // Many-to-1 relationship with Doctor
                 entity
                     .HasOne(e => e.Doctor)
                     .WithMany(d => d.MedicalRecords)
                     .HasForeignKey(e => e.DoctorId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                // Index to ensure unique Patient-MedicalRecord relationship
+                entity.HasIndex(e => e.PatientId).IsUnique();
             });
         }
 
@@ -298,7 +274,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
                 entity
                     .HasOne(e => e.MedicalRecord)
-                    .WithMany(m => m.AdditionalTestResults)
+                    .WithMany(m => m.TestResults)
                     .HasForeignKey(e => e.MedicalRecordId)
                     .OnDelete(DeleteBehavior.SetNull);
 
@@ -424,171 +400,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(u => u.AuditLogs)
                     .HasForeignKey(e => e.AccountId)
                     .OnDelete(DeleteBehavior.SetNull);
-            });
-        }
-
-        private void ConfigureMedicineEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Medicine>(entity =>
-            {
-                entity.HasKey(e => e.MedicineId);
-                entity.Property(e => e.MedicineName).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.GenericName).HasMaxLength(200);
-                entity.Property(e => e.Manufacturer).HasMaxLength(100);
-                entity.Property(e => e.Dosage).HasMaxLength(50);
-                entity.Property(e => e.Unit).HasMaxLength(20);
-                entity.Property(e => e.Description).HasMaxLength(500);
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
-            });
-        }
-
-        private void ConfigureMedicinePriceEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<MedicinePrice>(entity =>
-            {
-                entity.HasKey(e => e.MedicinePriceId);
-                entity.Property(e => e.Price).HasColumnType("decimal(18,2)").IsRequired();
-                entity.Property(e => e.CostPrice).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
-                
-                entity
-                    .HasOne(e => e.Medicine)
-                    .WithMany(m => m.MedicinePrices)
-                    .HasForeignKey(e => e.MedicineId)
-                    .OnDelete(DeleteBehavior.Cascade);
-                    
-                // Index for faster price lookups
-                entity.HasIndex(e => new { e.MedicineId, e.EffectiveDate, e.IsActive });
-            });
-        }
-
-        private void ConfigureTestServiceEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<TestService>(entity =>
-            {
-                entity.HasKey(e => e.TestServiceId);
-                entity.Property(e => e.ServiceName).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.ServiceCode).HasMaxLength(50);
-                entity.Property(e => e.Category).HasMaxLength(100);
-                entity.Property(e => e.Description).HasMaxLength(500);
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
-                
-                // Unique index on service code if provided
-                entity.HasIndex(e => e.ServiceCode).IsUnique().HasFilter("[ServiceCode] IS NOT NULL");
-            });
-        }
-
-        private void ConfigureTestServicePriceEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<TestServicePrice>(entity =>
-            {
-                entity.HasKey(e => e.TestServicePriceId);
-                entity.Property(e => e.Price).HasColumnType("decimal(18,2)").IsRequired();
-                entity.Property(e => e.IsActive).HasDefaultValue(true);
-                
-                entity
-                    .HasOne(e => e.TestService)
-                    .WithMany(ts => ts.TestServicePrices)
-                    .HasForeignKey(e => e.TestServiceId)
-                    .OnDelete(DeleteBehavior.Cascade);
-                    
-                // Index for faster price lookups
-                entity.HasIndex(e => new { e.TestServiceId, e.EffectiveDate, e.IsActive });
-            });
-        }
-
-        private void ConfigureInvoiceEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Invoice>(entity =>
-            {
-                entity.HasKey(e => e.InvoiceId);
-                entity.Property(e => e.InvoiceNumber).IsRequired().HasMaxLength(50);
-                entity.Property(e => e.SubTotal).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.TaxAmount).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.DiscountAmount).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.TotalAmount).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.Notes).HasMaxLength(500);
-                
-                // Unique invoice number
-                entity.HasIndex(e => e.InvoiceNumber).IsUnique();
-                
-                // Relationships
-                entity
-                    .HasOne(e => e.Patient)
-                    .WithMany()
-                    .HasForeignKey(e => e.PatientId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                    
-                entity
-                    .HasOne(e => e.Doctor)
-                    .WithMany()
-                    .HasForeignKey(e => e.DoctorId)
-                    .OnDelete(DeleteBehavior.Restrict);
-                    
-                entity
-                    .HasOne(e => e.Appointment)
-                    .WithMany()
-                    .HasForeignKey(e => e.AppointmentId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
-        }
-
-        private void ConfigureInvoiceItemEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<InvoiceItem>(entity =>
-            {
-                entity.HasKey(e => e.InvoiceItemId);
-                entity.Property(e => e.ItemName).IsRequired().HasMaxLength(200);
-                entity.Property(e => e.Quantity).HasColumnType("decimal(10,2)");
-                entity.Property(e => e.UnitPrice).HasColumnType("decimal(18,2)");
-                entity.Property(e => e.TotalPrice).HasColumnType("decimal(18,2)");
-                
-                // Relationships
-                entity
-                    .HasOne(e => e.Invoice)
-                    .WithMany(i => i.InvoiceItems)
-                    .HasForeignKey(e => e.InvoiceId)
-                    .OnDelete(DeleteBehavior.Cascade);
-                    
-                entity
-                    .HasOne(e => e.Medicine)
-                    .WithMany(m => m.InvoiceItems)
-                    .HasForeignKey(e => e.ItemId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_InvoiceItem_Medicine");
-                    
-                entity
-                    .HasOne(e => e.TestService)
-                    .WithMany(ts => ts.InvoiceItems)
-                    .HasForeignKey(e => e.ItemId)
-                    .OnDelete(DeleteBehavior.SetNull)
-                    .HasConstraintName("FK_InvoiceItem_TestService");
-                    
-                entity
-                    .HasOne(e => e.TestResult)
-                    .WithMany()
-                    .HasForeignKey(e => e.TestResultId)
-                    .OnDelete(DeleteBehavior.SetNull);
-            });
-        }
-
-        private void ConfigurePaymentEntity(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Payment>(entity =>
-            {
-                entity.HasKey(e => e.PaymentId);
-                entity.Property(e => e.PaymentAmount).HasColumnType("decimal(18,2)").IsRequired();
-                entity.Property(e => e.PaymentReference).HasMaxLength(100);
-                entity.Property(e => e.Notes).HasMaxLength(500);
-                
-                entity
-                    .HasOne(e => e.Invoice)
-                    .WithMany(i => i.Payments)
-                    .HasForeignKey(e => e.InvoiceId)
-                    .OnDelete(DeleteBehavior.Cascade);
-                    
-                // Index for payment reference lookups
-                entity.HasIndex(e => e.PaymentReference).HasFilter("[PaymentReference] IS NOT NULL");
             });
         }
 

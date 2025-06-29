@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250629170439_InitialCreate")]
+    [Migration("20250629175232_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -434,17 +434,11 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<string>("Symptoms")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TestResultId")
-                        .HasColumnType("int");
-
                     b.HasKey("MedicalRecordId");
 
                     b.HasIndex("DoctorId");
 
                     b.HasIndex("PatientId")
-                        .IsUnique();
-
-                    b.HasIndex("TestResultId")
                         .IsUnique();
 
                     b.ToTable("MedicalRecords");
@@ -989,17 +983,9 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.TestResult", "TestResult")
-                        .WithOne()
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "TestResultId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
-
-                    b.Navigation("TestResult");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>
@@ -1094,7 +1080,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "MedicalRecord")
-                        .WithMany("AdditionalTestResults")
+                        .WithMany("TestResults")
                         .HasForeignKey("MedicalRecordId")
                         .OnDelete(DeleteBehavior.SetNull);
 
@@ -1153,7 +1139,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.MedicalRecord", b =>
                 {
-                    b.Navigation("AdditionalTestResults");
+                    b.Navigation("TestResults");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>

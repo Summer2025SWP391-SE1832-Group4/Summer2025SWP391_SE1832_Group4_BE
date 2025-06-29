@@ -129,9 +129,9 @@ namespace HIVTreatmentSystem.Application.Services.PatientTreatmentService
             // we need to find it through TestResult that might be related to the appointment
             var allRecords = await _medicalRecordRepository.GetAllAsync();
             
-            // Find medical record where TestResult's AppointmentId matches
+            // Find medical record where any TestResult's AppointmentId matches
             var record = allRecords.FirstOrDefault(r => 
-                r.TestResult != null && r.TestResult.AppointmentId == appointmentId);
+                r.TestResults != null && r.TestResults.Any(tr => tr.AppointmentId == appointmentId));
             
             if (record != null)
             {

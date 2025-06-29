@@ -5,6 +5,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
 {
     /// <summary>
     /// Response model for Medical Record
+    /// Mỗi Patient chỉ có một MedicalRecord duy nhất (1-to-1 relationship)
     /// </summary>
     public class MedicalRecordResponse
     {
@@ -14,12 +15,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public int MedicalRecordId { get; set; }
 
         /// <summary>
-        /// ID của test result chính mà medical record này dựa vào
-        /// </summary>
-        public int TestResultId { get; set; }
-
-        /// <summary>
-        /// ID of the patient
+        /// ID of the patient (1-to-1 relationship)
         /// </summary>
         public int PatientId { get; set; }
 
@@ -64,11 +60,6 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string? DrugAllergyHistory { get; set; }
 
         /// <summary>
-        /// Test result chính mà medical record này dựa vào
-        /// </summary>
-        public TestResultResponse? TestResult { get; set; }
-
-        /// <summary>
         /// Patient details
         /// </summary>
         public PatientResponse? Patient { get; set; }
@@ -79,8 +70,8 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public DoctorResponse? Doctor { get; set; }
 
         /// <summary>
-        /// Các test results bổ sung khác (ngoài test result chính)
+        /// Tất cả test results của Patient này
         /// </summary>
-        public ICollection<TestResultResponse>? AdditionalTestResults { get; set; }
+        public ICollection<TestResultResponse>? TestResults { get; set; }
     }
 } 
