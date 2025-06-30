@@ -295,7 +295,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     Diagnosis = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     DoctorNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NextSteps = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CoinfectionDiseases = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    UnderlyingDisease = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
                     DrugAllergyHistory = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>

@@ -235,7 +235,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             modelBuilder.Entity<MedicalRecord>(entity =>
             {
                 entity.HasKey(e => e.MedicalRecordId);
-                entity.Property(e => e.CoinfectionDiseases).HasMaxLength(255);
+                entity.Property(e => e.UnderlyingDisease).HasMaxLength(255);
 
                 // 1-to-1 relationship with Patient
                 entity

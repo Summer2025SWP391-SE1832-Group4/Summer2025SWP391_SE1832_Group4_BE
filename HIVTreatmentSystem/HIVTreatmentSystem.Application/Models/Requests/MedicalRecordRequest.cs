@@ -50,7 +50,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         /// Any co-infection diseases
         /// </summary>
         [MaxLength(255, ErrorMessage = "Coinfection diseases cannot exceed 255 characters")]
-        public string? CoinfectionDiseases { get; set; }
+        public string? UnderlyingDisease { get; set; }
 
         /// <summary>
         /// Patient's drug allergy history

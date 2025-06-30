@@ -151,7 +151,7 @@ namespace HIVTreatmentSystem.Application.Services
                 Diagnosis = request.Diagnosis,
                 DoctorNotes = request.DoctorNotes,
                 NextSteps = request.NextSteps,
-                CoinfectionDiseases = request.CoinfectionDiseases,
+                UnderlyingDisease = request.UnderlyingDisease,
                 DrugAllergyHistory = request.DrugAllergyHistory
             };
 
@@ -181,7 +181,7 @@ namespace HIVTreatmentSystem.Application.Services
                 Diagnosis = request.Diagnosis,
                 DoctorNotes = request.DoctorNotes,
                 NextSteps = request.NextSteps,
-                CoinfectionDiseases = request.CoinfectionDiseases,
+                UnderlyingDisease = request.UnderlyingDisease,
                 DrugAllergyHistory = request.DrugAllergyHistory
             };
 

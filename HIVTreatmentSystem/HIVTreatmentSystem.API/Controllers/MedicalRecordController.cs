@@ -1,6 +1,8 @@
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.UseCases.MedicalRecords;
+using HIVTreatmentSystem.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
@@ -8,7 +10,8 @@ using AutoMapper;
 namespace HIVTreatmentSystem.API.Controllers
 {
     /// <summary>
-    /// Controller for managing Medical Records (Patient-based operations)
+    /// Clean Architecture Controller for Medical Records
+    /// Tuân thủ nguyên tắc Thin Controller, Fat Use Cases
     /// </summary>
     [Route("api/medical-records")]
     [ApiController]
@@ -16,11 +19,19 @@ namespace HIVTreatmentSystem.API.Controllers
     public class MedicalRecordController : ControllerBase
     {
         private readonly IMedicalRecordService _medicalRecordService;
+        private readonly CreateMedicalRecordFromTestResultUseCase _createFromTestResultUseCase;
+        private readonly UpdateMedicalRecordByPatientUseCase _updateByPatientUseCase;
         private readonly IMapper _mapper;
 
-        public MedicalRecordController(IMedicalRecordService medicalRecordService, IMapper mapper)
+        public MedicalRecordController(
+            IMedicalRecordService medicalRecordService,
+            CreateMedicalRecordFromTestResultUseCase createFromTestResultUseCase,
+            UpdateMedicalRecordByPatientUseCase updateByPatientUseCase,
+            IMapper mapper)
         {
             _medicalRecordService = medicalRecordService;
+            _createFromTestResultUseCase = createFromTestResultUseCase;
+            _updateByPatientUseCase = updateByPatientUseCase;
             _mapper = mapper;
         }
 
@@ -139,48 +150,22 @@ namespace HIVTreatmentSystem.API.Controllers
 
         /// <summary>
         /// Create a new medical record for a patient from test result
-        /// Bác sĩ chỉ cần nhập các thông tin cơ bản, test data đã có trong TestResult
+        /// Clean Architecture Implementation: Ultra-thin controller
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         /// <param name="request">The medical record data with test result ID</param>
         [HttpPost("patient/{patientId}/from-test-result")]
         // [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> CreateFromTestResultByPatientId(int patientId, [FromBody] MedicalRecordFromTestResultRequest request)
+        public async Task<IActionResult> CreateFromTestResultByPatientId(
+            int patientId, 
+            [FromBody] MedicalRecordFromTestResultRequest request)
         {
-            try
-            {
-                // Verify that the request is for the correct patient
-                if (request.TestResultId <= 0)
-                {
-                    return BadRequest(new ApiResponse("TestResultId is required."));
-                }
-
-                var medicalRecord = await _medicalRecordService.CreateFromTestResultAsync(request);
-                
-                // Validate that the created medical record belongs to the specified patient
-                if (medicalRecord.PatientId != patientId)
-                {
-                    return BadRequest(new ApiResponse($"The test result does not belong to patient with ID {patientId}."));
-                }
-
-                return CreatedAtAction(
-                    nameof(GetById), 
-                    new { id = medicalRecord.MedicalRecordId }, 
-                    new ApiResponse("Medical record created successfully from test result", medicalRecord)
-                );
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new ApiResponse(ex.Message));
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Conflict(new ApiResponse(ex.Message));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record from test result."));
-            }
+            var result = await _createFromTestResultUseCase.ExecuteAsync(patientId, request);
+            
+            return result.ToCreatedResult(this, 
+                nameof(GetById), 
+                new { id = result.Value?.MedicalRecordId }, 
+                "Medical record created successfully from test result");
         }
 
         /// <summary>
@@ -195,11 +180,10 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var mappedRequest = _mapper.Map<MedicalRecordRequest>(request);
-                
-                // Ensure the medical record is created for the correct patient
-                // This will be handled in the service layer, but we validate here too
+                mappedRequest.PatientId = patientId;
+
                 var medicalRecord = await _medicalRecordService.CreateOrUpdateByPatientIdAsync(patientId, mappedRequest);
-                
+
                 return CreatedAtAction(
                     nameof(GetById), 
                     new { id = medicalRecord.MedicalRecordId }, 
@@ -245,7 +229,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Update medical record for a specific patient
+        /// Update medical record by patient ID
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         /// <param name="request">The updated medical record data</param>
@@ -256,50 +240,9 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var mappedRequest = _mapper.Map<MedicalRecordRequest>(request);
+                mappedRequest.PatientId = patientId;
+
                 var medicalRecord = await _medicalRecordService.CreateOrUpdateByPatientIdAsync(patientId, mappedRequest);
-                return Ok(new ApiResponse("Medical record updated successfully", medicalRecord));
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(new ApiResponse(ex.Message));
-            }
-            catch (Exception)
-            {
-                return StatusCode(500, new ApiResponse("An error occurred while updating the medical record."));
-            }
-        }
-
-        /// <summary>
-        /// Update medical record using simplified request (for compatibility)
-        /// </summary>
-        /// <param name="patientId">The ID of the patient</param>
-        /// <param name="request">The updated medical record data</param>
-        [HttpPut("patient/{patientId}/simple")]
-        // [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> UpdateSimpleByPatientId(int patientId, [FromBody] MedicalRecordFromTestResultRequest request)
-        {
-            try
-            {
-                // Get existing medical record for the patient
-                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
-                if (existingRecord == null)
-                    return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
-
-                // Create full request with existing data
-                var fullRequest = new MedicalRecordRequest
-                {
-                    PatientId = patientId,
-                    DoctorId = request.DoctorId,
-                    ConsultationDate = request.ConsultationDate,
-                    Symptoms = request.Symptoms,
-                    Diagnosis = request.Diagnosis,
-                    DoctorNotes = request.DoctorNotes,
-                    NextSteps = request.NextSteps,
-                    CoinfectionDiseases = request.CoinfectionDiseases,
-                    DrugAllergyHistory = request.DrugAllergyHistory
-                };
-
-                var medicalRecord = await _medicalRecordService.UpdateAsync(existingRecord.MedicalRecordId, fullRequest);
                 return Ok(new ApiResponse("Medical record updated successfully", medicalRecord));
             }
             catch (ArgumentException ex)
@@ -310,6 +253,22 @@ namespace HIVTreatmentSystem.API.Controllers
             {
                 return StatusCode(500, new ApiResponse("An error occurred while updating the medical record."));
             }
+        }
+
+        /// <summary>
+        /// Update medical record by patient ID with simplified request
+        /// Clean Architecture Implementation: Ultra-thin controller
+        /// </summary>
+        /// <param name="patientId">The ID of the patient</param>
+        /// <param name="request">The updated medical record data</param>
+        [HttpPut("patient/{patientId}/simple")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> UpdateSimpleByPatientId(
+            int patientId, 
+            [FromBody] MedicalRecordFromTestResultRequest request)
+        {
+            var result = await _updateByPatientUseCase.ExecuteAsync(patientId, request);
+            return result.ToActionResult(this);
         }
 
         /// <summary>
@@ -323,7 +282,9 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var result = await _medicalRecordService.DeleteAsync(id);
-                return Ok(new ApiResponse("Medical record deleted successfully."));
+                return result 
+                    ? Ok(new ApiResponse("Medical record deleted successfully"))
+                    : NotFound(new ApiResponse("Medical record not found"));
             }
             catch (ArgumentException ex)
             {
@@ -336,7 +297,7 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Delete medical record by patient ID (1-to-1 relationship)
+        /// Delete medical record by patient ID
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         [HttpDelete("patient/{patientId}")]
@@ -345,16 +306,14 @@ namespace HIVTreatmentSystem.API.Controllers
         {
             try
             {
-                var medicalRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
-                if (medicalRecord == null)
+                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
+                if (existingRecord == null)
                     return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
 
-                var result = await _medicalRecordService.DeleteAsync(medicalRecord.MedicalRecordId);
-                return Ok(new ApiResponse("Medical record deleted successfully."));
-            }
-            catch (ArgumentException ex)
-            {
-                return NotFound(new ApiResponse(ex.Message));
+                var result = await _medicalRecordService.DeleteAsync(existingRecord.MedicalRecordId);
+                return result 
+                    ? Ok(new ApiResponse("Medical record deleted successfully"))
+                    : BadRequest(new ApiResponse("Failed to delete medical record"));
             }
             catch (Exception)
             {

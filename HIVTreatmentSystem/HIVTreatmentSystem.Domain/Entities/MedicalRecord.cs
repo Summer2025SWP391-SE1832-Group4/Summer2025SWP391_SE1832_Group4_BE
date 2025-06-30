@@ -47,7 +47,7 @@ namespace HIVTreatmentSystem.Domain.Entities
         /// Các bệnh đồng nhiễm khác
         /// </summary>
         [MaxLength(255)]
-        public string? CoinfectionDiseases { get; set; }
+        public string? UnderlyingDisease { get; set; }
 
         /// <summary>
         /// Lịch sử dị ứng thuốc của bệnh nhân

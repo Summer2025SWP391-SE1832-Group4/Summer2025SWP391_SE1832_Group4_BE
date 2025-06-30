@@ -23,7 +23,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         public string? NextSteps { get; set; }
 
         [MaxLength(255)]
-        public string? CoinfectionDiseases { get; set; }
+        public string? UnderlyingDisease { get; set; }
 
         public string? DrugAllergyHistory { get; set; }
     }

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250629175232_InitialCreate")]
+    [Migration("20250630012138_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -406,10 +406,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MedicalRecordId"));
 
-                    b.Property<string>("CoinfectionDiseases")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
                     b.Property<DateTime>("ConsultationDate")
                         .HasColumnType("datetime2");
 
@@ -433,6 +429,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Property<string>("Symptoms")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UnderlyingDisease")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
                     b.HasKey("MedicalRecordId");
 

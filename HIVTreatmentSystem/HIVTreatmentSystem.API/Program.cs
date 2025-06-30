@@ -18,6 +18,7 @@ using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
 using HIVTreatmentSystem.Application.Services.PatientTreatmentService;
 using HIVTreatmentSystem.Application.Services.PatientService;
+using HIVTreatmentSystem.Application.UseCases.MedicalRecords;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using HIVTreatmentSystem.Infrastructure.Repositories;
@@ -232,6 +233,10 @@ builder.Services.AddScoped<ISystemAuditLogRepository, SystemAuditLogRepository>(
 builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 // Đăng ký service PatientTreatment
 builder.Services.AddScoped<IPatientTreatmentService, PatientTreatmentService>();
+
+// Register Use Cases for Clean Architecture
+builder.Services.AddScoped<CreateMedicalRecordFromTestResultUseCase>();
+builder.Services.AddScoped<UpdateMedicalRecordByPatientUseCase>();
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
