@@ -172,6 +172,24 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 appointment.CreatedByUserId = accountId;
                 appointment.PatientId = patient.PatientId;
                 await _appointmentRepository.CreateAsync(appointment);
+                var email = appointment.Patient.Account.Email;
+                var dateMail = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
+                var timeMail = appointment.AppointmentTime.ToString(@"hh\:mm");
+                await _emailService.SendEmailAsync(
+                    email,"Your Appointment have been scheduled",
+                $@"<html>
+                    <body style='font-family: Arial, sans-serif;'>
+                        <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
+                        <p>Dear {appointment.Patient.Account.FullName},</p>
+                        <p>Your appointment with <strong>Doctor {appointment.Doctor.Account.FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
+                        <p><strong>Date:</strong> {dateMail}<br/>
+                           <strong>Time:</strong> {timeMail}</p>
+                        <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
+                        <br/>
+                        <p>Thank you,<br/>HIV Treatment Center</p>
+                    </body>
+                </html>"
+                        );
                 return new ApiResponse("Appointment created successfully.");
             }
             catch (Exception ex)

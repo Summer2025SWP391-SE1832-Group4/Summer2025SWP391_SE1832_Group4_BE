@@ -22,7 +22,7 @@ namespace HIVTreatmentSystem.Domain.Entities
         [MaxLength(50)]
         public AppointmentTypeEnum AppointmentType { get; set; }
 
-        public AppointmentStatus Status { get; set; } = AppointmentStatus.PendingConfirmation;
+        public AppointmentStatus Status { get; set; } = AppointmentStatus.Scheduled;
 
         public AppointmentServiceEnum? AppointmentService { get; set; }
 
