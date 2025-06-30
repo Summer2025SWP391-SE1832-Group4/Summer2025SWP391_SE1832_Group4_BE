@@ -15,7 +15,8 @@ namespace HIVTreatmentSystem.Application.Mappings
         /// </summary>
         public TestResultProfile()
         {
-            CreateMap<TestResult, TestResultResponse>();
+            CreateMap<TestResult, TestResultResponse>()
+                .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.Appointment != null ? src.Appointment.DoctorId : (int?)null));
             CreateMap<TestResultRequest, TestResult>();
         }
     }

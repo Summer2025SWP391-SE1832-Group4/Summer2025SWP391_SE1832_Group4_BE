@@ -36,7 +36,6 @@ namespace HIVTreatmentSystem.Application.Services
         /// <param name="medicalRecordId">Medical record ID</param>
         /// <returns>Collection of test result responses for the medical record</returns>
         Task<IEnumerable<TestResultResponse>> GetByMedicalRecordIdAsync(int medicalRecordId);
-
         /// <summary>
         /// Get test results by appointment ID
         /// Returns all test results for patients in appointments with CheckedIn status
