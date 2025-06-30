@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Application.Models.Responses
 {
@@ -40,6 +41,16 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string? Diagnosis { get; set; }
 
         /// <summary>
+        /// Trạng thái mang thai của bệnh nhân
+        /// </summary>
+        public PregnancyStatus PregnancyStatus { get; set; }
+
+        /// <summary>
+        /// Phụ mang thai ở tuần thứ... (chỉ áp dụng khi PregnancyStatus = Pregnant)
+        /// </summary>
+        public int PregnancyWeek { get; set; }
+
+        /// <summary>
         /// Additional notes from the doctor
         /// </summary>
         public string? DoctorNotes { get; set; }
@@ -52,7 +63,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         /// <summary>
         /// Any co-infection diseases
         /// </summary>
-        public string? CoinfectionDiseases { get; set; }
+        public string? UnderlyingDisease { get; set; }
 
         /// <summary>
         /// Patient's drug allergy history

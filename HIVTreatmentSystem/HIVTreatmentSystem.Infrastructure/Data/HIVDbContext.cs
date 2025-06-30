@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -56,6 +57,9 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             modelBuilder.Entity<Appointment>().Property(e => e.AppointmentService).HasConversion<string>();
 
             modelBuilder.Entity<Appointment>().Property(e => e.Status).HasConversion<string>();
+
+            // Configure PregnancyStatus enum conversion for MedicalRecord
+            modelBuilder.Entity<MedicalRecord>().Property(e => e.PregnancyStatus).HasConversion<string>();
 
 
 
@@ -237,6 +241,15 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.MedicalRecordId);
                 entity.Property(e => e.UnderlyingDisease).HasMaxLength(255);
 
+                // Configure PregnancyStatus with default value
+                entity.Property(e => e.PregnancyStatus)
+                    .HasDefaultValue(PregnancyStatus.Unknown)
+                    .IsRequired();
+
+                // Configure PregnancyWeek with default value 0
+                entity.Property(e => e.PregnancyWeek)
+                    .HasDefaultValue(0);
+
                 // 1-to-1 relationship with Patient
                 entity
                     .HasOne(e => e.Patient)
@@ -253,6 +266,12 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
                 // Index to ensure unique Patient-MedicalRecord relationship
                 entity.HasIndex(e => e.PatientId).IsUnique();
+
+                // Check constraint for pregnancy logic
+                entity.HasCheckConstraint(
+                    "CK_MedicalRecord_PregnancyLogic",
+                    "(PregnancyStatus != 'Pregnant' OR (PregnancyStatus = 'Pregnant' AND PregnancyWeek >= 0 AND PregnancyWeek <= 42))"
+                );
             });
         }
 

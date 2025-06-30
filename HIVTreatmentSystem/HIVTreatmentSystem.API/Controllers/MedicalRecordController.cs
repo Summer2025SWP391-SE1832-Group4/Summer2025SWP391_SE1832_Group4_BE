@@ -1,7 +1,6 @@
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
-using HIVTreatmentSystem.Application.UseCases.MedicalRecords;
 using HIVTreatmentSystem.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -19,19 +18,13 @@ namespace HIVTreatmentSystem.API.Controllers
     public class MedicalRecordController : ControllerBase
     {
         private readonly IMedicalRecordService _medicalRecordService;
-        private readonly CreateMedicalRecordFromTestResultUseCase _createFromTestResultUseCase;
-        private readonly UpdateMedicalRecordByPatientUseCase _updateByPatientUseCase;
         private readonly IMapper _mapper;
 
         public MedicalRecordController(
             IMedicalRecordService medicalRecordService,
-            CreateMedicalRecordFromTestResultUseCase createFromTestResultUseCase,
-            UpdateMedicalRecordByPatientUseCase updateByPatientUseCase,
             IMapper mapper)
         {
             _medicalRecordService = medicalRecordService;
-            _createFromTestResultUseCase = createFromTestResultUseCase;
-            _updateByPatientUseCase = updateByPatientUseCase;
             _mapper = mapper;
         }
 
@@ -149,8 +142,100 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
+        /// Create a new medical record
+        /// </summary>
+        /// <param name="request">The medical record data to create</param>
+        [HttpPost]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> Create([FromBody] MedicalRecordRequest request)
+        {
+            try
+            {
+                var medicalRecord = await _medicalRecordService.CreateAsync(request);
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = medicalRecord.MedicalRecordId }, 
+                    new ApiResponse("Medical record created successfully", medicalRecord)
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record."));
+            }
+        }
+
+        /// <summary>
+        /// Create a new medical record based on patient ID
+        /// </summary>
+        /// <param name="request">The medical record data with patient ID</param>
+        [HttpPost("by-patient")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> CreateByPatient([FromBody] MedicalRecordByPatientRequest request)
+        {
+            try
+            {
+                var medicalRecord = await _medicalRecordService.CreateByPatientIdAsync(request);
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = medicalRecord.MedicalRecordId }, 
+                    new ApiResponse("Medical record created successfully", medicalRecord)
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record."));
+            }
+        }
+
+        /// <summary>
+        /// Create a new medical record from test result
+        /// </summary>
+        /// <param name="request">The medical record data with test result ID</param>
+        [HttpPost("from-test-result")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> CreateFromTestResult([FromBody] MedicalRecordFromTestResultRequest request)
+        {
+            try
+            {
+                var medicalRecord = await _medicalRecordService.CreateFromTestResultAsync(request);
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = medicalRecord.MedicalRecordId }, 
+                    new ApiResponse("Medical record created successfully from test result", medicalRecord)
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record."));
+            }
+        }
+
+        /// <summary>
         /// Create a new medical record for a patient from test result
-        /// Clean Architecture Implementation: Ultra-thin controller
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         /// <param name="request">The medical record data with test result ID</param>
@@ -160,12 +245,34 @@ namespace HIVTreatmentSystem.API.Controllers
             int patientId, 
             [FromBody] MedicalRecordFromTestResultRequest request)
         {
-            var result = await _createFromTestResultUseCase.ExecuteAsync(patientId, request);
-            
-            return result.ToCreatedResult(this, 
-                nameof(GetById), 
-                new { id = result.Value?.MedicalRecordId }, 
-                "Medical record created successfully from test result");
+            try
+            {
+                var medicalRecord = await _medicalRecordService.CreateFromTestResultAsync(request);
+                
+                // Validate business rule: patient ID consistency
+                if (medicalRecord.PatientId != patientId)
+                {
+                    return BadRequest(new ApiResponse($"The test result does not belong to patient with ID {patientId}."));
+                }
+
+                return CreatedAtAction(
+                    nameof(GetById), 
+                    new { id = medicalRecord.MedicalRecordId }, 
+                    new ApiResponse("Medical record created successfully from test result", medicalRecord)
+                );
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while creating the medical record."));
+            }
         }
 
         /// <summary>
@@ -257,7 +364,6 @@ namespace HIVTreatmentSystem.API.Controllers
 
         /// <summary>
         /// Update medical record by patient ID with simplified request
-        /// Clean Architecture Implementation: Ultra-thin controller
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         /// <param name="request">The updated medical record data</param>
@@ -267,8 +373,42 @@ namespace HIVTreatmentSystem.API.Controllers
             int patientId, 
             [FromBody] MedicalRecordFromTestResultRequest request)
         {
-            var result = await _updateByPatientUseCase.ExecuteAsync(patientId, request);
-            return result.ToActionResult(this);
+            try
+            {
+                // Check if medical record exists
+                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
+                if (existingRecord == null)
+                {
+                    return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
+                }
+
+                // Convert to full request and update
+                var fullRequest = new MedicalRecordRequest
+                {
+                    PatientId = patientId,
+                    DoctorId = request.DoctorId,
+                    ConsultationDate = request.ConsultationDate,
+                    Symptoms = request.Symptoms,
+                    Diagnosis = request.Diagnosis,
+                    PregnancyStatus = request.PregnancyStatus,
+                    PregnancyWeek = request.PregnancyWeek,
+                    DoctorNotes = request.DoctorNotes,
+                    NextSteps = request.NextSteps,
+                    UnderlyingDisease = request.UnderlyingDisease,
+                    DrugAllergyHistory = request.DrugAllergyHistory
+                };
+
+                var updatedRecord = await _medicalRecordService.UpdateAsync(existingRecord.MedicalRecordId, fullRequest);
+                return Ok(new ApiResponse("Medical record updated successfully", updatedRecord));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while updating the medical record."));
+            }
         }
 
         /// <summary>

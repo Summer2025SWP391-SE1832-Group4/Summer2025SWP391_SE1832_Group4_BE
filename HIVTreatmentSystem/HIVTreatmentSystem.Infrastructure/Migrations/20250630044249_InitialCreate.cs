@@ -293,6 +293,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     ConsultationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Symptoms = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Diagnosis = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PregnancyStatus = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Unknown"),
+                    PregnancyWeek = table.Column<int>(type: "int", nullable: false, defaultValue: 0),
                     DoctorNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     NextSteps = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UnderlyingDisease = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
@@ -301,6 +303,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MedicalRecords", x => x.MedicalRecordId);
+                    table.CheckConstraint("CK_MedicalRecord_PregnancyLogic", "(PregnancyStatus != 'Pregnant' OR (PregnancyStatus = 'Pregnant' AND PregnancyWeek >= 0 AND PregnancyWeek <= 42))");
                     table.ForeignKey(
                         name: "FK_MedicalRecords_Doctors_DoctorId",
                         column: x => x.DoctorId,

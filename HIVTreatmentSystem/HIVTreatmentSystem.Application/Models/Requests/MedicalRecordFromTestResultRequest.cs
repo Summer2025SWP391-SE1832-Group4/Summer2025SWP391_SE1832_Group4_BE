@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Application.Models.Requests
 {
@@ -35,6 +36,16 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         /// Chẩn đoán của bác sĩ dựa trên test result và triệu chứng
         /// </summary>
         public string? Diagnosis { get; set; }
+
+        /// <summary>
+        /// Trạng thái mang thai của bệnh nhân
+        /// </summary>
+        public PregnancyStatus PregnancyStatus { get; set; } = PregnancyStatus.Unknown;
+
+        /// <summary>
+        /// Phụ mang thai ở tuần thứ... (chỉ áp dụng khi PregnancyStatus = Pregnant)
+        /// </summary>
+        public int PregnancyWeek { get; set; }
 
         /// <summary>
         /// Ghi chú của bác sĩ về tình trạng bệnh nhân

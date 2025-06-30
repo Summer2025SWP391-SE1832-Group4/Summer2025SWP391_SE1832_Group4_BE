@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250630012138_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250630044447_AddPregnancyStatusAndWeek")]
+    partial class AddPregnancyStatusAndWeek
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -427,6 +427,17 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Property<int>("PatientId")
                         .HasColumnType("int");
 
+                    b.Property<string>("PregnancyStatus")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("nvarchar(max)")
+                        .HasDefaultValue("Unknown");
+
+                    b.Property<int>("PregnancyWeek")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("Symptoms")
                         .HasColumnType("nvarchar(max)");
 
@@ -441,7 +452,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.HasIndex("PatientId")
                         .IsUnique();
 
-                    b.ToTable("MedicalRecords");
+                    b.ToTable("MedicalRecords", t =>
+                        {
+                            t.HasCheckConstraint("CK_MedicalRecord_PregnancyLogic", "(PregnancyStatus != 'Pregnant' OR (PregnancyStatus = 'Pregnant' AND PregnancyWeek >= 0 AND PregnancyWeek <= 42))");
+                        });
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>

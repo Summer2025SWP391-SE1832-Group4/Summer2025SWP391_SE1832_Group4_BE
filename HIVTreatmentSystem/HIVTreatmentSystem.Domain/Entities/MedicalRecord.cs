@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
@@ -33,6 +34,16 @@ namespace HIVTreatmentSystem.Domain.Entities
         /// </summary>
         public string? Diagnosis { get; set; }
 
+
+        /// <summary>
+        /// Trạng thái mang thai của bệnh nhân
+        /// </summary>
+        public PregnancyStatus PregnancyStatus { get; set; } = PregnancyStatus.Unknown;
+        
+        /// <summary>
+        /// Phụ mang thai ở tuần thứ....
+        /// </summary>
+        public int PregnancyWeek { get; set; }
         /// <summary>
         /// Ghi chú của bác sĩ về tình trạng bệnh nhân
         /// </summary>
