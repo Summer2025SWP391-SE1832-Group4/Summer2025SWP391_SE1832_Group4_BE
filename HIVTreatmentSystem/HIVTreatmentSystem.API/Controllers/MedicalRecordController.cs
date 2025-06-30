@@ -460,5 +460,36 @@ namespace HIVTreatmentSystem.API.Controllers
                 return StatusCode(500, new ApiResponse("An error occurred while deleting the medical record."));
             }
         }
+
+        /// <summary>
+        /// Add test result to existing medical record
+        /// Thêm test result vào medical record đã tồn tại
+        /// </summary>
+        /// <param name="medicalRecordId">The ID of the medical record</param>
+        /// <param name="request">Request chứa TestResultId</param>
+        [HttpPost("{medicalRecordId}/add-test-result")]
+        // [Authorize(Roles = "Doctor")]
+        public async Task<IActionResult> AddTestResultToMedicalRecord(
+            int medicalRecordId, 
+            [FromBody] AddTestResultToMedicalRecordRequest request)
+        {
+            try
+            {
+                var medicalRecord = await _medicalRecordService.AddTestResultToMedicalRecordAsync(medicalRecordId, request);
+                return Ok(new ApiResponse("Test result added to medical record successfully", medicalRecord));
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(new ApiResponse(ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return Conflict(new ApiResponse(ex.Message));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ApiResponse("An error occurred while adding test result to medical record."));
+            }
+        }
     }
 } 

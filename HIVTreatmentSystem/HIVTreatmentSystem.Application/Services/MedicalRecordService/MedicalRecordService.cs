@@ -198,5 +198,35 @@ namespace HIVTreatmentSystem.Application.Services
 
             return _mapper.Map<MedicalRecordResponse>(createdMedicalRecord);
         }
+
+        /// <inheritdoc/>
+        public async Task<MedicalRecordResponse> AddTestResultToMedicalRecordAsync(int medicalRecordId, AddTestResultToMedicalRecordRequest request)
+        {
+            // Validate medical record exists
+            var medicalRecord = await _medicalRecordRepository.GetByIdAsync(medicalRecordId);
+            if (medicalRecord == null)
+                throw new ArgumentException($"Medical record with ID {medicalRecordId} not found.");
+
+            // Validate test result exists
+            var testResult = await _testResultRepository.GetByIdAsync(request.TestResultId);
+            if (testResult == null)
+                throw new ArgumentException($"Test result with ID {request.TestResultId} not found.");
+
+            // Check if test result already linked to another medical record
+            if (testResult.MedicalRecordId.HasValue && testResult.MedicalRecordId != medicalRecordId)
+                throw new InvalidOperationException($"Test result with ID {request.TestResultId} is already linked to medical record {testResult.MedicalRecordId}.");
+
+            // Check if test result belongs to the same patient as medical record
+            if (testResult.PatientId != medicalRecord.PatientId)
+                throw new InvalidOperationException($"Test result patient ID ({testResult.PatientId}) does not match medical record patient ID ({medicalRecord.PatientId}).");
+
+            // Link test result to medical record
+            testResult.MedicalRecordId = medicalRecordId;
+            await _testResultRepository.UpdateAsync(testResult);
+
+            // Return updated medical record with all test results
+            var updatedMedicalRecord = await _medicalRecordRepository.GetByIdAsync(medicalRecordId);
+            return _mapper.Map<MedicalRecordResponse>(updatedMedicalRecord);
+        }
     }
 } 
