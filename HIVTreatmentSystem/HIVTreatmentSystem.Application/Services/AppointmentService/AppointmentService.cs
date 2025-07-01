@@ -176,7 +176,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 var doctor = await _doctorRepository.GetByIdAsync(request.DoctorId);
                 var email = patient.Account.Email;
                 var dateMail = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
-                var timeMail = appointment.AppointmentTime.ToString(@"hh\:mm");
+                var timeMail = appointment.AppointmentTime.ToString(@"HH\:mm");
                 await _emailService.SendEmailAsync(
                     email,"Your Appointment have been scheduled",
                 $@"<html>
@@ -321,7 +321,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
 
             var email = appointment.Patient.Account.Email;
             var date = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
-            var time = appointment.AppointmentTime.ToString(@"hh\:mm");
+            var time = appointment.AppointmentTime.ToString(@"HH\:mm");
             await _emailService.SendEmailAsync(
                 email,
                 "Your Appointment have been scheduled",
@@ -480,7 +480,7 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
 
                 var email = patient.Account.Email;
                 var date = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
-                var time = appointment.AppointmentTime.ToString(@"hh\:mm");
+                var time = appointment.AppointmentTime.ToString(@"HH\:mm");
                 await _emailService.SendEmailAsync(
                 email,
                 "Your Appointment have been scheduled",
