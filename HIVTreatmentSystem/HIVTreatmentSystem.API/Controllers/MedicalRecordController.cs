@@ -147,7 +147,7 @@ namespace HIVTreatmentSystem.API.Controllers
         /// <param name="request">The medical record data to create</param>
         [HttpPost]
         // [Authorize(Roles = "Doctor")]
-        public async Task<IActionResult> Create([FromBody] MedicalRecordRequest request)
+        public async Task<IActionResult> Create([FromQuery] MedicalRecordRequest request)
         {
             try
             {
