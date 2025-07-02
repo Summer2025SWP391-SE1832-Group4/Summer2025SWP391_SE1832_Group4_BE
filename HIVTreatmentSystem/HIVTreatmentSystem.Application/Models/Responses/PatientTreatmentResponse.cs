@@ -16,7 +16,13 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         public string Status { get; set; } = string.Empty;
         public string? ReasonForChangeOrStop { get; set; }
 
-        // Nested relations if needed
+        // Nested relations
         public StandardARVRegimenResponse? Regimen { get; set; }
+        public PatientResponse? Patient { get; set; }
+        public DoctorResponse? PrescribingDoctor { get; set; }
+        
+        // Additional related data by Patient ID
+        public ICollection<TestResultResponse>? PatientTestResults { get; set; }
+        public MedicalRecordResponse? PatientMedicalRecord { get; set; }
     }
 } 
