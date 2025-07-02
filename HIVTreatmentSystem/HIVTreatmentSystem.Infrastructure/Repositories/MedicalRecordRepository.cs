@@ -23,8 +23,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.MedicalRecords
                 .Include(m => m.Patient)
+                    .ThenInclude(p => p.Account)
                 .Include(m => m.Doctor)
+                    .ThenInclude(d => d.Account)
                 .Include(m => m.TestResults)
+                    .ThenInclude(tr => tr.Appointment)
+                        .ThenInclude(a => a.Doctor)
+                            .ThenInclude(d => d.Account)
                 .ToListAsync();
         }
 
@@ -33,8 +38,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.MedicalRecords
                 .Include(m => m.Patient)
+                    .ThenInclude(p => p.Account)
                 .Include(m => m.Doctor)
+                    .ThenInclude(d => d.Account)
                 .Include(m => m.TestResults)
+                    .ThenInclude(tr => tr.Appointment)
+                        .ThenInclude(a => a.Doctor)
+                            .ThenInclude(d => d.Account)
                 .FirstOrDefaultAsync(m => m.MedicalRecordId == id);
         }
 
@@ -43,8 +53,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.MedicalRecords
                 .Include(m => m.Patient)
+                    .ThenInclude(p => p.Account)
                 .Include(m => m.Doctor)
+                    .ThenInclude(d => d.Account)
                 .Include(m => m.TestResults)
+                    .ThenInclude(tr => tr.Appointment)
+                        .ThenInclude(a => a.Doctor)
+                            .ThenInclude(d => d.Account)
                 .Where(m => m.PatientId == patientId)
                 .ToListAsync();
         }
@@ -54,8 +69,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.MedicalRecords
                 .Include(m => m.Patient)
+                    .ThenInclude(p => p.Account)
                 .Include(m => m.Doctor)
+                    .ThenInclude(d => d.Account)
                 .Include(m => m.TestResults)
+                    .ThenInclude(tr => tr.Appointment)
+                        .ThenInclude(a => a.Doctor)
+                            .ThenInclude(d => d.Account)
                 .Where(m => m.DoctorId == doctorId)
                 .ToListAsync();
         }
@@ -96,8 +116,13 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         {
             return await _context.MedicalRecords
                 .Include(m => m.Patient)
+                    .ThenInclude(p => p.Account)
                 .Include(m => m.Doctor)
+                    .ThenInclude(d => d.Account)
                 .Include(m => m.TestResults)
+                    .ThenInclude(tr => tr.Appointment)
+                        .ThenInclude(a => a.Doctor)
+                            .ThenInclude(d => d.Account)
                 .FirstOrDefaultAsync(m => m.PatientId == patientId);
         }
     }
