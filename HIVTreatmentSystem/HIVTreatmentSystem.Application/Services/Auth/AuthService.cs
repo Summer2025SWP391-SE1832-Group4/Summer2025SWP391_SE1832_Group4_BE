@@ -108,6 +108,21 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 }
             }
 
+            // Add patient-specific info when login as Patient
+            if (account.Role.RoleName == "Patient")
+            {
+                var patient = await _patientRepository.GetByAccountIdAsync(account.AccountId);
+                if (patient != null)
+                {
+                    loginResponse.PatientCodeAtFacility = patient.PatientCodeAtFacility;
+                    loginResponse.DateOfBirth = patient.DateOfBirth;
+                    loginResponse.Gender = patient.Gender?.ToString();
+                    loginResponse.Address = patient.Address;
+                    loginResponse.ConsentInformation = patient.ConsentInformation;
+                    loginResponse.AdditionalNotes = patient.AdditionalNotes;
+                }
+            }
+
             return new ApiResponse("Login successful", loginResponse);
         }
 
