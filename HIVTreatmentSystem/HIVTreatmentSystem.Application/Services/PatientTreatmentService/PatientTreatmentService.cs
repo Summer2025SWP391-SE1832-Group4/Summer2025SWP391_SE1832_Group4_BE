@@ -220,14 +220,11 @@ namespace HIVTreatmentSystem.Application.Services.PatientTreatmentService
                     response.PatientTestResults = _mapper.Map<ICollection<TestResultResponse>>(testResults);
                 }
 
-                // Get MedicalRecord for the patient if not already populated
-                if (response.PatientMedicalRecord == null)
+                // Get MedicalRecords for the patient if not already populated
+                if (response.PatientMedicalRecords == null || !response.PatientMedicalRecords.Any())
                 {
-                    var medicalRecord = await _medicalRecordRepository.GetByPatientIdUniqueAsync(response.PatientId);
-                    if (medicalRecord != null)
-                    {
-                        response.PatientMedicalRecord = _mapper.Map<MedicalRecordResponse>(medicalRecord);
-                    }
+                    var medicalRecords = await _medicalRecordRepository.GetByPatientIdAsync(response.PatientId);
+                    response.PatientMedicalRecords = _mapper.Map<ICollection<MedicalRecordResponse>>(medicalRecords);
                 }
             }
         }

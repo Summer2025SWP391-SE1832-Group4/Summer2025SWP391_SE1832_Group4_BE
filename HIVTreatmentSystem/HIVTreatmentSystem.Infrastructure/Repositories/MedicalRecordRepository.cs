@@ -110,20 +110,5 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.MedicalRecords
                 .AnyAsync(m => m.PatientId == patientId);
         }
-
-        /// <inheritdoc/>
-        public async Task<MedicalRecord?> GetByPatientIdUniqueAsync(int patientId)
-        {
-            return await _context.MedicalRecords
-                .Include(m => m.Patient)
-                    .ThenInclude(p => p.Account)
-                .Include(m => m.Doctor)
-                    .ThenInclude(d => d.Account)
-                .Include(m => m.TestResults)
-                    .ThenInclude(tr => tr.Appointment)
-                        .ThenInclude(a => a.Doctor)
-                            .ThenInclude(d => d.Account)
-                .FirstOrDefaultAsync(m => m.PatientId == patientId);
-        }
     }
 } 

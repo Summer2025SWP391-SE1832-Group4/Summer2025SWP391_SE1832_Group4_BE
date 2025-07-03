@@ -23,6 +23,6 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         
         // Additional related data by Patient ID
         public ICollection<TestResultResponse>? PatientTestResults { get; set; }
-        public MedicalRecordResponse? PatientMedicalRecord { get; set; }
+        public ICollection<MedicalRecordResponse>? PatientMedicalRecords { get; set; }
     }
 } 

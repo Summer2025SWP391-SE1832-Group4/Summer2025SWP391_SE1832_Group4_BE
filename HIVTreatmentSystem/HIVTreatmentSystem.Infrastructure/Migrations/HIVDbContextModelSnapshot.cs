@@ -483,8 +483,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
+                    b.HasIndex("PatientId");
 
                     b.ToTable("MedicalRecords", t =>
                         {
@@ -1037,8 +1036,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
-                        .WithOne("MedicalRecord")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "PatientId")
+                        .WithMany("MedicalRecords")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1207,8 +1206,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Navigation("Appointments");
 
-                    b.Navigation("MedicalRecord")
-                        .IsRequired();
+                    b.Navigation("MedicalRecords");
 
                     b.Navigation("Reminders");
 

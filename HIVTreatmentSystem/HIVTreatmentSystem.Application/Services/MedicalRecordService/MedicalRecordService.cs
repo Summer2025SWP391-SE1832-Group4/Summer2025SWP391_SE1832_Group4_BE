@@ -6,6 +6,7 @@ using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
+using System.Linq;
 
 namespace HIVTreatmentSystem.Application.Services
 {
@@ -96,13 +97,6 @@ namespace HIVTreatmentSystem.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<MedicalRecordResponse?> GetUniqueByPatientIdAsync(int patientId)
-        {
-            var medicalRecord = await _medicalRecordRepository.GetByPatientIdUniqueAsync(patientId);
-            return medicalRecord == null ? null : _mapper.Map<MedicalRecordResponse>(medicalRecord);
-        }
-
-        /// <inheritdoc/>
         public async Task<MedicalRecordResponse> CreateOrUpdateByPatientIdAsync(int patientId, MedicalRecordRequest request)
         {
             // Ensure request is for the correct patient
@@ -110,7 +104,8 @@ namespace HIVTreatmentSystem.Application.Services
                 throw new ArgumentException($"Request PatientId ({request.PatientId}) does not match the provided patientId ({patientId}).");
 
             // Check if patient already has a medical record
-            var existingRecord = await _medicalRecordRepository.GetByPatientIdUniqueAsync(patientId);
+            var records = await _medicalRecordRepository.GetByPatientIdAsync(patientId);
+            var existingRecord = records.FirstOrDefault();
 
             if (existingRecord != null)
             {

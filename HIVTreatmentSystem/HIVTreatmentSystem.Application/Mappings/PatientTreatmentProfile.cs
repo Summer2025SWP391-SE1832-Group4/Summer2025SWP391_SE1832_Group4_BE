@@ -18,7 +18,7 @@ namespace HIVTreatmentSystem.Application.Mappings
                 .ForMember(dest => dest.PrescribingDoctor, opt => opt.MapFrom(src => src.PrescribingDoctor))
                 .ForMember(dest => dest.Regimen, opt => opt.MapFrom(src => src.Regimen))
                 .ForMember(dest => dest.PatientTestResults, opt => opt.MapFrom(src => src.Patient != null ? src.Patient.TestResults : null))
-                .ForMember(dest => dest.PatientMedicalRecord, opt => opt.MapFrom(src => src.Patient != null ? src.Patient.MedicalRecord : null));
+                .ForMember(dest => dest.PatientMedicalRecords, opt => opt.MapFrom(src => src.Patient != null ? src.Patient.MedicalRecords : null));
 
             CreateMap<PatientTreatmentRequest, PatientTreatment>()
                 .ForMember(dest => dest.PatientTreatmentId, opt => opt.Ignore())
