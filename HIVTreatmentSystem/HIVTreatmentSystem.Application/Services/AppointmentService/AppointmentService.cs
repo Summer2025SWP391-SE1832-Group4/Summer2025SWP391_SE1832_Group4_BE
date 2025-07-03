@@ -180,17 +180,34 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 await _emailService.SendEmailAsync(
                     email,"Your Appointment have been scheduled",
                 $@"<html>
-                    <body style='font-family: Arial, sans-serif;'>
-                        <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
-                        <p>Dear {patient.Account.FullName},</p>
-                        <p>Your appointment with <strong>Doctor {doctor.Account.FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
-                        <p><strong>Date:</strong> {dateMail}<br/>
-                           <strong>Time:</strong> {timeMail}</p>
-                        <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
-                        <br/>
-                        <p>Thank you,<br/>HIV Treatment Center</p>
-                    </body>
-                </html>"
+  <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px;'>
+    <div style='max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+      <h2 style='color: #2e6c80; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;'>Appointment Confirmation</h2>
+      <p style='font-size: 16px;'>Dear <strong>{patient.Account.FullName}</strong>,</p>
+
+      <p style='font-size: 16px;'>
+        Your appointment with <strong>Dr. {doctor.Account.FullName}</strong> has been 
+        <span style='color: green; font-weight: bold;'>successfully scheduled</span>.
+      </p>
+
+      <table style='margin-top: 20px; font-size: 16px;'>
+        <tr>
+          <td style='padding: 6px 0;'><strong>Date:</strong></td>
+          <td style='padding: 6px 0;'>{dateMail}</td>
+        </tr>
+        <tr>
+          <td style='padding: 6px 0;'><strong>Time:</strong></td>
+          <td style='padding: 6px 0;'>{timeMail}</td>
+        </tr>
+      </table>
+
+      <p style='margin-top: 20px; font-size: 16px;'>Please arrive at least <strong>10 minutes early</strong>. If you have any questions, feel free to contact us.</p>
+
+      <p style='margin-top: 40px; font-size: 16px;'>Thank you,<br/><strong>HIV Treatment Center</strong></p>
+    </div>
+  </body>
+</html>"
+
                         );
                 return new ApiResponse("Appointment created successfully.");
             }
@@ -302,46 +319,6 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                     "Error: Failed to update appointment: " + ex.InnerException.Message
                 );
             }
-        }
-
-        public async Task<ApiResponse> SetStatusScheduledAsync(int appointmentId)
-        {
-            var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(
-                appointmentId
-            );
-            if (appointment == null)
-            {
-                return new ApiResponse("Error: Appointment not found");
-            }
-
-            if (appointment.Status == AppointmentStatus.Scheduled)
-            {
-                return new ApiResponse("Error: This appointment has already been confirmed.");
-            }
-
-            var email = appointment.Patient.Account.Email;
-            var date = appointment.AppointmentDate.ToString("dddd, dd MMMM yyyy");
-            var time = appointment.AppointmentTime.ToString(@"HH\:mm");
-            await _emailService.SendEmailAsync(
-                email,
-                "Your Appointment have been scheduled",
-                $@"<html>
-            <body style='font-family: Arial, sans-serif;'>
-                <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
-                <p>Dear {appointment.Patient.Account.FullName},</p>
-                <p>Your appointment with <strong>Doctor {appointment .Doctor .Account .FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
-                <p><strong>Date:</strong> {date}<br/>
-                   <strong>Time:</strong> {time}</p>
-                <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
-                <br/>
-                <p>Thank you,<br/>HIV Treatment Center</p>
-            </body>
-        </html>"
-            );
-            appointment.Status = AppointmentStatus.Scheduled;
-            await _appointmentRepository.UpdateAsync(appointment);
-
-            return new ApiResponse("Appointment status updated to Scheduled");
         }
 
         public async Task<List<AppointmentResponse>> GetAppointmentsByTokenAsync()
@@ -485,17 +462,34 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 email,
                 "Your Appointment have been scheduled",
                 $@"<html>
-            <body style='font-family: Arial, sans-serif;'>
-                <h2 style='color: #2e6c80;'>Appointment Scheduled</h2>
-                <p>Dear {appointment.Patient.Account.FullName},</p>
-                <p>Your appointment with <strong>Doctor {appointment.Doctor.Account.FullName}</strong> has been <strong>successfully scheduled</strong>.</p>
-                <p><strong>Date:</strong> {date}<br/>
-                   <strong>Time:</strong> {time}</p>
-                <p>Please arrive at least 10 minutes early. If you have any questions, feel free to contact us.</p>
-                <br/>
-                <p>Thank you,<br/>HIV Treatment Center</p>
-            </body>
-        </html>"
+  <body style='font-family: Arial, sans-serif; background-color: #f9f9f9; padding: 30px;'>
+    <div style='max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);'>
+      <h2 style='color: #2e6c80; border-bottom: 1px solid #e0e0e0; padding-bottom: 10px;'>Appointment Confirmation</h2>
+      <p style='font-size: 16px;'>Dear <strong>{patient.Account.FullName}</strong>,</p>
+
+      <p style='font-size: 16px;'>
+        Your appointment with <strong>Dr. {doctor.Account.FullName}</strong> has been 
+        <span style='color: green; font-weight: bold;'>successfully scheduled</span>.
+      </p>
+
+      <table style='margin-top: 20px; font-size: 16px;'>
+        <tr>
+          <td style='padding: 6px 0;'><strong>Date:</strong></td>
+          <td style='padding: 6px 0;'>{date}</td>
+        </tr>
+        <tr>
+          <td style='padding: 6px 0;'><strong>Time:</strong></td>
+          <td style='padding: 6px 0;'>{time}</td>
+        </tr>
+      </table>
+
+      <p style='margin-top: 20px; font-size: 16px;'>Please arrive at least <strong>10 minutes early</strong>. If you have any questions, feel free to contact us.</p>
+
+      <p style='margin-top: 40px; font-size: 16px;'>Thank you,<br/><strong>HIV Treatment Center</strong></p>
+    </div>
+  </body>
+</html>"
+
             );
                 return new ApiResponse("Appointment created successfully.");
             }
