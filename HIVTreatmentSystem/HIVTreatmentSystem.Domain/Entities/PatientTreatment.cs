@@ -23,6 +23,10 @@ namespace HIVTreatmentSystem.Domain.Entities
         public DateTime? ExpectedEndDate { get; set; }
 
         public string? RegimenAdjustments { get; set; }
+        public int? BaselineCD4 { get; set; }
+
+        [MaxLength(50)]
+        public string? BaselineHivViralLoad { get; set; }
 
         [MaxLength(255)]
         public string? ActualDosage { get; set; }
