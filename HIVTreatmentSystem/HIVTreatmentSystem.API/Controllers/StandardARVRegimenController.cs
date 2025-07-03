@@ -1,6 +1,7 @@
 ﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -143,6 +144,42 @@ namespace HIVTreatmentSystem.API.Controllers
                     }
                 );
             }
+        }
+
+        [HttpPost("suggest-regimens")]
+        public async Task<IActionResult> SuggestRegimen([FromBody] RegimenSuggestionRequest req)
+        {
+            if (!int.TryParse(req.hivViralLoadValue, out var viralLoad))
+                return BadRequest("Invalid viral load value");
+
+            string level;
+            int selectedRegimenId;
+
+            if (req.cD4Count <= 350 || viralLoad <= 500)
+            {
+                level = "Tier 1";
+                selectedRegimenId = 1;
+            }
+            else if (req.cD4Count <= 500 || viralLoad <= 800)
+            {
+                level = "Tier 2";
+                selectedRegimenId = 2;
+            }
+            else
+            {
+                level = "Tier 3";
+                selectedRegimenId = 3;
+            }
+
+            var regimen = await _standardARVRegimenService.GetByIdAsync(selectedRegimenId);
+            return Ok(
+                new RegimenSuggestionResponse
+                {
+                    RegimenId = regimen.RegimenId,
+                    RegimenName = regimen.RegimenName,
+                    SuggestionLevel = level,
+                }
+            );
         }
     }
 }
