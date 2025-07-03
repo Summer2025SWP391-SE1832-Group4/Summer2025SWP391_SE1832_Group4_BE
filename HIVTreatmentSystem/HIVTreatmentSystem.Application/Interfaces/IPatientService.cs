@@ -34,5 +34,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
 
         Task<PatientResponse> GetPatientByIdAsync(int id);
 
+        Task<PatientResponse> GetPatientByAccountIdAsync(int accountId);
     }
 }

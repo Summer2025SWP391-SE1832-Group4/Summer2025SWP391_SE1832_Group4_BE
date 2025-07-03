@@ -53,9 +53,22 @@ namespace HIVTreatmentSystem.API.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPatientById(int id)
         {
-            var result = await _patientService.GetPatientByIdAsync(id);
-            if (result == null) return NotFound(new ApiResponse("Patient not exist"));
-            return Ok(result);
+            var patient = await _patientService.GetPatientByIdAsync(id);
+            return Ok(new ApiResponse("Success", patient));
+        }
+
+        [HttpGet("account/{accountId}")]
+        public async Task<IActionResult> GetPatientByAccountId(int accountId)
+        {
+            try
+            {
+                var patient = await _patientService.GetPatientByAccountIdAsync(accountId);
+                return Ok(new ApiResponse("Success", patient));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(new ApiResponse(ex.Message));
+            }
         }
 
         [HttpPost]

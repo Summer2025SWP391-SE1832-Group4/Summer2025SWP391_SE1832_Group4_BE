@@ -157,12 +157,23 @@ namespace HIVTreatmentSystem.Application.Services.PatientService
         }
 
         public async Task<PatientResponse> GetPatientByIdAsync(int id)
-        {       
+        {
             var patient = await _patientRepository.GetByIdAsync(id);
+            if (patient == null) throw new ArgumentException($"Patient with ID {id} does not exist");
             var response = _mapper.Map<PatientResponse>(patient);
             return response;
         }
 
+        public async Task<PatientResponse> GetPatientByAccountIdAsync(int accountId)
+        {
+            var patient = await _patientRepository.GetByAccountIdAsync(accountId);
+            if (patient == null)
+            {
+                throw new ArgumentException($"Patient with Account ID {accountId} not found");
+            }
+            var response = _mapper.Map<PatientResponse>(patient);
+            return response;
+        }
     }
 }
 
