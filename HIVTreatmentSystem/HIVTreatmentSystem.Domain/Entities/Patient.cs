@@ -46,5 +46,8 @@ namespace HIVTreatmentSystem.Domain.Entities
         public virtual ICollection<PatientTreatment> Treatments { get; set; } =
             new List<PatientTreatment>();
         public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
+
+        public ICollection<AdverseEffectReport> AdverseEffectReports { get; set; }
+        = new List<AdverseEffectReport>();
     }
 }

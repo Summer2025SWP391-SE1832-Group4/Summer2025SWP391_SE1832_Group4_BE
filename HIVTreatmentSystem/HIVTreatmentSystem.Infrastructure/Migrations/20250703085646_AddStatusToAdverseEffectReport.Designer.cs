@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250630044249_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250703085646_AddStatusToAdverseEffectReport")]
+    partial class AddStatusToAdverseEffectReport
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -93,6 +93,43 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Accounts");
+                });
+
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.AdverseEffectReport", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateOnly>("DateOccurred")
+                        .HasColumnType("date");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("PatientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PatientId");
+
+                    b.ToTable("AdverseEffectReports");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Appointment", b =>
@@ -878,6 +915,17 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Role");
                 });
 
+            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.AdverseEffectReport", b =>
+                {
+                    b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
+                        .WithMany("AdverseEffectReports")
+                        .HasForeignKey("PatientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Patient");
+                });
+
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Appointment", b =>
                 {
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Account", "CreatedByUser")
@@ -1158,6 +1206,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Patient", b =>
                 {
+                    b.Navigation("AdverseEffectReports");
+
                     b.Navigation("Appointments");
 
                     b.Navigation("MedicalRecord")
