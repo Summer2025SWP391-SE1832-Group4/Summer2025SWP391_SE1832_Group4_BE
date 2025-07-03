@@ -28,6 +28,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using static HIVTreatmentSystem.Application.Services.SystemAuditLogService;
+using HIVTreatmentSystem.Application.Services.AdverseEffectReport;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -234,6 +235,8 @@ builder.Services.AddScoped<ITreatmentRepository, TreatmentRepository>();
 // Đăng ký service PatientTreatment
 builder.Services.AddScoped<IPatientTreatmentService, PatientTreatmentService>();
 
+builder.Services.AddScoped<IAdverseEffectReportRepository, AdverseEffectReportRepository>();
+builder.Services.AddScoped<IAdverseEffectReportService, AdverseEffectReportService>();
 
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -245,6 +248,7 @@ builder.Services.AddAutoMapper(typeof(PatientMapper));
 builder.Services.AddAutoMapper(typeof(StandardARVRegimenMapper));
 builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
 builder.Services.AddAutoMapper(typeof(HIVTreatmentSystem.Application.Mappings.PatientTreatmentProfile));
+builder.Services.AddAutoMapper(typeof(AdverseEffectReportMapper));
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

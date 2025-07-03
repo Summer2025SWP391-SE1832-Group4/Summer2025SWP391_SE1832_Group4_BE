@@ -36,6 +36,8 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
+        public DbSet<AdverseEffectReport> AdverseEffectReports { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -57,6 +59,11 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             modelBuilder.Entity<Appointment>().Property(e => e.AppointmentService).HasConversion<string>();
 
             modelBuilder.Entity<Appointment>().Property(e => e.Status).HasConversion<string>();
+
+            modelBuilder.Entity<AdverseEffectReport>().Property(e => e.Severity).HasConversion<string>();
+
+            modelBuilder.Entity<AdverseEffectReport>().Property(e => e.Status).HasConversion<string>();
+
 
             // Configure PregnancyStatus enum conversion for MedicalRecord
             modelBuilder.Entity<MedicalRecord>().Property(e => e.PregnancyStatus).HasConversion<string>();
@@ -102,6 +109,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             ConfigureReminderEntity(modelBuilder);
             ConfigureEducationalMaterialEntity(modelBuilder);
             ConfigureSystemAuditLogEntity(modelBuilder);
+            ConfigureAdverseEffectReportEntity(modelBuilder);
 
             // Seed initial data
             SeedData(modelBuilder);
@@ -139,6 +147,29 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(r => r.Users)
                     .HasForeignKey(e => e.RoleId)
                     .OnDelete(DeleteBehavior.Restrict);
+            });
+        }
+
+
+        private void ConfigureAdverseEffectReportEntity(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<AdverseEffectReport>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+
+                entity
+                    .HasOne(e => e.Patient)
+                    .WithMany(p => p.AdverseEffectReports)
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.Property(e => e.DateOccurred)
+                      .HasColumnType("date");
+
+                entity.Property(e => e.Description)
+                      .IsRequired()
+                      .HasMaxLength(500);
+
             });
         }
 
