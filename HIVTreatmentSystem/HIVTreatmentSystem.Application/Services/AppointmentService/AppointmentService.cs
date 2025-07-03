@@ -450,7 +450,6 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
                 var doctor = await _doctorRepository.GetByIdAsync(request.DoctorId);
 
                 var appointment = _mapper.Map<Appointment>(request);
-                appointment.CreatedByUserId = doctor.AccountId;
 
                 await _appointmentRepository.CreateAsync(appointment);
                 var patient = await _patientRepository.GetByIdAsync(request.PatientId);
