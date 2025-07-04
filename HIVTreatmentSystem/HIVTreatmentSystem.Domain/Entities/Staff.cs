@@ -19,5 +19,7 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         [ForeignKey(nameof(AccountId))]
         public virtual Account Account { get; set; } = null!;
+        public virtual ICollection<ScheduledActivity> CreatedSchedules { get; set; } =
+            new List<ScheduledActivity>();
     }
 }

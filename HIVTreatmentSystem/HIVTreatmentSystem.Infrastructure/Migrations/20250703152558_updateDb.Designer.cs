@@ -4,6 +4,7 @@ using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    partial class HIVDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250703152558_updateDb")]
+    partial class updateDb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,7 +486,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("PatientId")
+                        .IsUnique();
 
                     b.ToTable("MedicalRecords", t =>
                         {
@@ -707,45 +711,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                             Description = "Patient/Client",
                             RoleName = "Patient"
                         });
-                });
-
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.ScheduledActivity", b =>
-                {
-                    b.Property<int>("ScheduledActivityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ScheduledActivityId"));
-
-                    b.Property<int>("ActivityType")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedByStaffId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("PatientId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ScheduledDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.HasKey("ScheduledActivityId");
-
-                    b.HasIndex("CreatedByStaffId");
-
-                    b.HasIndex("PatientId");
-
-                    b.ToTable("ScheduledActivities");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Staff", b =>
@@ -1082,8 +1047,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany("MedicalRecords")
-                        .HasForeignKey("PatientId")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1153,23 +1118,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                     b.Navigation("Patient");
 
                     b.Navigation("PatientTreatment");
-                });
-
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.ScheduledActivity", b =>
-                {
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.Staff", "CreatedByStaff")
-                        .WithMany("CreatedSchedules")
-                        .HasForeignKey("CreatedByStaffId");
-
-                    b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany("ScheduledActivities")
-                        .HasForeignKey("PatientId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedByStaff");
-
-                    b.Navigation("Patient");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Staff", b =>
@@ -1269,11 +1217,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Navigation("Appointments");
 
-                    b.Navigation("MedicalRecords");
+                    b.Navigation("MedicalRecord")
+                        .IsRequired();
 
                     b.Navigation("Reminders");
-
-                    b.Navigation("ScheduledActivities");
 
                     b.Navigation("TestResults");
 
@@ -1288,11 +1235,6 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Role", b =>
                 {
                     b.Navigation("Users");
-                });
-
-            modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.Staff", b =>
-                {
-                    b.Navigation("CreatedSchedules");
                 });
 
             modelBuilder.Entity("HIVTreatmentSystem.Domain.Entities.StandardARVRegimen", b =>

@@ -4,6 +4,7 @@ using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    partial class HIVDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250704055845_AddScheduledActivity")]
+    partial class AddScheduledActivity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -483,7 +486,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("PatientId")
+                        .IsUnique();
 
                     b.ToTable("MedicalRecords", t =>
                         {
@@ -1082,8 +1086,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
-                        .WithMany("MedicalRecords")
-                        .HasForeignKey("PatientId")
+                        .WithOne("MedicalRecord")
+                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1269,7 +1273,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Navigation("Appointments");
 
-                    b.Navigation("MedicalRecords");
+                    b.Navigation("MedicalRecord")
+                        .IsRequired();
 
                     b.Navigation("Reminders");
 
