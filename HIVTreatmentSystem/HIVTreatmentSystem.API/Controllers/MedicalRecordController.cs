@@ -108,6 +108,12 @@ namespace HIVTreatmentSystem.API.Controllers
                 if (medicalRecords == null || !medicalRecords.Any())
                     return NotFound(new ApiResponse($"No medical records found for patient with ID {patientId}."));
 
+                // Also include patient treatments for this patient
+                var patientTreatments = await _patientTreatmentService.GetByPatientIdAsync(patientId);
+                foreach (var record in medicalRecords)
+                {
+                    record.PatientTreatments = patientTreatments.ToList();
+                }
                 return Ok(new ApiResponse("Success", medicalRecords));
             }
             catch (Exception)

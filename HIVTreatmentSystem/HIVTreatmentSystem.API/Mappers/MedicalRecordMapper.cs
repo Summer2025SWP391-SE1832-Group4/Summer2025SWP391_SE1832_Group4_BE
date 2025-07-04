@@ -13,7 +13,11 @@ namespace HIVTreatmentSystem.API.Mappers
         public MedicalRecordMapper()
         {
             // Map from Entity to Response
-            CreateMap<MedicalRecord, MedicalRecordResponse>();
+            CreateMap<MedicalRecord, MedicalRecordResponse>()
+                .ForMember(dest => dest.Patient, opt => opt.MapFrom(src => src.Patient))
+                .ForMember(dest => dest.Doctor, opt => opt.MapFrom(src => src.Doctor))
+                .ForMember(dest => dest.TestResults, opt => opt.MapFrom(src => src.TestResults))
+                .ForMember(dest => dest.PatientTreatments, opt => opt.Ignore());
 
             // Map from Request to Entity
             CreateMap<MedicalRecordRequest, MedicalRecord>();

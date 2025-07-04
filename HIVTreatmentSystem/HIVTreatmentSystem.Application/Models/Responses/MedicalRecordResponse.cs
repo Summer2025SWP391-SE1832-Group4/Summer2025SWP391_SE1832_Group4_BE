@@ -83,7 +83,7 @@ namespace HIVTreatmentSystem.Application.Models.Responses
         /// <summary>
         /// Tất cả test results của Patient này
         /// </summary>
-        public ICollection<TestResultResponse>? TestResults { get; set; }
+        public ICollection<TestResultResponse> TestResults { get; set; } = new List<TestResultResponse>();
 
         /// <summary>
         /// All patient treatments for this patient
