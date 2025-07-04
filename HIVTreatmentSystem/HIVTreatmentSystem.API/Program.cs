@@ -19,6 +19,7 @@ using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
 using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Application.Services.PatientTreatmentService;
+using HIVTreatmentSystem.Application.Services.ScheduledActivityService;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using HIVTreatmentSystem.Infrastructure.Repositories;
@@ -240,7 +241,8 @@ builder.Services.AddScoped<IPatientTreatmentService, PatientTreatmentService>();
 
 builder.Services.AddScoped<IAdverseEffectReportRepository, AdverseEffectReportRepository>();
 builder.Services.AddScoped<IAdverseEffectReportService, AdverseEffectReportService>();
-
+builder.Services.AddScoped<IScheduledActivityRepository, ScheduledActivityRepository>();
+builder.Services.AddScoped<IScheduledActivityService, ScheduledActivityService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddAutoMapper(typeof(CertificateMapper));
 builder.Services.AddAutoMapper(typeof(DoctorMapper));
@@ -248,7 +250,11 @@ builder.Services.AddAutoMapper(typeof(AccountMapper));
 builder.Services.AddAutoMapper(typeof(AppointmentMapper));
 builder.Services.AddAutoMapper(typeof(PatientMapper));
 builder.Services.AddAutoMapper(typeof(StandardARVRegimenMapper));
-builder.Services.AddAutoMapper(typeof(BlogMapper), typeof(BlogTagMapper));
+builder.Services.AddAutoMapper(
+    typeof(BlogMapper),
+    typeof(BlogTagMapper),
+    typeof(ScheduledActivityMapper)
+);
 builder.Services.AddAutoMapper(typeof(PatientTreatmentMapper));
 builder.Services.AddAutoMapper(typeof(AdverseEffectReportMapper));
 builder.Services.AddHttpContextAccessor();

@@ -1,11 +1,11 @@
-﻿using HIVTreatmentSystem.Domain.Enums;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Entities
 {
@@ -34,7 +34,6 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public virtual MedicalRecord MedicalRecord { get; set; }
 
-
         // Navigation properties
         public int AccountId { get; set; }
 
@@ -47,7 +46,9 @@ namespace HIVTreatmentSystem.Domain.Entities
             new List<PatientTreatment>();
         public virtual ICollection<Reminder> Reminders { get; set; } = new List<Reminder>();
 
-        public ICollection<AdverseEffectReport> AdverseEffectReports { get; set; }
-        = new List<AdverseEffectReport>();
+        public ICollection<AdverseEffectReport> AdverseEffectReports { get; set; } =
+            new List<AdverseEffectReport>();
+        public virtual ICollection<ScheduledActivity> ScheduledActivities { get; set; } =
+            new List<ScheduledActivity>();
     }
 }

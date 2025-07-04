@@ -37,7 +37,7 @@ namespace HIVTreatmentSystem.Infrastructure.Data
         public DbSet<Blog> Blogs { get; set; }
         public DbSet<BlogTag> BlogTags { get; set; }
         public DbSet<AdverseEffectReport> AdverseEffectReports { get; set; }
-
+        public DbSet<ScheduledActivity> ScheduledActivities { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -54,22 +54,33 @@ namespace HIVTreatmentSystem.Infrastructure.Data
 
             modelBuilder.Entity<Reminder>().Property(e => e.ReminderType).HasConversion<string>();
 
-            modelBuilder.Entity<Appointment>().Property(e => e.AppointmentType).HasConversion<string>();
+            modelBuilder
+                .Entity<Appointment>()
+                .Property(e => e.AppointmentType)
+                .HasConversion<string>();
 
-            modelBuilder.Entity<Appointment>().Property(e => e.AppointmentService).HasConversion<string>();
+            modelBuilder
+                .Entity<Appointment>()
+                .Property(e => e.AppointmentService)
+                .HasConversion<string>();
 
             modelBuilder.Entity<Appointment>().Property(e => e.Status).HasConversion<string>();
 
-            modelBuilder.Entity<AdverseEffectReport>().Property(e => e.Severity).HasConversion<string>();
+            modelBuilder
+                .Entity<AdverseEffectReport>()
+                .Property(e => e.Severity)
+                .HasConversion<string>();
 
-            modelBuilder.Entity<AdverseEffectReport>().Property(e => e.Status).HasConversion<string>();
-
+            modelBuilder
+                .Entity<AdverseEffectReport>()
+                .Property(e => e.Status)
+                .HasConversion<string>();
 
             // Configure PregnancyStatus enum conversion for MedicalRecord
-            modelBuilder.Entity<MedicalRecord>().Property(e => e.PregnancyStatus).HasConversion<string>();
-
-
-
+            modelBuilder
+                .Entity<MedicalRecord>()
+                .Property(e => e.PregnancyStatus)
+                .HasConversion<string>();
 
             modelBuilder
                 .Entity<ExperienceWorking>()
@@ -93,7 +104,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 .Entity<EducationalMaterial>()
                 .Property(e => e.MaterialType)
                 .HasConversion<string>();
-            
 
             // Configure primary keys and relationships
             ConfigureRoleEntity(modelBuilder);
@@ -150,7 +160,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
             });
         }
 
-
         private void ConfigureAdverseEffectReportEntity(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<AdverseEffectReport>(entity =>
@@ -163,13 +172,9 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .HasForeignKey(e => e.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
 
-                entity.Property(e => e.DateOccurred)
-                      .HasColumnType("date");
+                entity.Property(e => e.DateOccurred).HasColumnType("date");
 
-                entity.Property(e => e.Description)
-                      .IsRequired()
-                      .HasMaxLength(500);
-
+                entity.Property(e => e.Description).IsRequired().HasMaxLength(500);
             });
         }
 
@@ -238,12 +243,12 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.HasKey(e => e.AppointmentId);
                 entity.Property(e => e.AppointmentType).HasMaxLength(50);
                 entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
-                entity.Property(e => e.AppointmentType)
-                        .HasConversion<string>();
+                entity.Property(e => e.AppointmentType).HasConversion<string>();
 
-                entity.Property(e => e.AppointmentService)
-                        .HasConversion<string>()
-                        .IsRequired(false);
+                entity
+                    .Property(e => e.AppointmentService)
+                    .HasConversion<string>()
+                    .IsRequired(false);
                 entity
                     .HasOne(e => e.Patient)
                     .WithMany(p => p.Appointments)
@@ -261,7 +266,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(u => u.CreatedAppointments)
                     .HasForeignKey(e => e.CreatedByUserId)
                     .OnDelete(DeleteBehavior.SetNull);
-
             });
         }
 
@@ -273,13 +277,13 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 entity.Property(e => e.UnderlyingDisease).HasMaxLength(255);
 
                 // Configure PregnancyStatus with default value
-                entity.Property(e => e.PregnancyStatus)
+                entity
+                    .Property(e => e.PregnancyStatus)
                     .HasDefaultValue(PregnancyStatus.Unknown)
                     .IsRequired();
 
                 // Configure PregnancyWeek with default value 0
-                entity.Property(e => e.PregnancyWeek)
-                    .HasDefaultValue(0);
+                entity.Property(e => e.PregnancyWeek).HasDefaultValue(0);
 
                 // 1-to-1 relationship with Patient
                 entity
@@ -430,7 +434,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .OnDelete(DeleteBehavior.SetNull);
             });
         }
-        
 
         private void ConfigureSystemAuditLogEntity(ModelBuilder modelBuilder)
         {
@@ -449,6 +452,36 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .HasOne(e => e.Account)
                     .WithMany(u => u.AuditLogs)
                     .HasForeignKey(e => e.AccountId)
+                    .OnDelete(DeleteBehavior.SetNull);
+            });
+        }
+
+        private void ConfigureScheduledActivityEntity(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ScheduledActivity>(entity =>
+            {
+                entity.HasKey(e => e.ScheduledActivityId);
+
+                entity.Property(e => e.ActivityType).HasConversion<string>().IsRequired();
+
+                entity.Property(e => e.Status).HasConversion<string>().IsRequired();
+
+                entity.Property(e => e.Description).HasMaxLength(500);
+
+                entity.Property(e => e.ScheduledDate).HasColumnType("datetime2");
+
+                entity.Property(e => e.CreatedAt).HasDefaultValueSql("GETUTCDATE()");
+
+                entity
+                    .HasOne(e => e.Patient)
+                    .WithMany(p => p.ScheduledActivities)
+                    .HasForeignKey(e => e.PatientId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity
+                    .HasOne(e => e.CreatedByStaff)
+                    .WithMany(s => s.CreatedSchedules)
+                    .HasForeignKey(e => e.CreatedByStaffId)
                     .OnDelete(DeleteBehavior.SetNull);
             });
         }
