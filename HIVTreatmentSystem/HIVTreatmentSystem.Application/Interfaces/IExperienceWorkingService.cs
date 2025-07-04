@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using HIVTreatmentSystem.Application.Models.ExperienceWorking;
 
 namespace HIVTreatmentSystem.Application.Interfaces

@@ -1,7 +1,5 @@
 using AutoMapper;
-using System;
-using System.Linq;
-using System.Collections.Generic;
+
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;

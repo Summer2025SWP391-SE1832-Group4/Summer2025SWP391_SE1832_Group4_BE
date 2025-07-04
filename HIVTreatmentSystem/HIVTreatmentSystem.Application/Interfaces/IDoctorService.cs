@@ -2,10 +2,8 @@ using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Models.Doctor;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
-using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace HIVTreatmentSystem.Application.Interfaces
 {

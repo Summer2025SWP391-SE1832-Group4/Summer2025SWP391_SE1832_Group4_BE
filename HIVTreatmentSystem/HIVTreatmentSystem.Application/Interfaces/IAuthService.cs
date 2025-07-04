@@ -1,4 +1,3 @@
-using System.Threading.Tasks;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Models.Auth;
 using HIVTreatmentSystem.Application.Models.Requests;

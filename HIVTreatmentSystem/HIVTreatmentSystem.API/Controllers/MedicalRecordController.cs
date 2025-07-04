@@ -1,11 +1,8 @@
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
-using HIVTreatmentSystem.API.Extensions;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
-using System.Linq;
 
 namespace HIVTreatmentSystem.API.Controllers
 {

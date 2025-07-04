@@ -1,6 +1,5 @@
 using HIVTreatmentSystem.Domain.Entities;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 
 namespace HIVTreatmentSystem.Application.Repositories
 {

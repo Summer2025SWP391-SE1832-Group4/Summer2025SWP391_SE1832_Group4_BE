@@ -1,14 +1,7 @@
 ﻿using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {

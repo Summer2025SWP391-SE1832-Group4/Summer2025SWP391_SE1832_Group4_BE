@@ -1,10 +1,7 @@
-using System.Threading.Tasks;
 using HIVTreatmentSystem.Application.Common;
 using Microsoft.AspNetCore.Mvc;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.ExperienceWorking;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace HIVTreatmentSystem.API.Controllers
 {

@@ -1,4 +1,3 @@
-using System;
 
 namespace HIVTreatmentSystem.Application.Models.Doctor
 {

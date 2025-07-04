@@ -1,15 +1,8 @@
-using System;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using HIVTreatmentSystem.API.Models.Auth;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
-using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
 using HIVTreatmentSystem.Application.Models.Requests;
-using HIVTreatmentSystem.Application.Models.Settings;
-using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
