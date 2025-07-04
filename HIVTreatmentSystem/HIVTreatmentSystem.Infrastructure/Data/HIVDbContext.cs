@@ -195,13 +195,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithOne(u => u.Patient)
                     .HasForeignKey<Patient>(e => e.AccountId)
                     .OnDelete(DeleteBehavior.Cascade);
-
-                entity
-                    .HasOne(e => e.MedicalRecord)
-                    .WithOne(m => m.Patient)
-                    .HasForeignKey<MedicalRecord>(m => m.PatientId) // FK nằm ở MedicalRecord
-                    .IsRequired()
-                    .OnDelete(DeleteBehavior.Cascade);
             });
         }
 
@@ -285,12 +278,15 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                 // Configure PregnancyWeek with default value 0
                 entity.Property(e => e.PregnancyWeek).HasDefaultValue(0);
 
-                // 1-to-1 relationship with Patient
+                // Many-to-1 relationship with Patient
                 entity
                     .HasOne(e => e.Patient)
-                    .WithOne(p => p.MedicalRecord)
-                    .HasForeignKey<MedicalRecord>(e => e.PatientId)
+                    .WithMany(p => p.MedicalRecords)
+                    .HasForeignKey(e => e.PatientId)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                // Optional index on PatientId for performance
+                entity.HasIndex(e => e.PatientId);
 
                 // Many-to-1 relationship with Doctor
                 entity
@@ -298,9 +294,6 @@ namespace HIVTreatmentSystem.Infrastructure.Data
                     .WithMany(d => d.MedicalRecords)
                     .HasForeignKey(e => e.DoctorId)
                     .OnDelete(DeleteBehavior.Restrict);
-
-                // Index to ensure unique Patient-MedicalRecord relationship
-                entity.HasIndex(e => e.PatientId).IsUnique();
 
                 // Check constraint for pregnancy logic
                 entity.HasCheckConstraint(

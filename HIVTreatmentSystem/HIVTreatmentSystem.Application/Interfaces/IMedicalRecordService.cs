@@ -51,12 +51,6 @@ namespace HIVTreatmentSystem.Application.Interfaces
         Task<bool> DeleteAsync(int id);
 
         /// <summary>
-        /// Get the unique medical record for a patient (1-to-1 relationship)
-        /// </summary>
-        /// <param name="patientId">The ID of the patient</param>
-        Task<MedicalRecordResponse?> GetUniqueByPatientIdAsync(int patientId);
-
-        /// <summary>
         /// Create or update medical record for a patient (1-to-1 relationship)
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>

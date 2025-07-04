@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HIVTreatmentSystem.Infrastructure.Migrations
 {
     [DbContext(typeof(HIVDbContext))]
-    [Migration("20250703070440_AddAdverseEffect")]
-    partial class AddAdverseEffect
+    [Migration("20250703141229_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -118,6 +118,10 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Severity")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -482,8 +486,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.HasIndex("DoctorId");
 
-                    b.HasIndex("PatientId")
-                        .IsUnique();
+                    b.HasIndex("PatientId");
 
                     b.ToTable("MedicalRecords", t =>
                         {
@@ -1036,8 +1039,8 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         .IsRequired();
 
                     b.HasOne("HIVTreatmentSystem.Domain.Entities.Patient", "Patient")
-                        .WithOne("MedicalRecord")
-                        .HasForeignKey("HIVTreatmentSystem.Domain.Entities.MedicalRecord", "PatientId")
+                        .WithMany("MedicalRecords")
+                        .HasForeignKey("PatientId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1206,8 +1209,7 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
 
                     b.Navigation("Appointments");
 
-                    b.Navigation("MedicalRecord")
-                        .IsRequired();
+                    b.Navigation("MedicalRecords");
 
                     b.Navigation("Reminders");
 

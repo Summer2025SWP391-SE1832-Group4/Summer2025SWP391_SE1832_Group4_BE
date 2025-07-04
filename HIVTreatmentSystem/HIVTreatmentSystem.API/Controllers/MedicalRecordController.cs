@@ -5,6 +5,7 @@ using HIVTreatmentSystem.API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
+using System.Linq;
 
 namespace HIVTreatmentSystem.API.Controllers
 {
@@ -18,13 +19,16 @@ namespace HIVTreatmentSystem.API.Controllers
     public class MedicalRecordController : ControllerBase
     {
         private readonly IMedicalRecordService _medicalRecordService;
+        private readonly IPatientTreatmentService _patientTreatmentService;
         private readonly IMapper _mapper;
 
         public MedicalRecordController(
             IMedicalRecordService medicalRecordService,
+            IPatientTreatmentService patientTreatmentService,
             IMapper mapper)
         {
             _medicalRecordService = medicalRecordService;
+            _patientTreatmentService = patientTreatmentService;
             _mapper = mapper;
         }
 
@@ -76,6 +80,13 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 var medicalRecords = await _medicalRecordService.GetByPatientIdAsync(patientId);
+                var patientTreatments = await _patientTreatmentService.GetByPatientIdAsync(patientId);
+                // Populate treatments into each medical record response
+                foreach (var record in medicalRecords)
+                {
+                    record.PatientTreatments = patientTreatments.ToList();
+                }
+                // Return only the updated medical records
                 return Ok(new ApiResponse("Success", medicalRecords));
             }
             catch (Exception)
@@ -93,15 +104,21 @@ namespace HIVTreatmentSystem.API.Controllers
         {
             try
             {
-                var medicalRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
-                if (medicalRecord == null)
-                    return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
+                var medicalRecords = await _medicalRecordService.GetByPatientIdAsync(patientId);
+                if (medicalRecords == null || !medicalRecords.Any())
+                    return NotFound(new ApiResponse($"No medical records found for patient with ID {patientId}."));
 
-                return Ok(new ApiResponse("Success", medicalRecord));
+                // Also include patient treatments for this patient
+                var patientTreatments = await _patientTreatmentService.GetByPatientIdAsync(patientId);
+                foreach (var record in medicalRecords)
+                {
+                    record.PatientTreatments = patientTreatments.ToList();
+                }
+                return Ok(new ApiResponse("Success", medicalRecords));
             }
             catch (Exception)
             {
-                return StatusCode(500, new ApiResponse("An error occurred while retrieving the medical record."));
+                return StatusCode(500, new ApiResponse("An error occurred while retrieving medical records."));
             }
         }
 
@@ -376,7 +393,8 @@ namespace HIVTreatmentSystem.API.Controllers
             try
             {
                 // Check if medical record exists
-                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
+                var records = await _medicalRecordService.GetByPatientIdAsync(patientId);
+                var existingRecord = records.FirstOrDefault();
                 if (existingRecord == null)
                 {
                     return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
@@ -446,7 +464,8 @@ namespace HIVTreatmentSystem.API.Controllers
         {
             try
             {
-                var existingRecord = await _medicalRecordService.GetUniqueByPatientIdAsync(patientId);
+                var records = await _medicalRecordService.GetByPatientIdAsync(patientId);
+                var existingRecord = records.FirstOrDefault();
                 if (existingRecord == null)
                     return NotFound(new ApiResponse($"No medical record found for patient with ID {patientId}."));
 
