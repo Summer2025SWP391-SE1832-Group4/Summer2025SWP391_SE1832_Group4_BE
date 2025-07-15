@@ -7,9 +7,6 @@ using HIVTreatmentSystem.Domain.Interfaces;
 
 namespace HIVTreatmentSystem.Application.Services
 {
-    /// <summary>
-    /// Service implementation for managing test results
-    /// </summary>
     public class TestResultService : ITestResultService
     {
         private readonly ITestResultRepository _repository;
@@ -158,7 +155,7 @@ namespace HIVTreatmentSystem.Application.Services
             // Map request to entity
             var testResult = _mapper.Map<TestResult>(request);
             testResult.PatientId = appointment.PatientId;
-            testResult.TestDate = DateTime.Now;
+            testResult.TestDate = DateTime.UtcNow;
             // Add to repository
             var createdTestResult = await _repository.AddAsync(testResult);
 
@@ -166,7 +163,6 @@ namespace HIVTreatmentSystem.Application.Services
             return _mapper.Map<TestResultResponse>(createdTestResult);
         }
 
-        /// <inheritdoc/>
         public async Task<TestResultResponse> UpdateAsync(int id, TestResultRequest request)
         {
             if (request == null)
@@ -178,7 +174,7 @@ namespace HIVTreatmentSystem.Application.Services
             var existingTestResult = await _repository.GetByIdAsync(id);
             if (existingTestResult == null)
                 throw new KeyNotFoundException($"Test result with ID {id} not found");
-            existingTestResult.TestDate = DateTime.Now;
+            existingTestResult.TestDate = DateTime.UtcNow;
             // Resolve patient via appointment
             var appointment = await _appointmentRepository.GetAppointmentWithDetailsAsync(request.AppointmentId);
             if (appointment == null)
