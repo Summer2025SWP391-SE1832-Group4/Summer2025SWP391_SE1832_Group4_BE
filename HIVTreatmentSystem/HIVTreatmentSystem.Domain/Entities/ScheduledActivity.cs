@@ -1,7 +1,5 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Entities

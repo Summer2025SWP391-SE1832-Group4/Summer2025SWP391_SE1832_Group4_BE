@@ -1,5 +1,4 @@
-﻿
-using HIVTreatmentSystem.Domain.Entities;
+﻿using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {

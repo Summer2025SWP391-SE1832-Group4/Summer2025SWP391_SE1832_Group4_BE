@@ -1,6 +1,4 @@
-﻿
-
-namespace HIVTreatmentSystem.Domain.Enums
+﻿namespace HIVTreatmentSystem.Domain.Enums
 {
     public enum ActivityType
     {

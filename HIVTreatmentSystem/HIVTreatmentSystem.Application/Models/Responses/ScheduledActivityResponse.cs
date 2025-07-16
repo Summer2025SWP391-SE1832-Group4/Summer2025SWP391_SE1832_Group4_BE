@@ -1,5 +1,4 @@
-﻿
-using HIVTreatmentSystem.Domain.Enums;
+﻿using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Application.Models.Responses
 {
