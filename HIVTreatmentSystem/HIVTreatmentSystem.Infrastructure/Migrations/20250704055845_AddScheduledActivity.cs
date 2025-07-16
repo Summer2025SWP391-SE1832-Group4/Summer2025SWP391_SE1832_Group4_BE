@@ -15,15 +15,20 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                 name: "ScheduledActivities",
                 columns: table => new
                 {
-                    ScheduledActivityId = table.Column<int>(type: "int", nullable: false)
+                    ScheduledActivityId = table
+                        .Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PatientId = table.Column<int>(type: "int", nullable: false),
                     CreatedByStaffId = table.Column<int>(type: "int", nullable: true),
                     ScheduledDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ActivityType = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: true),
+                    Description = table.Column<string>(
+                        type: "nvarchar(500)",
+                        maxLength: 500,
+                        nullable: true
+                    ),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                 },
                 constraints: table =>
                 {
@@ -33,30 +38,34 @@ namespace HIVTreatmentSystem.Infrastructure.Migrations
                         column: x => x.PatientId,
                         principalTable: "Patients",
                         principalColumn: "PatientId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Cascade
+                    );
                     table.ForeignKey(
                         name: "FK_ScheduledActivities_Staff_CreatedByStaffId",
                         column: x => x.CreatedByStaffId,
                         principalTable: "Staff",
-                        principalColumn: "StaffId");
-                });
+                        principalColumn: "StaffId"
+                    );
+                }
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduledActivities_CreatedByStaffId",
                 table: "ScheduledActivities",
-                column: "CreatedByStaffId");
+                column: "CreatedByStaffId"
+            );
 
             migrationBuilder.CreateIndex(
                 name: "IX_ScheduledActivities_PatientId",
                 table: "ScheduledActivities",
-                column: "PatientId");
+                column: "PatientId"
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "ScheduledActivities");
+            migrationBuilder.DropTable(name: "ScheduledActivities");
         }
     }
 }

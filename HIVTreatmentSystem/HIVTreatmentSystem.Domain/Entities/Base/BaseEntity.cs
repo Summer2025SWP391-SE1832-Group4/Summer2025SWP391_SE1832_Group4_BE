@@ -1,4 +1,3 @@
-using System;
 
 namespace HIVTreatmentSystem.Domain.Entities.Base
 {

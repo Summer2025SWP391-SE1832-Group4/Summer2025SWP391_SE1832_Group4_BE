@@ -1,5 +1,4 @@
-using HIVTreatmentSystem.Domain.Enums;
-using System;
+
 
 namespace HIVTreatmentSystem.Application.Models.Auth
 {

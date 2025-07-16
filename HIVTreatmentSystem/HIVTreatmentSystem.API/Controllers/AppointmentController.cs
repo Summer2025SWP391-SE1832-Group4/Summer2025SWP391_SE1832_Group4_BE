@@ -1,10 +1,7 @@
 ﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
-using HIVTreatmentSystem.Application.Services.DoctorService;
 using HIVTreatmentSystem.Domain.Enums;
-using HIVTreatmentSystem.Domain.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HIVTreatmentSystem.API.Controllers

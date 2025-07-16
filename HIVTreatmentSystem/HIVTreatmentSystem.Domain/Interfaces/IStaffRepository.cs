@@ -1,6 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
+
 using HIVTreatmentSystem.Domain.Entities;
 
 namespace HIVTreatmentSystem.Domain.Interfaces

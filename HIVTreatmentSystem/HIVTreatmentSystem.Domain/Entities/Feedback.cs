@@ -1,6 +1,6 @@
-using System;
+
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+
 namespace HIVTreatmentSystem.Domain.Entities
 {
     public class Feedback

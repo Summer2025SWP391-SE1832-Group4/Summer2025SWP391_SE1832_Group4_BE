@@ -1,5 +1,4 @@
 ﻿using HIVTreatmentSystem.Domain.Entities;
-using HIVTreatmentSystem.Domain.Interfaces;
 
 public interface ICertificateRepository
 {

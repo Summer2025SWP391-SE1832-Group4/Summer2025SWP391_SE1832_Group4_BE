@@ -1,9 +1,6 @@
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Enums;
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Domain.Interfaces
 {

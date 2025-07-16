@@ -1,6 +1,4 @@
-using HIVTreatmentSystem.Domain.Enums;
-using System;
-using System.Collections.Generic;
+
 
 namespace HIVTreatmentSystem.Application.Models.Doctor
 {

@@ -1,10 +1,7 @@
-﻿using Azure;
-using HIVTreatmentSystem.Application.Common;
+﻿using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
-using HIVTreatmentSystem.Application.Models.Pages;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Domain.Enums;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace HIVTreatmentSystem.API.Controllers

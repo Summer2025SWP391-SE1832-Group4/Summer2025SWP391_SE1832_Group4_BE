@@ -1,6 +1,4 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.ExperienceWorking;
 using HIVTreatmentSystem.Domain.Entities;

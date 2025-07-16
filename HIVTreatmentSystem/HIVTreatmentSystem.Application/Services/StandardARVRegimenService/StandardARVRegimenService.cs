@@ -2,7 +2,6 @@
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
-using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 
 namespace HIVTreatmentSystem.Application.Services

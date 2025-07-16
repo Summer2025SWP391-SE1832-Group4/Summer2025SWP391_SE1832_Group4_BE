@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using HIVTreatmentSystem.Domain.Enums;
 
 namespace HIVTreatmentSystem.Domain.Entities
@@ -32,7 +27,8 @@ namespace HIVTreatmentSystem.Domain.Entities
 
         public string? AdditionalNotes { get; set; }
 
-        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } = new List<MedicalRecord>();
+        public virtual ICollection<MedicalRecord> MedicalRecords { get; set; } =
+            new List<MedicalRecord>();
 
         // Navigation properties
         public int AccountId { get; set; }

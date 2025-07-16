@@ -5,6 +5,7 @@ using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Domain.Entities;

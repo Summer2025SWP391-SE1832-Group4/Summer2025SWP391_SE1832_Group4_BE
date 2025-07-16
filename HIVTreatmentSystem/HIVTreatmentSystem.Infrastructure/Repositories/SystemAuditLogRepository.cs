@@ -1,7 +1,6 @@
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
-using System.Threading.Tasks;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {

@@ -1,14 +1,9 @@
-using Azure.Core;
-using HIVTreatmentSystem.API.Controllers;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
-using HIVTreatmentSystem.Application.Models.Doctor;
 using HIVTreatmentSystem.Application.Models.Requests;
-using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Domain.Enums;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+
 namespace HIVTreatmentSystem.API.Controllers
 {
     [ApiController]

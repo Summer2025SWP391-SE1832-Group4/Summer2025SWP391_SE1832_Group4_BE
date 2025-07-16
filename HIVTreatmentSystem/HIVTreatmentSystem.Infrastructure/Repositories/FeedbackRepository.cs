@@ -2,7 +2,6 @@ using HIVTreatmentSystem.Application.Repositories;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
-using System.Linq;
 
 namespace HIVTreatmentSystem.Infrastructure.Repositories
 {
