@@ -1,7 +1,10 @@
-using BCrypt.Net;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Auth;
+using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 using HIVTreatmentSystem.Application.Models.Settings;
 using HIVTreatmentSystem.Domain.Entities;
@@ -9,14 +12,6 @@ using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
-using HIVTreatmentSystem.Application.Models.Requests;
 
 namespace HIVTreatmentSystem.Application.Services.Auth
 {
@@ -42,7 +37,6 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             IDoctorRepository doctorRepository,
             IExperienceWorkingRepository experienceWorkingRepository,
             IPatientRepository patientRepository
-
         )
         {
             _accountRepository = accountRepository;
@@ -134,7 +128,6 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 || string.IsNullOrWhiteSpace(request.FullName)
             )
             {
-
                 return new ApiResponse("Please provide all required information.");
             }
 
@@ -168,33 +161,50 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             await _accountRepository.AddAsync(account);
             await _accountRepository.SaveChangesAsync();
 
-            // Tạo Doctor/Staff nếu cần (chỉ tạo bản ghi rỗng, không có thông tin chuyên biệt)
+            // Tạo Doctor/Staff nếu cần
             if (request.RoleId == 3) // Doctor
             {
-                var doctor = new Doctor
-                {
-                    AccountId = account.AccountId
-                };
+                var doctor = new Doctor { AccountId = account.AccountId };
                 await _doctorRepository.AddAsync(doctor);
-
-                //Thêm ID của doctor vào trong Expriment working
             }
             else if (request.RoleId == 4) // Staff
             {
-                var staff = new Staff
-                {
-                    AccountId = account.AccountId
-                };
+                var staff = new Staff { AccountId = account.AccountId };
                 await _staffRepository.AddAsync(staff);
             }
 
             var setPasswordUrl = $"http://localhost:5173/passwordAfterRegister-page?token={token}";
             var subject = "Set your password for HIV Treatment System";
             var body =
-                $"<p>Hello {account.FullName},</p>"
-                + $"<p>Thank you for registering. Please set your password by clicking the link below (valid for 30 minutes):</p>"
-                + $"<p><a href='{setPasswordUrl}'>Set Password</a></p>"
-                + $"<p>If you did not request this, please ignore this email.</p>";
+                $@"
+<div style=""font-family: 'Helvetica Neue', Arial, sans-serif; max-width: 600px; margin: auto; padding: 0 20px;"">
+  <div style=""background: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); overflow: hidden;"">
+    <div style=""background: linear-gradient(135deg,#4e89ff 0%,#6fc8ff 100%); padding: 30px; text-align: center;"">
+      <h1 style=""margin: 0; color: white; font-size: 24px;"">Welcome to HIV Treatment System</h1>
+    </div>
+    <div style=""padding: 30px; color: #333;"">
+      <p style=""font-size: 16px; line-height: 1.5;"">
+        Hello <strong>{account.FullName}</strong>,
+      </p>
+      <p style=""font-size: 16px; line-height: 1.5;"">
+Thank you for registering. Click the button below to set a new password (link valid for 30 minutes).
+      </p>
+      <div style=""text-align: center; margin: 30px 0;"">
+        <a href=""{setPasswordUrl}"" style=""display: inline-block; padding: 14px 28px; font-size: 16px; font-weight: 500; color: white; text-decoration: none; border-radius: 8px; background: linear-gradient(135deg,#ff7e5f 0%,#feb47b 100%); box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: transform 0.2s;""
+           onmouseover=""this.style.transform='scale(1.05)'"" onmouseout=""this.style.transform='scale(1)'"" target=""_blank"">
+          Set Password
+        </a>
+      </div>
+      <p style=""font-size: 14px; color: #888; line-height: 1.4;"">
+        If you did not request this, please ignore this email.
+      </p>
+    </div>
+    <div style=""background: #f4f6f8; padding: 20px; text-align: center; font-size: 12px; color: #aaa;"">
+      &copy; {DateTime.Now.Year} Modern State. All rights reserved.
+    </div>
+  </div>
+</div>";
+
             await _emailService.SendEmailAsync(account.Email, subject, body);
 
             return new ApiResponse(
@@ -246,10 +256,9 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 var patient = new Patient
                 {
                     AccountId = account.AccountId,
-                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
+                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync(),
                 };
                 await _patientRepository.AddAsync(patient);
-
             }
 
             await _accountRepository.SaveChangesAsync();
@@ -271,7 +280,6 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             return code;
         }
-
 
         public async Task<ApiResponse> GetRolesAsync()
         {
@@ -352,30 +360,56 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             return response;
         }
 
-        public async Task<ChangePasswordResponse> ChangePassword(string oldPassword, string newPassword, int id)
+        public async Task<ChangePasswordResponse> ChangePassword(
+            string oldPassword,
+            string newPassword,
+            int id
+        )
         {
             try
             {
                 var account = await _accountRepository.GetByIdAsync(id);
                 if (account == null)
-                    return new ChangePasswordResponse { Success = false, Message = "Error: Account not found." };
-                bool checkPassword = _passwordHasher.VerifyPassword(oldPassword, account.PasswordHash);
+                    return new ChangePasswordResponse
+                    {
+                        Success = false,
+                        Message = "Error: Account not found.",
+                    };
+                bool checkPassword = _passwordHasher.VerifyPassword(
+                    oldPassword,
+                    account.PasswordHash
+                );
                 if (!checkPassword)
                     return new ChangePasswordResponse
-                        { Success = false, Message = "Error: Old password is incorrect." };
-                bool isSamePassword = _passwordHasher.VerifyPassword(newPassword, account.PasswordHash);
+                    {
+                        Success = false,
+                        Message = "Error: Old password is incorrect.",
+                    };
+                bool isSamePassword = _passwordHasher.VerifyPassword(
+                    newPassword,
+                    account.PasswordHash
+                );
                 if (isSamePassword)
                     return new ChangePasswordResponse
-                        { Success = false, Message = "Error: New password must be different from the old password." };
+                    {
+                        Success = false,
+                        Message = "Error: New password must be different from the old password.",
+                    };
                 account.PasswordHash = _passwordHasher.HashPassword(newPassword);
                 _accountRepository.Update(account);
-                return new ChangePasswordResponse { Success = true, Message = "Password changed successfully." };
-
+                return new ChangePasswordResponse
+                {
+                    Success = true,
+                    Message = "Password changed successfully.",
+                };
             }
             catch (Exception ex)
             {
                 return new ChangePasswordResponse
-                    { Success = false, Message = "An error occurred while changing the password." };
+                {
+                    Success = false,
+                    Message = "An error occurred while changing the password.",
+                };
             }
         }
 
@@ -422,9 +456,6 @@ namespace HIVTreatmentSystem.Application.Services.Auth
     </div>"
             );
 
-
-
-
             return new ApiResponse("Password reset link has been sent to your email.");
         }
 
@@ -442,7 +473,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
 
             return new ApiResponse("Password has been reset successfully.");
         }
-        
+
         public async Task<ApiResponse> RegisterByAdminAsync(RegisterByAdminRequest request)
         {
             if (
@@ -482,18 +513,12 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             // Create Doctor/Staff/Patient if needed
             if (request.RoleId == 3) // Doctor
             {
-                var doctor = new Doctor
-                {
-                    AccountId = account.AccountId
-                };
+                var doctor = new Doctor { AccountId = account.AccountId };
                 await _doctorRepository.AddAsync(doctor);
             }
             else if (request.RoleId == 4) // Staff
             {
-                var staff = new Staff
-                {
-                    AccountId = account.AccountId
-                };
+                var staff = new Staff { AccountId = account.AccountId };
                 await _staffRepository.AddAsync(staff);
             }
             else if (request.RoleId == 5) // Patient
@@ -501,7 +526,7 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 var patient = new Patient
                 {
                     AccountId = account.AccountId,
-                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync()
+                    PatientCodeAtFacility = await GenerateUniquePatientCodeAsync(),
                 };
                 await _patientRepository.AddAsync(patient);
             }
@@ -530,10 +555,5 @@ namespace HIVTreatmentSystem.Application.Services.Auth
                 }
             );
         }
-
-
     }
-    
-
-
 }
