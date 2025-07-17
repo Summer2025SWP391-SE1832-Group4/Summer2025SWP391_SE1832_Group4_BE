@@ -37,14 +37,14 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PatientTreatmentRequest request)
+        public async Task<IActionResult> Create([FromQuery]PatientTreatmentRequest request)
         {
             var result = await _service.CreateAsync(request);
             return CreatedAtAction(nameof(GetById), new { id = result.PatientTreatmentId }, result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] PatientTreatmentRequest request)
+        public async Task<IActionResult> Update(int id, [FromQuery] PatientTreatmentRequest request)
         {
             var result = await _service.UpdateAsync(id, request);
             return Ok(result);
