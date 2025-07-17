@@ -1,3 +1,4 @@
+using System.Linq;
 using AutoMapper;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;

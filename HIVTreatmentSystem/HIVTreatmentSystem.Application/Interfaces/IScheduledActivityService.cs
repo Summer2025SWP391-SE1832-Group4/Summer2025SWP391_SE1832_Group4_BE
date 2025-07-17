@@ -1,5 +1,4 @@
-﻿
-using HIVTreatmentSystem.Application.Models.Requests;
+﻿using HIVTreatmentSystem.Application.Models.Requests;
 using HIVTreatmentSystem.Application.Models.Responses;
 
 namespace HIVTreatmentSystem.Application.Interfaces
