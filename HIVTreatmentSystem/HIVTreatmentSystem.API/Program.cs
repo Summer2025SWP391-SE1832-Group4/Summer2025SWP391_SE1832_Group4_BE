@@ -17,6 +17,7 @@ using HIVTreatmentSystem.Application.Services.Auth;
 using HIVTreatmentSystem.Application.Services.BlogService;
 using HIVTreatmentSystem.Application.Services.BlogTagService;
 using HIVTreatmentSystem.Application.Services.CertificateService;
+using HIVTreatmentSystem.Application.Services.DashBroadService;
 using HIVTreatmentSystem.Application.Services.PatientService;
 using HIVTreatmentSystem.Application.Services.PatientTreatmentService;
 using HIVTreatmentSystem.Application.Services.ScheduledActivityService;
@@ -188,6 +189,8 @@ builder.Services.AddScoped<
     IDoctorService,
     HIVTreatmentSystem.Application.Services.DoctorService.DoctorService
 >();
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+builder.Services.AddScoped<IDashboardService, DashboardService>();
 
 builder.Services.AddScoped<
     HIVTreatmentSystem.Application.Interfaces.IPasswordHasher,
@@ -220,7 +223,7 @@ builder.Services.AddScoped<IMedicalRecordRepository, MedicalRecordRepository>();
 
 // Add TestResultService services
 builder.Services.AddScoped<ITestResultService, TestResultService>();
-builder.Services.AddScoped<ITestResultRepository, TestResultRepository>();
+builder.Services.AddScoped<HIVTreatmentSystem.Application.Repositories.ITestResultRepository, TestResultRepository>();
 
 // Add Feedback services
 builder.Services.AddScoped<
