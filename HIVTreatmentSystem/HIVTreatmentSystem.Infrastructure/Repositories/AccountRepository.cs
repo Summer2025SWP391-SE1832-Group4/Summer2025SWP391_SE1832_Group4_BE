@@ -125,6 +125,12 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.Roles.FindAsync(roleId);
         }
 
+        public async Task<Account?> GetByPhoneAsync(string phone)
+        {
+            return await _context.Accounts
+                .Include(a => a.Role)
+                .FirstOrDefaultAsync(a => a.PhoneNumber == phone);
+        }
         public async Task<Account?> GetByEmailAsync(string email)
         {
             return await _context.Accounts

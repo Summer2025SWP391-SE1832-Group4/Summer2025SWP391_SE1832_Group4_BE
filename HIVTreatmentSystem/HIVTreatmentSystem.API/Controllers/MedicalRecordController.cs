@@ -99,17 +99,16 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get the unique medical record for a patient (1-to-1 relationship)
         /// </summary>
         /// <param name="email">The email of the patient</param>
-        [HttpGet("patient/{email}/unique")]
-        public async Task<IActionResult> GetUniqueByPatientId(string email)
+        [HttpGet("patient/{phone}/unique")]
+        public async Task<IActionResult> GetUniqueByPatientId(string phone)
         {
             try
             {
-                var medicalRecords = await _medicalRecordService.GetUniqueByPatientEmailAsync(email);
+                var medicalRecords = await _medicalRecordService.GetUniqueByPatientPhonelAsync(phone);
                 if (medicalRecords == null || !medicalRecords.Any())
-                    return NotFound(new ApiResponse($"No medical records found for patient with email {email}."));
+                    return NotFound(new ApiResponse($"No medical records found for patient with phone {phone}."));
 
                 return Ok(new ApiResponse("Success", medicalRecords));
             }
