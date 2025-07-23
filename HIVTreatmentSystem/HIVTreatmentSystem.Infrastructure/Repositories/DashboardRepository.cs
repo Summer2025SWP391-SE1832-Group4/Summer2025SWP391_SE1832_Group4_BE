@@ -17,20 +17,26 @@ public class DashboardRepository : IDashboardRepository
     public async Task<List<object>> GetAppointmentStatisticsByMonthAsync()
     {
         var currentYear = DateTime.UtcNow.Year;
-        
-        var monthlyStats = await _context.Appointments
+
+        // Fetch data first
+        var appointments = await _context.Appointments
             .Where(a => a.CreatedAt.Year == currentYear)
+            .ToListAsync();
+
+        // Group and format on client-side
+        var monthlyStats = appointments
             .GroupBy(a => new { a.CreatedAt.Year, a.CreatedAt.Month })
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = $"{g.Key.Year}-{g.Key.Month:D2}",
                 Count = g.Count(),
                 Date = new DateTime(g.Key.Year, g.Key.Month, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return monthlyStats.Cast<object>().ToList();
+        return monthlyStats;
     }
 
     public async Task<List<object>> GetAppointmentStatisticsByDayAsync()
@@ -54,18 +60,23 @@ public class DashboardRepository : IDashboardRepository
 
     public async Task<List<object>> GetAppointmentStatisticsByYearAsync()
     {
-        var yearlyStats = await _context.Appointments
+        // Fetch all appointments first
+        var appointments = await _context.Appointments.ToListAsync();
+
+        // Group and format on client-side
+        var yearlyStats = appointments
             .GroupBy(a => a.CreatedAt.Year)
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = g.Key.ToString(),
                 Count = g.Count(),
                 Date = new DateTime(g.Key, 1, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return yearlyStats.Cast<object>().ToList();
+        return yearlyStats;
     }
 
     public async Task<List<object>> GetAppointmentStatisticsByWeekAsync()
@@ -95,21 +106,27 @@ public class DashboardRepository : IDashboardRepository
     public async Task<List<object>> GetPatientStatisticsByMonthAsync()
     {
         var currentYear = DateTime.UtcNow.Year;
-        
-        var monthlyStats = await _context.Patients
+
+        // Fetch joined data first
+        var patients = await _context.Patients
             .Join(_context.Accounts, p => p.AccountId, a => a.AccountId, (p, a) => new { p, a })
             .Where(pa => pa.a.CreatedAt.Year == currentYear)
+            .ToListAsync();
+
+        // Group and format on client-side
+        var monthlyStats = patients
             .GroupBy(pa => new { pa.a.CreatedAt.Year, pa.a.CreatedAt.Month })
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = $"{g.Key.Year}-{g.Key.Month:D2}",
                 Count = g.Count(),
                 Date = new DateTime(g.Key.Year, g.Key.Month, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return monthlyStats.Cast<object>().ToList();
+        return monthlyStats;
     }
 
     public async Task<List<object>> GetPatientStatisticsByDayAsync()
@@ -134,19 +151,25 @@ public class DashboardRepository : IDashboardRepository
 
     public async Task<List<object>> GetPatientStatisticsByYearAsync()
     {
-        var yearlyStats = await _context.Patients
+        // Fetch joined data first
+        var patients = await _context.Patients
             .Join(_context.Accounts, p => p.AccountId, a => a.AccountId, (p, a) => new { p, a })
+            .ToListAsync();
+
+        // Group and format on client-side
+        var yearlyStats = patients
             .GroupBy(pa => pa.a.CreatedAt.Year)
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = g.Key.ToString(),
                 Count = g.Count(),
                 Date = new DateTime(g.Key, 1, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return yearlyStats.Cast<object>().ToList();
+        return yearlyStats;
     }
 
     public async Task<List<object>> GetPatientStatisticsByWeekAsync()
@@ -177,20 +200,26 @@ public class DashboardRepository : IDashboardRepository
     public async Task<List<object>> GetTestResultStatisticsByMonthAsync()
     {
         var currentYear = DateTime.UtcNow.Year;
-        
-        var monthlyStats = await _context.TestResults
+
+        // Fetch data first
+        var testResults = await _context.TestResults
             .Where(tr => tr.TestDate.Year == currentYear)
+            .ToListAsync();
+
+        // Group and format on client-side
+        var monthlyStats = testResults
             .GroupBy(tr => new { tr.TestDate.Year, tr.TestDate.Month })
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = $"{g.Key.Year}-{g.Key.Month:D2}",
                 Count = g.Count(),
                 Date = new DateTime(g.Key.Year, g.Key.Month, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return monthlyStats.Cast<object>().ToList();
+        return monthlyStats;
     }
 
     public async Task<List<object>> GetTestResultStatisticsByDayAsync()
@@ -214,18 +243,23 @@ public class DashboardRepository : IDashboardRepository
 
     public async Task<List<object>> GetTestResultStatisticsByYearAsync()
     {
-        var yearlyStats = await _context.TestResults
+        // Fetch all test results first
+        var testResults = await _context.TestResults.ToListAsync();
+
+        // Group and format on client-side
+        var yearlyStats = testResults
             .GroupBy(tr => tr.TestDate.Year)
-            .Select(g => new 
+            .Select(g => new
             {
                 Period = g.Key.ToString(),
                 Count = g.Count(),
                 Date = new DateTime(g.Key, 1, 1)
             })
             .OrderBy(x => x.Date)
-            .ToListAsync();
+            .Cast<object>()
+            .ToList();
 
-        return yearlyStats.Cast<object>().ToList();
+        return yearlyStats;
     }
 
     public async Task<List<object>> GetTestResultStatisticsByWeekAsync()

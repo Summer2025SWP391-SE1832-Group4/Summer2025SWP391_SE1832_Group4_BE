@@ -7,7 +7,7 @@ namespace HIVTreatmentSystem.API.Controllers;
 
 [ApiController]
 [Route("api/dashboard")]
-[Authorize] // Require authentication for all endpoints
+// [Authorize] // Require authentication for all endpoints
 public class DashboardController : ControllerBase
 {
     private readonly IDashboardService _dashboardService;
