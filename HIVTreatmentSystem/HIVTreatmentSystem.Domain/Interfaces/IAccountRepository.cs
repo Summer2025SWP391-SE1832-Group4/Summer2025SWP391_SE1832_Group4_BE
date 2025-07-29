@@ -28,5 +28,8 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         Task<Role?> GetRoleByIdAsync(int roleId);
         Task<List<Role>> GetAllRolesAsync();
         Task<Account> GetByResetTokenAsync(String token);
+        
+        Task<bool> PhoneNumberExistsAsync(string phoneNumber);
+
     }
 }

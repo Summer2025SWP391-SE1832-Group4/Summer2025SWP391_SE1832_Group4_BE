@@ -87,7 +87,8 @@ namespace HIVTreatmentSystem.Application.Interfaces
         /// <summary>
         /// Get unique medical record by patient email (Clean Architecture)
         /// </summary>
-        /// <param name="email">The email of the patient</param>
-        Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhonelAsync(string phone);
+        /// <param name="phone">The phone of the patient</param>
+        Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhoneAsync(string phone);
+
     }
 } 

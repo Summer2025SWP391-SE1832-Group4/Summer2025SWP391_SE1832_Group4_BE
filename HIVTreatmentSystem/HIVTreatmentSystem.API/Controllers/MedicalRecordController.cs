@@ -100,13 +100,13 @@ namespace HIVTreatmentSystem.API.Controllers
 
         /// <summary>
         /// </summary>
-        /// <param name="email">The email of the patient</param>
+        /// <param name="phone">The phone of the patient</param>
         [HttpGet("patient/{phone}/unique")]
-        public async Task<IActionResult> GetUniqueByPatientId(string phone)
+        public async Task<IActionResult> GetUniqueByPatientPhone(string phone)
         {
             try
             {
-                var medicalRecords = await _medicalRecordService.GetUniqueByPatientPhonelAsync(phone);
+                var medicalRecords = await _medicalRecordService.GetUniqueByPatientPhoneAsync(phone);
                 if (medicalRecords == null || !medicalRecords.Any())
                     return NotFound(new ApiResponse($"No medical records found for patient with phone {phone}."));
 

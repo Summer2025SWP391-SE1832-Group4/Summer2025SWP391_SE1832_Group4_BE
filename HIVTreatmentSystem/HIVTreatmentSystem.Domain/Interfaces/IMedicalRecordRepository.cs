@@ -53,5 +53,7 @@ namespace HIVTreatmentSystem.Domain.Interfaces
         /// </summary>
         /// <param name="patientId">The ID of the patient</param>
         Task<bool> HasMedicalRecordAsync(int patientId);
+        
+        
     }
 } 

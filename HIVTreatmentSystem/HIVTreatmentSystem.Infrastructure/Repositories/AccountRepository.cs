@@ -131,6 +131,10 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 .Include(a => a.Role)
                 .FirstOrDefaultAsync(a => a.PhoneNumber == phone);
         }
+        public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
+        {
+            return await _context.Accounts.AnyAsync(a => a.PhoneNumber == phoneNumber);
+        }
         public async Task<Account?> GetByEmailAsync(string email)
         {
             return await _context.Accounts

@@ -232,9 +232,9 @@ namespace HIVTreatmentSystem.Application.Services
         }
 
         /// <inheritdoc/>
-        public async Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhonelAsync(string phone)
+        public async Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhoneAsync(string phone)
         {
-            // Get account by email
+            // Get account by phone
             var account = await _accountRepository.GetByPhoneAsync(phone);
             if (account == null)
                 return Enumerable.Empty<MedicalRecordResponse>();
