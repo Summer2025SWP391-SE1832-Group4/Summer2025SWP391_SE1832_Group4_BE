@@ -10,4 +10,5 @@ public interface IDashboardRepository
         DateTime? from,
         DateTime? to
     );
+    Task<object> GetTestResultSummaryAsync();
 }

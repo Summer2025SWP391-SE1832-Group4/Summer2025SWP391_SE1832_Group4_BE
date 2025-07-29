@@ -34,4 +34,18 @@ public class DashboardController : ControllerBase
             }
         );
     }
+
+    [HttpGet("statistics/test-result-summary")]
+    public async Task<IActionResult> GetTestResultSummary()
+    {
+        var data = await _service.GetTestResultSummaryAsync();
+        return Ok(
+            new ApiResponse
+            {
+                Success = true,
+                Message = "Test result statistics retrieved successfully",
+                Data = data,
+            }
+        );
+    }
 }

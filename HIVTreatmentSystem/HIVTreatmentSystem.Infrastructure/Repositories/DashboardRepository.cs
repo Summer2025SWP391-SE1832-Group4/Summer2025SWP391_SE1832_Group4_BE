@@ -1,4 +1,4 @@
-using System.Globalization;
+﻿using System.Globalization;
 using HIVTreatmentSystem.Domain.Entities;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
@@ -194,4 +194,34 @@ public class DashboardRepository : IDashboardRepository
             >= 55 and < 65 => "55-64",
             _ => "65+",
         };
+
+    public async Task<object> GetTestResultSummaryAsync()
+    {
+        // 1. Tổng số test
+        var totalTests = await _context.TestResults.CountAsync();
+
+        // 2. Đếm dương tính: chuyển TestResults về chữ thường, so với "positive"
+        var positiveCount = await _context.TestResults.CountAsync(tr =>
+            tr.TestResults != null && tr.TestResults.ToLower() == "positive"
+        );
+
+        // 3. Số âm tính là phần còn lại
+        var negativeCount = totalTests - positiveCount;
+
+        // 4. Tính tỷ lệ
+        var positivePercentage =
+            totalTests > 0 ? Math.Round((double)positiveCount / totalTests * 100, 2) : 0.0;
+        var negativePercentage =
+            totalTests > 0 ? Math.Round((double)negativeCount / totalTests * 100, 2) : 0.0;
+
+        // 5. Trả về anonymous object
+        return new
+        {
+            TotalTests = totalTests,
+            PositiveCount = positiveCount,
+            NegativeCount = negativeCount,
+            PositivePercentage = positivePercentage,
+            NegativePercentage = negativePercentage,
+        };
+    }
 }

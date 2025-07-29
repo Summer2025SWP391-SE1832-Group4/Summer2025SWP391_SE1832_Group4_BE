@@ -1,4 +1,5 @@
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Models.Responses;
 
 namespace HIVTreatmentSystem.Application.Interfaces;
 
@@ -10,4 +11,5 @@ public interface IDashboardService
         DateTime? from,
         DateTime? to
     );
+    Task<TestResultSummaryResponse> GetTestResultSummaryAsync();
 }
