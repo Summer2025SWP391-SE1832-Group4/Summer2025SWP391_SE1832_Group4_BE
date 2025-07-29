@@ -127,18 +127,20 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
 
         public async Task<Account?> GetByPhoneAsync(string phone)
         {
-            return await _context.Accounts
-                .Include(a => a.Role)
+            return await _context
+                .Accounts.Include(a => a.Role)
                 .FirstOrDefaultAsync(a => a.PhoneNumber == phone);
         }
+
         public async Task<bool> PhoneNumberExistsAsync(string phoneNumber)
         {
             return await _context.Accounts.AnyAsync(a => a.PhoneNumber == phoneNumber);
         }
+
         public async Task<Account?> GetByEmailAsync(string email)
         {
-            return await _context.Accounts
-                .Include(a => a.Role)
+            return await _context
+                .Accounts.Include(a => a.Role)
                 .FirstOrDefaultAsync(a => a.Email == email);
         }
 
