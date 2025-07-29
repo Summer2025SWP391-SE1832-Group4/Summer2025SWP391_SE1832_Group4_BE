@@ -12,4 +12,13 @@ public interface IDashboardService
         DateTime? to
     );
     Task<TestResultSummaryResponse> GetTestResultSummaryAsync();
+
+    Task<(IEnumerable<PatientTreatmentResponse> Items, int TotalCount)> GetPatientTreatmentsAsync(
+        string? statusFilter,
+        string? sortBy,
+        bool sortDesc,
+        int pageNumber,
+        int pageSize,
+        CancellationToken ct = default
+    );
 }

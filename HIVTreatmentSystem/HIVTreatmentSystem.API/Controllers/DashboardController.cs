@@ -48,4 +48,31 @@ public class DashboardController : ControllerBase
             }
         );
     }
+
+    [HttpGet("treatments")]
+    public async Task<IActionResult> GetPatientTreatments(
+        [FromQuery] string? statusFilter,
+        [FromQuery] string? sortBy,
+        [FromQuery] bool sortDesc = false,
+        [FromQuery] int pageNumber = 1,
+        [FromQuery] int pageSize = 20
+    )
+    {
+        var (items, total) = await _service.GetPatientTreatmentsAsync(
+            statusFilter,
+            sortBy,
+            sortDesc,
+            pageNumber,
+            pageSize
+        );
+
+        return Ok(
+            new ApiResponse
+            {
+                Success = true,
+                Message = "Patient treatments retrieved successfully",
+                Data = new { Items = items, TotalCount = total },
+            }
+        );
+    }
 }

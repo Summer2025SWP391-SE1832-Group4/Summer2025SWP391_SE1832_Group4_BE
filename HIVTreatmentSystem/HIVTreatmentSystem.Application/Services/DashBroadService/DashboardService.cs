@@ -11,11 +11,17 @@ public class DashboardService : IDashboardService
 {
     private readonly IDashboardRepository _repo;
     private readonly IMapper _mapper;
+    private readonly IPatientTreatmentRepository _treatmentRepo;
 
-    public DashboardService(IDashboardRepository repo, IMapper mapper)
+    public DashboardService(
+        IDashboardRepository repo,
+        IMapper mapper,
+        IPatientTreatmentRepository treatmentRepo
+    )
     {
         _repo = repo;
         _mapper = mapper;
+        _treatmentRepo = treatmentRepo;
     }
 
     public async Task<(IEnumerable<DashboardStatisticsResponse> Items, int TotalCount)> GetAllAsync(
@@ -33,7 +39,7 @@ public class DashboardService : IDashboardService
     public async Task<TestResultSummaryResponse> GetTestResultSummaryAsync()
     {
         var raw = await _repo.GetTestResultSummaryAsync();
-        // ánh x? t? anonymous object sang DTO
+
         var props = new ExpandoObject() as IDictionary<string, object?>;
         foreach (var p in raw.GetType().GetProperties())
         {
@@ -48,5 +54,28 @@ public class DashboardService : IDashboardService
             PositivePercentage = Convert.ToDouble(props["PositivePercentage"]),
             NegativePercentage = Convert.ToDouble(props["NegativePercentage"]),
         };
+    }
+
+    public async Task<(
+        IEnumerable<PatientTreatmentResponse> Items,
+        int TotalCount
+    )> GetPatientTreatmentsAsync(
+        string? statusFilter,
+        string? sortBy,
+        bool sortDesc,
+        int pageNumber,
+        int pageSize,
+        CancellationToken ct = default
+    )
+    {
+        var (entities, total) = await _treatmentRepo.GetPagedAsync(
+            statusFilter,
+            sortBy,
+            sortDesc,
+            pageNumber,
+            pageSize
+        );
+        var items = _mapper.Map<IEnumerable<PatientTreatmentResponse>>(entities);
+        return (items, total);
     }
 }
