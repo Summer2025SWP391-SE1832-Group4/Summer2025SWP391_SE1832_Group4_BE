@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using HIVTreatmentSystem.Domain.Entities;
+using HIVTreatmentSystem.Domain.Enums;
 using HIVTreatmentSystem.Domain.Interfaces;
 using HIVTreatmentSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,6 @@ public class DashboardRepository : IDashboardRepository
         DateTime? to
     )
     {
-        // Thi?t l?p th?i gian
         var start = from ?? DateTime.MinValue;
         var end = to ?? DateTime.UtcNow;
         List<DashboardStatistics> stats;
@@ -78,7 +78,6 @@ public class DashboardRepository : IDashboardRepository
                 );
                 break;
 
-            // TODO: implement similarly patientpregnancy, patienttreatmentstatus
             default:
                 throw new ArgumentException($"Unsupported entity: {entity}");
         }
@@ -86,7 +85,6 @@ public class DashboardRepository : IDashboardRepository
         return (stats, stats.Count);
     }
 
-    // Helper for time-based statistics
     private async Task<List<DashboardStatistics>> GetDateStats(
         IQueryable<DateTime> dates,
         string? groupBy
@@ -144,7 +142,6 @@ public class DashboardRepository : IDashboardRepository
         return result.OrderBy(x => x.Date).ToList();
     }
 
-    // Helper for demographic: accepts a grouped IEnumberable of { Key, Count }
     private Task<List<DashboardStatistics>> GetDemographicStats<T>(IEnumerable<T> grouped)
     {
         var list = grouped.ToList();
@@ -197,24 +194,19 @@ public class DashboardRepository : IDashboardRepository
 
     public async Task<object> GetTestResultSummaryAsync()
     {
-        // 1. Tổng số test
         var totalTests = await _context.TestResults.CountAsync();
 
-        // 2. Đếm dương tính: chuyển TestResults về chữ thường, so với "positive"
         var positiveCount = await _context.TestResults.CountAsync(tr =>
             tr.TestResults != null && tr.TestResults.ToLower() == "positive"
         );
 
-        // 3. Số âm tính là phần còn lại
         var negativeCount = totalTests - positiveCount;
 
-        // 4. Tính tỷ lệ
         var positivePercentage =
             totalTests > 0 ? Math.Round((double)positiveCount / totalTests * 100, 2) : 0.0;
         var negativePercentage =
             totalTests > 0 ? Math.Round((double)negativeCount / totalTests * 100, 2) : 0.0;
 
-        // 5. Trả về anonymous object
         return new
         {
             TotalTests = totalTests,
