@@ -21,4 +21,5 @@ public interface IDashboardService
         int pageSize,
         CancellationToken ct = default
     );
+    Task<TreatmentStatusCountResponse> GetTreatmentStatusCountAsync();
 }

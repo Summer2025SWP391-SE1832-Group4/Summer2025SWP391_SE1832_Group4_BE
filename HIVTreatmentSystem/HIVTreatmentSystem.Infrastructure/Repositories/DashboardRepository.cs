@@ -217,4 +217,15 @@ public class DashboardRepository : IDashboardRepository
             NegativePercentage = negativePercentage,
         };
     }
+
+    public async Task<IEnumerable<(string Status, int Count)>> GetTreatmentStatusCountsAsync()
+    {
+        var list = await _context
+            .PatientTreatments.AsNoTracking()
+            .GroupBy(pt => pt.Status)
+            .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
+            .ToListAsync();
+
+        return list.Select(x => (x.Status, x.Count));
+    }
 }

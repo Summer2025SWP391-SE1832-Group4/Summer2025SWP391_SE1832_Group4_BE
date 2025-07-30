@@ -78,4 +78,35 @@ public class DashboardService : IDashboardService
         var items = _mapper.Map<IEnumerable<PatientTreatmentResponse>>(entities);
         return (items, total);
     }
+
+    public async Task<TreatmentStatusCountResponse> GetTreatmentStatusCountAsync()
+    {
+        var raw = await _repo.GetTreatmentStatusCountsAsync();
+        var dict = raw.ToDictionary(x => x.Status, x => x.Count);
+
+        return new TreatmentStatusCountResponse
+        {
+            InTreatment = dict.TryGetValue(
+                nameof(Domain.Enums.TreatmentStatus.InTreatment),
+                out var i
+            )
+                ? i
+                : 0,
+            Completed = dict.TryGetValue(nameof(Domain.Enums.TreatmentStatus.Completed), out var c)
+                ? c
+                : 0,
+            Discontinued = dict.TryGetValue(
+                nameof(Domain.Enums.TreatmentStatus.Discontinued),
+                out var d
+            )
+                ? d
+                : 0,
+            SwitchedRegimen = dict.TryGetValue(
+                nameof(Domain.Enums.TreatmentStatus.SwitchedRegimen),
+                out var s
+            )
+                ? s
+                : 0,
+        };
+    }
 }
