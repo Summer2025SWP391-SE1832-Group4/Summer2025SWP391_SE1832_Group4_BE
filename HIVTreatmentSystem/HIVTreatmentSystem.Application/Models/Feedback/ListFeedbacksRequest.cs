@@ -6,6 +6,7 @@ namespace HIVTreatmentSystem.Application.Models.Requests
         public int PageSize { get; set; } = 10;
         public int? PatientId { get; set; }
         public int? AppointmentId { get; set; }
+        public int? DoctorId { get; set; }
         public int? Rating { get; set; }
     }
 } 

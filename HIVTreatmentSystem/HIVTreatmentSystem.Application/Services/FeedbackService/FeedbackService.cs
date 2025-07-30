@@ -27,6 +27,7 @@ namespace HIVTreatmentSystem.Application.Services
             var (items, total) = await _repository.GetPagedAsync(
                 request.PatientId,
                 request.AppointmentId,
+                request.DoctorId,
                 request.Rating,
                 request.PageNumber,
                 request.PageSize);

@@ -141,7 +141,11 @@ namespace HIVTreatmentSystem.Application.Services.Auth
             {
                 return new ApiResponse("Email is already in use.");
             }
-
+            if (await _accountRepository.PhoneNumberExistsAsync(request.PhoneNumber))
+            {
+                return new ApiResponse("Phone number already exists") { Success = false };
+            }
+            
             var token = Guid.NewGuid().ToString();
             var expiry = DateTime.UtcNow.AddMinutes(30);
 

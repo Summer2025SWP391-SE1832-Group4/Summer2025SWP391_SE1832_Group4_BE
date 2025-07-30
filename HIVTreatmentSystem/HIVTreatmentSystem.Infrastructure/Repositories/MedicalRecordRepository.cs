@@ -110,5 +110,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
             return await _context.MedicalRecords
                 .AnyAsync(m => m.PatientId == patientId);
         }
+        
+        
     }
 } 

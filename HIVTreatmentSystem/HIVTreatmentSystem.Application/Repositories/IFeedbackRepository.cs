@@ -20,6 +20,7 @@ namespace HIVTreatmentSystem.Application.Repositories
         Task<(IEnumerable<Feedback> Items, int TotalCount)> GetPagedAsync(
             int? patientId,
             int? appointmentId,
+            int? doctorID,
             int? rating,
             int pageNumber,
             int pageSize);

@@ -83,5 +83,12 @@ namespace HIVTreatmentSystem.Application.Interfaces
         /// <param name="medicalRecordId">ID của medical record</param>
         /// <param name="request">Request chứa TestResultId</param>
         Task<MedicalRecordResponse> AddTestResultToMedicalRecordAsync(int medicalRecordId, AddTestResultToMedicalRecordRequest request);
+
+        /// <summary>
+        /// Get unique medical record by patient email (Clean Architecture)
+        /// </summary>
+        /// <param name="phone">The phone of the patient</param>
+        Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhoneAsync(string phone);
+
     }
 } 

@@ -1,6 +1,7 @@
 using HIVTreatmentSystem.Application.Common;
 using HIVTreatmentSystem.Application.Interfaces;
 using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using AutoMapper;
 
@@ -8,7 +9,6 @@ namespace HIVTreatmentSystem.API.Controllers
 {
     /// <summary>
     /// Clean Architecture Controller for Medical Records
-    /// Tuân thủ nguyên tắc Thin Controller, Fat Use Cases
     /// </summary>
     [Route("api/medical-records")]
     [ApiController]
@@ -17,15 +17,21 @@ namespace HIVTreatmentSystem.API.Controllers
     {
         private readonly IMedicalRecordService _medicalRecordService;
         private readonly IPatientTreatmentService _patientTreatmentService;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IPatientService _patientService;
         private readonly IMapper _mapper;
 
         public MedicalRecordController(
             IMedicalRecordService medicalRecordService,
             IPatientTreatmentService patientTreatmentService,
+            IAccountRepository accountRepository,
+            IPatientService patientService,
             IMapper mapper)
         {
             _medicalRecordService = medicalRecordService;
             _patientTreatmentService = patientTreatmentService;
+            _accountRepository = accountRepository;
+            _patientService = patientService;
             _mapper = mapper;
         }
 
@@ -93,24 +99,17 @@ namespace HIVTreatmentSystem.API.Controllers
         }
 
         /// <summary>
-        /// Get the unique medical record for a patient (1-to-1 relationship)
         /// </summary>
-        /// <param name="patientId">The ID of the patient</param>
-        [HttpGet("patient/{patientId}/unique")]
-        public async Task<IActionResult> GetUniqueByPatientId(int patientId)
+        /// <param name="phone">The phone of the patient</param>
+        [HttpGet("patient/{phone}/unique")]
+        public async Task<IActionResult> GetUniqueByPatientPhone(string phone)
         {
             try
             {
-                var medicalRecords = await _medicalRecordService.GetByPatientIdAsync(patientId);
+                var medicalRecords = await _medicalRecordService.GetUniqueByPatientPhoneAsync(phone);
                 if (medicalRecords == null || !medicalRecords.Any())
-                    return NotFound(new ApiResponse($"No medical records found for patient with ID {patientId}."));
+                    return NotFound(new ApiResponse($"No medical records found for patient with phone {phone}."));
 
-                // Also include patient treatments for this patient
-                var patientTreatments = await _patientTreatmentService.GetByPatientIdAsync(patientId);
-                foreach (var record in medicalRecords)
-                {
-                    record.PatientTreatments = patientTreatments.ToList();
-                }
                 return Ok(new ApiResponse("Success", medicalRecords));
             }
             catch (Exception)

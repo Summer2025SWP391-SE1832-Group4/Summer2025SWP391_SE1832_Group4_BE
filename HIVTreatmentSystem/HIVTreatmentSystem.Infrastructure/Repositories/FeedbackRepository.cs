@@ -21,6 +21,7 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
         public async Task<(IEnumerable<Feedback> Items, int TotalCount)> GetPagedAsync(
             int? patientId,
             int? appointmentId,
+            int? doctorID,
             int? rating,
             int pageNumber,
             int pageSize)
@@ -31,6 +32,8 @@ namespace HIVTreatmentSystem.Infrastructure.Repositories
                 query = query.Where(f => f.PatientId == patientId.Value);
             if (appointmentId.HasValue)
                 query = query.Where(f => f.AppointmentId == appointmentId.Value);
+            if(doctorID.HasValue)
+                query = query.Where(f => f.Appointment.DoctorId == doctorID.Value);
             if (rating.HasValue)
                 query = query.Where(f => f.Rating == rating.Value);
 

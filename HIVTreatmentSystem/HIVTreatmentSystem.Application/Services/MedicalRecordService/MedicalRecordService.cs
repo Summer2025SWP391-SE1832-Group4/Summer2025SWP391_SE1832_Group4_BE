@@ -17,16 +17,25 @@ namespace HIVTreatmentSystem.Application.Services
         private readonly IMedicalRecordRepository _medicalRecordRepository;
         private readonly IAppointmentRepository _appointmentRepository;
         private readonly ITestResultRepository _testResultRepository;
+        private readonly IAccountRepository _accountRepository;
+        private readonly IPatientService _patientService;
+        private readonly IPatientTreatmentService _patientTreatmentService;
         private readonly IMapper _mapper;
 
         public MedicalRecordService(IMedicalRecordRepository medicalRecordRepository,
             IAppointmentRepository appointmentRepository,
             ITestResultRepository testResultRepository,
+            IAccountRepository accountRepository,
+            IPatientService patientService,
+            IPatientTreatmentService patientTreatmentService,
             IMapper mapper)
         {
             _medicalRecordRepository = medicalRecordRepository;
             _appointmentRepository = appointmentRepository;
             _testResultRepository = testResultRepository;
+            _accountRepository = accountRepository;
+            _patientService = patientService;
+            _patientTreatmentService = patientTreatmentService;
             _mapper = mapper;
         }
 
@@ -220,6 +229,33 @@ namespace HIVTreatmentSystem.Application.Services
             // Return updated medical record with all test results
             var updatedMedicalRecord = await _medicalRecordRepository.GetByIdAsync(medicalRecordId);
             return _mapper.Map<MedicalRecordResponse>(updatedMedicalRecord);
+        }
+
+        /// <inheritdoc/>
+        public async Task<IEnumerable<MedicalRecordResponse>> GetUniqueByPatientPhoneAsync(string phone)
+        {
+            // Get account by phone
+            var account = await _accountRepository.GetByPhoneAsync(phone);
+            if (account == null)
+                return Enumerable.Empty<MedicalRecordResponse>();
+
+            // Get patient by account ID
+            var patient = await _patientService.GetPatientByAccountIdAsync(account.AccountId);
+            if (patient == null)
+                return Enumerable.Empty<MedicalRecordResponse>();
+
+            // Get medical records by patient ID
+            var medicalRecords = await _medicalRecordRepository.GetByPatientIdAsync(patient.PatientId);
+            var medicalRecordResponses = _mapper.Map<IEnumerable<MedicalRecordResponse>>(medicalRecords).ToList();
+            
+            // Also include patient treatments for this patient (to maintain same response format as before)
+            var patientTreatments = await _patientTreatmentService.GetByPatientIdAsync(patient.PatientId);
+            foreach (var record in medicalRecordResponses)
+            {
+                record.PatientTreatments = patientTreatments.ToList();
+            }
+
+            return medicalRecordResponses;
         }
     }
 } 
