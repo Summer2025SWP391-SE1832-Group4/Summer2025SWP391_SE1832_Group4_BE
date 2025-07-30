@@ -1,15 +1,24 @@
-using HIVTreatmentSystem.Application.Models.DashBroad;
+using HIVTreatmentSystem.Application.Models.Requests;
+using HIVTreatmentSystem.Application.Models.Responses;
 
 namespace HIVTreatmentSystem.Application.Interfaces;
 
 public interface IDashboardService
 {
-    // Get total patient count
-    Task<int> GetTotalPatientsCountAsync();
-    
-    // Get test result statistics
-    Task<(int TotalTests, int PositiveCount, int NegativeCount)> GetTestResultsSummaryAsync();
-    
-    // Get treatment status statistics
-    Task<List<PatientTreatmentStatusStatisticsResponse>> GetPatientTreatmentStatusStatisticsAsync();
+    Task<(IEnumerable<DashboardStatisticsResponse> Items, int TotalCount)> GetAllAsync(
+        string? entity,
+        string? groupBy,
+        DateTime? from,
+        DateTime? to
+    );
+    Task<TestResultSummaryResponse> GetTestResultSummaryAsync();
+
+    Task<(IEnumerable<PatientTreatmentResponse> Items, int TotalCount)> GetPatientTreatmentsAsync(
+        string? statusFilter,
+        string? sortBy,
+        bool sortDesc,
+        int pageNumber,
+        int pageSize,
+        CancellationToken ct = default
+    );
 }
