@@ -42,7 +42,9 @@ public class DashboardRepository : IDashboardRepository
             case "patient":
                 stats = await GetDateStats(
                     _context
-                        .Accounts.Where(a => a.CreatedAt >= start && a.CreatedAt <= end)
+                        .Accounts.Where(a =>
+                            a.CreatedAt >= start && a.CreatedAt <= end && a.RoleId == 5
+                        )
                         .Select(a => a.CreatedAt),
                     groupBy
                 );
