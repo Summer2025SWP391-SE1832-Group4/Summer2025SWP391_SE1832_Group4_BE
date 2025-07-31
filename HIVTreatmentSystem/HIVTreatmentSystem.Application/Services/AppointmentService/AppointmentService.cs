@@ -370,11 +370,11 @@ namespace HIVTreatmentSystem.Application.Services.AppointmentService
 
             var start = appointment.AppointmentDate.ToDateTime(appointment.AppointmentTime);
             var now = DateTime.Now;
-            if (Math.Abs((now - start).TotalMinutes) > 5)
+            if (now < start)
             {
                 return new ApiResponse(
-                    $"Error: Check-in allowed only after "
-                  + $"the scheduled start ({start:yyyy-MM-dd HH:mm}).");
+                    $"Error: Check-in is only allowed after "
+                  + $"the scheduled start time ({start:yyyy-MM-dd HH:mm}).");
             }
 
 
