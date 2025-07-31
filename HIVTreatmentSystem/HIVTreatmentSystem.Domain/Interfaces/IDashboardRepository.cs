@@ -11,4 +11,5 @@ public interface IDashboardRepository
         DateTime? to
     );
     Task<object> GetTestResultSummaryAsync();
+    Task<IEnumerable<(string Status, int Count)>> GetTreatmentStatusCountsAsync();
 }

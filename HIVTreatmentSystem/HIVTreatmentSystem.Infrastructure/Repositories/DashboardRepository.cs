@@ -42,7 +42,9 @@ public class DashboardRepository : IDashboardRepository
             case "patient":
                 stats = await GetDateStats(
                     _context
-                        .Accounts.Where(a => a.CreatedAt >= start && a.CreatedAt <= end)
+                        .Accounts.Where(a =>
+                            a.CreatedAt >= start && a.CreatedAt <= end && a.RoleId == 5
+                        )
                         .Select(a => a.CreatedAt),
                     groupBy
                 );
@@ -216,5 +218,16 @@ public class DashboardRepository : IDashboardRepository
             PositivePercentage = positivePercentage,
             NegativePercentage = negativePercentage,
         };
+    }
+
+    public async Task<IEnumerable<(string Status, int Count)>> GetTreatmentStatusCountsAsync()
+    {
+        var list = await _context
+            .PatientTreatments.AsNoTracking()
+            .GroupBy(pt => pt.Status)
+            .Select(g => new { Status = g.Key.ToString(), Count = g.Count() })
+            .ToListAsync();
+
+        return list.Select(x => (x.Status, x.Count));
     }
 }

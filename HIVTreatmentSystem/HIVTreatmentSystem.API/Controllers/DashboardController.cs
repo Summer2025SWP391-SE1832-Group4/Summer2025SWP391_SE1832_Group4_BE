@@ -75,4 +75,18 @@ public class DashboardController : ControllerBase
             }
         );
     }
+
+    [HttpGet("statistics/treatment-status-count")]
+    public async Task<IActionResult> GetTreatmentStatusCount()
+    {
+        var data = await _service.GetTreatmentStatusCountAsync();
+        return Ok(
+            new ApiResponse
+            {
+                Success = true,
+                Message = "Treatment status counts retrieved successfully",
+                Data = data,
+            }
+        );
+    }
 }
